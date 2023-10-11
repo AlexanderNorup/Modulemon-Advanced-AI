@@ -1,0 +1,14 @@
+{
+  "platform": "windows64",
+  "jdk": "jre-windows-64.zip",
+  "executable": "Modulémon",
+  "classpath": [
+    "modulemon-2.0-SNAPSHOT.jar"
+  ],
+  "mainclass": "dk.sdu.mmmi.Main",
+  "vmargs": [
+    "Xmx1G"
+  ],
+  "minimizejre": "soft",
+  "output": "out_windows"
+}

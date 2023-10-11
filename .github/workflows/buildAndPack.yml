@@ -1,0 +1,84 @@
+# Kindly stolen from https://raw.githubusercontent.com/yairm210/Unciv/
+# This is a basic workflow to help you get started with Actions
+
+name: Build and pack Modulémon
+
+# Controls when the action will run.
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  # Maybe consider other on: attributes here. Maybe on release?
+
+jobs:
+
+  build-jar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:g
+          distribution: 'temurin'
+          java-version: '18'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2.4.2
+
+      - name: Compile Jar files
+        run: ./gradlew jar
+
+      - name: Upload JAR
+        continue-on-error: true
+        uses: actions/upload-artifact@v3
+        with:
+          name: Modulemon
+          path: |
+            /build/libs/modulemon-2.0-SNAPSHOT.jar
+
+
+  packr-build:
+    runs-on: ubuntu-latest
+    needs: build-jar
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '18'
+
+      - name: Download JAR
+        uses: actions/download-artifact@v3
+        # See 'Upload JAR' step in 'build' job
+        with:
+          name: Modulemon
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Packr build
+        run: |
+          wget -q -O packr-all-4.0.0.jar https://github.com/libgdx/packr/releases/download/4.0.0/packr-all-4.0.0.jar
+          
+          wget -q -O jre-windows-64.zip https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2.1%2B1/OpenJDK18U-jre_x64_windows_hotspot_18.0.2.1_1.zip
+          java -jar packr-all-4.0.0.jar packr_windows.json
+          cd out_windows/
+          zip -r ../modulemon-windows_x64.zip .
+          cd ..
+          
+          wget -q -O jre-linux-64.tar.gz https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2.1%2B1/OpenJDK18U-jre_x64_linux_hotspot_18.0.2.1_1.tar.gz
+          java -jar packr-all-4.0.0.jar packr_linux.json
+          cd out_linux/
+          zip -r ../modulemon-linux_x64.zip .
+          cd ..
+          
+
+      # MacOS, add: https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2.1%2B1/OpenJDK18U-jre_x64_mac_hotspot_18.0.2.1_1.tar.gz
+      - name: Upload packed zips
+        uses: actions/upload-artifact@v3
+        with:
+          name: PackagedRunners
+          path: |
+            modulemon-windows_x64.zip
+            modulemon-linux_x64.zip

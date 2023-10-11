@@ -1,8 +1,0 @@
-{
-    "soundVolume": 60,
-    "AI alpha-beta pruning": true,
-    "personaRectangles": true,
-    "battleMusicTheme": "Original",
-    "AI processing time": 1000,
-    "musicVolume": 30
-}
