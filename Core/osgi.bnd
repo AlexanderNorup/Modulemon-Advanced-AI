@@ -1,3 +1,0 @@
-Bundle-SymbolicName: Core
-Service-Component: META-INF/core.xml
-includeresource.resources: -src/main/resources

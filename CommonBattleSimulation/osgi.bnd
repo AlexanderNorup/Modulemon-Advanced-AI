@@ -1,2 +1,0 @@
-Bundle-SymbolicName: CommonBattleSimulation
-Export-Package: dk.sdu.mmmi.modulemon.CommonBattleSimulation, dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents

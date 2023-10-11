@@ -1,0 +1,135 @@
+[
+  {
+    "id" : 0,
+    "name" : "Alpaca",
+    "type" : "GRASS",
+    "hp" : 100,
+    "defence" : 90,
+    "attack" : 125,
+    "speed" : 85,
+    "moves" : [
+      "spit",
+      "trample",
+      "hornBlast",
+      "fireBreath"
+    ],
+    "front": "/images/alpaca_1.png",
+    "back": "/images/alpaca_2.png"
+  },
+  {
+    "id" : 1,
+    "name" : "Eel",
+    "type" : "WATER",
+    "hp" : 74,
+    "defence" : 65,
+    "attack" : 125,
+    "speed" : 120,
+    "moves" : [
+      "zap",
+      "windGust",
+      "eggBomb",
+      "waterBlast"
+    ],
+    "front": "/images/eel_1.png",
+    "back": "/images/eel_2.png"
+  },
+  {
+    "id" : 2,
+    "name" : "Bird",
+    "type" : "AIR",
+    "hp" : 98,
+    "defence" : 105,
+    "attack" : 87,
+    "speed" : 75,
+    "moves" : [
+      "slam",
+      "tornado",
+      "zap",
+      "spit"
+    ],
+    "front": "/images/bird_front.png",
+    "back": "/images/bird_back.png"
+  },
+  {
+    "id" : 3,
+    "name" : "Mole",
+    "type" : "EARTH",
+    "hp" : 80,
+    "defence" : 110,
+    "attack" : 90,
+    "speed" : 35,
+    "moves" : [
+      "slam",
+      "dig",
+      "earthquake",
+      "trample"
+    ],
+    "front": "/images/mole_front.png",
+    "back": "/images/mole_back.png"
+  },
+  {
+    "id" : 4,
+    "name" : "Cat",
+    "type" : "LIGHTNING",
+    "hp" : 75,
+    "defence" : 90,
+    "attack" : 123,
+    "speed" : 95,
+    "moves" : [
+      "furBall",
+      "dig",
+      "arcBolt",
+      "slam"
+    ],
+    "front": "/images/cat_front.png",
+    "back": "/images/cat_back.png"
+  },
+  {
+    "id" : 5,
+    "name" : "Dog",
+    "type" : "FIRE",
+    "hp" : 85,
+    "defence" : 85,
+    "attack" : 116,
+    "speed" : 119,
+    "moves" : [
+      "zap",
+      "flameFang",
+      "earthquake",
+      "slam"
+    ],
+    "front": "/images/dog_front.png",
+    "back": "/images/dog_back.png"
+  },
+  {
+    "id" : 6,
+    "name" : "GOD",
+    "type" : "NORMAL",
+    "hp" : 9999,
+    "defence" : 1000,
+    "attack" : 1000,
+    "speed" : 1000,
+    "moves" : [
+      "DIE"
+    ],
+    "front": "/images/god_front.png",
+    "back": "/images/god_back.png"
+  },
+  {
+    "id" : 7,
+    "name" : "Seagull",
+    "type" : "AIR",
+    "hp" : 74,
+    "defence" : 100,
+    "attack" : 100,
+    "speed" : 100,
+    "moves" : [
+      "screech",
+      "slam",
+      "eggBomb",
+      "waterBlast"
+    ],
+    "front": "/images/seagull_front.png",
+    "back": "/images/seagull_back.png"
+  }
+]

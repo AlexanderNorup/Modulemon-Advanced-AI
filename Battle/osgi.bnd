@@ -1,3 +1,0 @@
-Service-Component: META-INF/gameview.xml
-Bundle-SymbolicName: Battle
-Bundle-ActivationPolicy: lazy

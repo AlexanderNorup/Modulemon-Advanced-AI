@@ -1,3 +1,0 @@
-Bundle-SymbolicName: NPC
-Bundle-ActivationPolicy: lazy
-Service-Component: META-INF/entityprocessing.xml, META-INF/gameplugin.xml

@@ -1,3 +1,0 @@
-Bundle-SymbolicName: BattleSimulation
-Bundle-ActivationPolicy: lazy
-Service-Component: META-INF/BattleSimulation.xml
