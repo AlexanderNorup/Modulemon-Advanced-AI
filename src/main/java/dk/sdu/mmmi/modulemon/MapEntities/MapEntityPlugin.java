@@ -1,6 +1,7 @@
 package dk.sdu.mmmi.modulemon.MapEntities;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.Entity;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityParts.InteracteePart;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityParts.PositionPart;
@@ -85,15 +86,15 @@ public class MapEntityPlugin implements IGamePluginService {
     }
 
     private Entity createVendingMachine(GameData gameData, int x, int y, List<IMonster> monsters) {
-        int xOffsetCorrection = 7;
-        int yOffsetCorrection = 20;
+
         int tilemapXPos = x;
         int tilemapYPos = y;
-        float actualX = (tilemapXPos) * TILE_SIZE + xOffsetCorrection;
-        float actualY = (TILE_SIZE * (TILE_SIZE - 1) - (tilemapYPos) * TILE_SIZE) + yOffsetCorrection;
+        float actualX = (tilemapXPos) * TILE_SIZE ;
+        float actualY = (TILE_SIZE * (TILE_SIZE - 1) - (tilemapYPos) * TILE_SIZE);
 
         Entity vendingMachine = new VendingMachine();
         PositionPart positionPart = new PositionPart(actualX, actualY);
+        positionPart.setVisualOffsetPos(new Vector2(-5, 10));
         Texture texture = AssetLoader.getInstance().getTextureAsset("/Textures/vendingmachine.png", getClass());
         SpritePart spritePart = new SpritePart(texture, texture, texture, texture);
         spritePart.setCurrentSprite(texture);
@@ -108,16 +109,15 @@ public class MapEntityPlugin implements IGamePluginService {
     }
 
     private Entity createHealingMachine(GameData gameData, int x, int y) {
-        int xOffsetCorrection = 7;
-        int yOffsetCorrection = 20;
         int tilemapXPos = x;
         int tilemapYPos = y;
 
-        float actualX = (tilemapXPos) * TILE_SIZE + xOffsetCorrection;
-        float actualY = (TILE_SIZE * (TILE_SIZE - 1) - (tilemapYPos) * TILE_SIZE) + yOffsetCorrection;
+        float actualX = (tilemapXPos) * TILE_SIZE;
+        float actualY = (TILE_SIZE * (TILE_SIZE - 1) - (tilemapYPos) * TILE_SIZE);
 
         Entity healingMachine = new HealingMachine();
         PositionPart positionPart = new PositionPart(actualX, actualY);
+        positionPart.setVisualOffsetPos(new Vector2(-5, 10));
         Texture texture = AssetLoader.getInstance().getTextureAsset("/Textures/healingmachine.png", getClass());
         SpritePart spritePart = new SpritePart(texture, texture, texture, texture);
         spritePart.setCurrentSprite(texture);
