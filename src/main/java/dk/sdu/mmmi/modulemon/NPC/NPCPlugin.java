@@ -4,6 +4,7 @@
  */
 package dk.sdu.mmmi.modulemon.NPC;
 
+import com.badlogic.gdx.math.Vector2;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityParts.*;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterRegistry;
@@ -37,7 +38,8 @@ public class NPCPlugin implements IGamePluginService{
         npcs = new ArrayList<>();
 
         npcs.add(0, new NPC());
-        PositionPart positionPart1 = new PositionPart((30)* 64 + 7, (64*63 - (46) * 64 ) + 20);
+        PositionPart positionPart1 = new PositionPart((30)* 64, (64*63 - (46) * 64 ));
+        positionPart1.setVisualOffsetPos(new Vector2(7, 20));
         npcs.get(0).add(new SpritePart(
                 AssetLoader.getInstance().getTextureAsset("/assets/npc/npc1up.png", NPCPlugin.class), //upSprite
                 AssetLoader.getInstance().getTextureAsset("/assets/npc/npc1down.png", NPCPlugin.class), //downSprite
@@ -53,7 +55,8 @@ public class NPCPlugin implements IGamePluginService{
         npcs.get(0).add(new TextDisplayPart(npc1Lines));
 
         npcs.add(1, new NPC());
-        PositionPart positionPart2 = new PositionPart((55)* 64 + 7, (64*63 - (31) * 64 ) + 20);
+        PositionPart positionPart2 = new PositionPart((55)* 64, (64*63 - (31) * 64 ));
+        positionPart2.setVisualOffsetPos(new Vector2(7, 20));
         npcs.get(1).add(new SpritePart(
                 AssetLoader.getInstance().getTextureAsset("/assets/npc/npc2up.png", NPCPlugin.class), //upSprite
                 AssetLoader.getInstance().getTextureAsset("/assets/npc/npc2down.png", NPCPlugin.class), //downSprite
@@ -69,7 +72,8 @@ public class NPCPlugin implements IGamePluginService{
         npcs.get(1).add(new TextDisplayPart(npc2Lines));
 
         npcs.add(2, new NPC());
-        PositionPart positionPart3 = new PositionPart((14)* 64 + 7, (64*63 - (14) * 64 ) + 20);
+        PositionPart positionPart3 = new PositionPart((14)* 64, (64*63 - (14) * 64 ));
+        positionPart3.setVisualOffsetPos(new Vector2(7, 20));
         npcs.get(2).add(new SpritePart(
                 AssetLoader.getInstance().getTextureAsset("/assets/npc/npc3up.png", NPCPlugin.class), //upSprite
                 AssetLoader.getInstance().getTextureAsset("/assets/npc/npc3down.png", NPCPlugin.class), //downSprite

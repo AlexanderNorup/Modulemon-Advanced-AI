@@ -19,8 +19,6 @@ import java.util.Collection;
  */
 public class NPCControlSystem implements IEntityProcessingService{
 
-    private String current = ""; // Save the current or it will be overrided to nothing.
-    
     @Override
     public void process(GameData gameData, World world) {
 
@@ -33,20 +31,6 @@ public class NPCControlSystem implements IEntityProcessingService{
                     movingPart.setRight(controlPart.shouldGoRight());
                     movingPart.setUp(controlPart.shouldGoUp());
                     movingPart.setDown(controlPart.shouldGoDown());
-
-                    // else stand still
-                    if(controlPart.shouldGoLeft()){
-                        current = "left";
-                    }
-                    if(controlPart.shouldGoRight()){
-                        current = "right";
-                    }
-                    if(controlPart.shouldGoUp()){
-                        current = "up";
-                    }
-                    if(controlPart.shouldGoDown()){
-                        current = "down";
-                    }
                 }
 
                 Collection<EntityPart> entityParts = npc.getParts();
@@ -59,27 +43,26 @@ public class NPCControlSystem implements IEntityProcessingService{
     }
 
     private void updateShape(Entity entity) {
-
-        PositionPart positionPart = entity.getPart(PositionPart.class);
         SpritePart spritePart = entity.getPart(SpritePart.class);
+        PositionPart positionPart = entity.getPart(PositionPart.class);
 
         Texture result = null;
-        switch (current) {
-            case "right":
-               result = spritePart.getRightSprite();
-               break;
-            case "left":
+        switch (positionPart.getDirection()) {
+            case EAST:
+                result = spritePart.getRightSprite();
+                break;
+            case WEST:
                 result = spritePart.getLeftSprite();
                 break;
-            case "up":
+            case NORTH:
                 result = spritePart.getUpSprite();
                 break;
-            case "down":
+            case SOUTH:
                 result = spritePart.getDownSprite();
                 break;
-            default: System.out.println(("The NPC sprite could not be loaded: Current did not match any direction"));
+            default:
+                System.out.println(("Did not match any direction"));
         }
-
         spritePart.setCurrentSprite(result);
     }
     
