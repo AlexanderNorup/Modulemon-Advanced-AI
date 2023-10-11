@@ -61,9 +61,6 @@ public class NPCControlSystem implements IEntityProcessingService{
     private void updateShape(Entity entity) {
 
         PositionPart positionPart = entity.getPart(PositionPart.class);
-        float x = positionPart.getX();
-        float y = positionPart.getY();
-
         SpritePart spritePart = entity.getPart(SpritePart.class);
 
         Texture result = null;
@@ -84,9 +81,6 @@ public class NPCControlSystem implements IEntityProcessingService{
         }
 
         spritePart.setCurrentSprite(result);
-        //entity.setSpriteTexture(result);
-        positionPart.setX(x);
-        positionPart.setY(y);
     }
     
 }

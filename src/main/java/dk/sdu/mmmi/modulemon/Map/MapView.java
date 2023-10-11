@@ -202,6 +202,8 @@ public class MapView implements IGameViewService, IMapView {
         }
     }
 
+    private List<Rectangle> collisionRectangles = null;
+
     @Override
     public void draw(GameData gameData) {
         if (cam == null)
@@ -217,12 +219,13 @@ public class MapView implements IGameViewService, IMapView {
                 spriteBatch.setProjectionMatrix(cam.combined);
                 spriteBatch.begin();
                 PositionPart positionPart = entity.getPart(PositionPart.class);
-                spriteBatch.draw(sprite, positionPart.getX(), positionPart.getY());
+                var visualEntityPosition = positionPart.getVisualPos();
+                spriteBatch.draw(sprite, visualEntityPosition.x, visualEntityPosition.y);
                 spriteBatch.end();
 
                 if (entity.getType().equals(EntityType.PLAYER)) {
-                    playerPosX = positionPart.getX();
-                    playerPosY = positionPart.getY();
+                    playerPosX = visualEntityPosition.x;
+                    playerPosY = visualEntityPosition.y;
 
                     /*
                     The value of the leftmost position of the camera and the rightmost position of the camera
@@ -239,6 +242,34 @@ public class MapView implements IGameViewService, IMapView {
         tiledMapRenderer.getBatch().begin();
         tiledMapRenderer.renderTileLayer(overhangLayer);
         tiledMapRenderer.getBatch().end();
+
+        // DEBUG DRAWING
+        if(gameData.getKeys().isDown(GameKeys.K)){
+            if(collisionRectangles == null){
+                // Generate and cache them
+                collisionRectangles = new ArrayList<>();
+
+                TiledMapTileLayer collsionLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
+                for(int height = 0; height < collsionLayer.getHeight(); height++){
+                    for(int width = 0; width < collsionLayer.getWidth(); width++){
+                        var cell = collsionLayer.getCell(height, width);
+                        if(cell.getTile().getProperties().containsKey("blocked")){
+                            // Cell is blocked
+                            var newRect = createRectangle(this.rectToUse, height*tilePixelSize, width* tilePixelSize, tilePixelSize, tilePixelSize);
+                            newRect.setFillColor(Color.RED);
+                            collisionRectangles.add(newRect);
+                        }
+                    }
+                }
+            }
+            shapeRenderer.setAutoShapeType(true);
+            shapeRenderer.setProjectionMatrix(cam.combined);
+            shapeRenderer.begin();
+            collisionRectangles.forEach(x -> x.draw(shapeRenderer, gameData.getDelta()));
+            shapeRenderer.end();
+        }
+
+
 
         // Draw events
         if (!mapEvents.isEmpty()) {

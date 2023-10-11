@@ -25,16 +25,16 @@ public class CollisionProcessing implements IPostEntityProcessingService {
         }
         for (Entity entity : world.getEntities()) {
             PositionPart entityPosPart = entity.getPart(PositionPart.class);
-            if(mapView.isCellBlocked(entityPosPart.getTargetPos().x, entityPosPart.getTargetPos().y) && !entityPosPart.getTargetPos().equals(new Vector2(0,0))) {
-                entityPosPart.setTargetPos(entityPosPart.getX(), entityPosPart.getY());
-                if (bonkCooldown <= 0 && entity.getType().equals(EntityType.PLAYER)) {
-                    if(settings != null){
-                        loader.getSoundAsset("/sounds/bonk.ogg", this.getClass()).play( ((int) settings.getSetting(SettingsRegistry.getInstance().getSoundVolumeSetting()) / 100f) / 2f);
-                    }
-                    else loader.getSoundAsset("/sounds/bonk.ogg", this.getClass()).play( );
-                    bonkCooldown = 0.5f;
+            var targetPos = entityPosPart.getTargetPos();
+            if(targetPos != null && mapView.isCellBlocked(targetPos.x, targetPos.y) && !entityPosPart.getTargetPos().equals(new Vector2(0,0))) {
+                // Map cell is blocked!
+                entityPosPart.setTargetPos(null);
+
+                if(entity.getType().equals(EntityType.PLAYER)){
+                    playBonkSound();
                 }
-                return;
+
+                break;
             }
 
             for (Entity checking : world.getEntities()) {
@@ -42,23 +42,36 @@ public class CollisionProcessing implements IPostEntityProcessingService {
                     continue;
 
                 PositionPart checkPosPart = checking.getPart(PositionPart.class);
-
-                if(entityPosPart.getTargetPos().equals(checkPosPart.getCurrentPos()) && !checkPosPart.getCurrentPos().equals(new Vector2(0,0))){
-                    entityPosPart.setTargetPos(entityPosPart.getX(), entityPosPart.getY());
+                if(checkPosPart == null){
+                    // Entity checking against has no position part. That's weird tho, maybe log that?
+                    continue;
                 }
-                if(entityPosPart.getTargetPos().equals(checkPosPart.getTargetPos())){
-                    float entityDistanceToTarget = entityPosPart.getTargetPos().dst(entityPosPart.getCurrentPos());
-                    float checkingDistanceToTarget = checkPosPart.getTargetPos().dst(checkPosPart.getCurrentPos());
-                    if(entityDistanceToTarget > checkingDistanceToTarget){
-                        entityPosPart.setTargetPos(entityPosPart.getX(), entityPosPart.getY());
-                    } else {
-                        checkPosPart.setTargetPos(checkPosPart.getX(), checkPosPart.getY());
+
+                if(targetPos != null
+                        && (targetPos.epsilonEquals(checkPosPart.getCurrentPos()) //Checking if moving into another entity
+                        || targetPos.epsilonEquals(checkPosPart.getTargetPos()))){ // Checking if moving into the same block
+                    // We're trying to move into another entity
+                    entityPosPart.setTargetPos(null);
+
+                    if(entity.getType().equals(EntityType.PLAYER)){
+                        playBonkSound();
                     }
+                    break;
                 }
             }
         }
         if(bonkCooldown >= 0){
             bonkCooldown -= gameData.getDelta();
+        }
+    }
+
+    private void playBonkSound(){
+        if (bonkCooldown <= 0) {
+            if(settings != null){
+                loader.getSoundAsset("/sounds/bonk.ogg", this.getClass()).play( ((int) settings.getSetting(SettingsRegistry.getInstance().getSoundVolumeSetting()) / 100f) / 2f);
+            }
+            else loader.getSoundAsset("/sounds/bonk.ogg", this.getClass()).play( );
+            bonkCooldown = 0.5f;
         }
     }
 

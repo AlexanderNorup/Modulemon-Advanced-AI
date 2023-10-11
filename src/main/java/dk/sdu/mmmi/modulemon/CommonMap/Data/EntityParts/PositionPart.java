@@ -19,34 +19,39 @@ import dk.sdu.mmmi.modulemon.common.data.GameData;
  * @author Alexander
  */
 public class PositionPart implements EntityPart {
-
-    private float x;
-    private float y;
     private Direction direction; // facing direction in comparison to the unit circle
+
+    /**
+     * The actual position of this part
+     * This is always inline with the grid
+     */
     private Vector2 currentPos;
-    private Vector2 targetPos = new Vector2();
+
+    /**
+     * The visual position of this part
+     */
+    private Vector2 visualPos;
+
+    private Vector2 visualOffsetPos = Vector2.Zero;
+
+    /**
+     * Where this part is trying to move. May be null, which means the part is not trying to move!
+     * This is always inline with the grid
+     */
+    private Vector2 targetPos = null;
 
     public PositionPart(float x, float y) {
-        this.x = x;
-        this.y = y;
         currentPos = new Vector2(x,y);
+        visualPos = currentPos;
         this.direction = SOUTH;
     }
 
-    public float getX() {
-        return x;
+    public Vector2 getCurrentPos() {
+        return this.currentPos;
     }
 
-    public float getY() {
-        return y;
-    }
-
-    public void setX(float newX) {
-        this.x = newX;
-    }
-    
-    public void setY(float newY) {
-        this.y = newY;
+    public void setCurrentPos(Vector2 newPos) {
+        this.currentPos = newPos;
     }
 
     public Direction getDirection() {
@@ -57,10 +62,6 @@ public class PositionPart implements EntityPart {
         this.direction = direction;
     }
 
-    public void setTargetPos(float newX, float newY){
-        targetPos.set(newX, newY);
-    }
-
     public void setTargetPos(Vector2 targetPos) {
         this.targetPos = targetPos;
     }
@@ -69,21 +70,23 @@ public class PositionPart implements EntityPart {
         return targetPos;
     }
 
-    public void setPosition(float newX, float newY) {
-        setX(newX);
-        setY(newY);
+    public void setVisualOffsetPos(Vector2 visualOffsetPos) {
+        this.visualOffsetPos = visualOffsetPos;
+    }
+
+    public void setVisualPos(Vector2 newPos) {
+        this.visualPos = newPos;
+    }
+    public Vector2 getPureVisualPos() {
+        return visualPos;
+    }
+
+    public Vector2 getVisualPos(){
+        return visualPos.cpy().add(visualOffsetPos);
     }
 
     @Override
     public void process(GameData gameData, World world, Entity entity) {
         
-    }
-
-    public Vector2 getCurrentPos() {
-        return currentPos;
-    }
-
-    public void setCurrentPos(Vector2 newPosition) {
-        this.currentPos = newPosition;
     }
 }

@@ -83,10 +83,12 @@ public class BattleEvent implements IMapEvent {
         textBox.draw(shapeRenderer, gameData.getDelta());
 
         PositionPart victimPosition = victim.getPart(PositionPart.class);
+        var visualVictimPosition = victimPosition.getVisualPos();
+
 
         if (victimPosition != null) {
-            exlamationBox.setY(victimPosition.getY() + 59);
-            exlamationBox.setX(victimPosition.getX() + 12.5f);
+            exlamationBox.setY(visualVictimPosition.y + 59);
+            exlamationBox.setX(visualVictimPosition.x + 12.5f);
             exlamationBox.draw(shapeRenderer, gameData.getDelta());
         }
 
@@ -101,8 +103,8 @@ public class BattleEvent implements IMapEvent {
             TextUtils.getInstance().drawBigRoboto(spriteBatch,
                     "!",
                     Color.BLACK,
-                    victimPosition.getX() + 16,
-                    victimPosition.getY() + 85);
+                    visualVictimPosition.x + 16,
+                    visualVictimPosition.y + 85);
 
         TextUtils.getInstance().drawNormalRoboto(spriteBatch,
                 lines.peek(),

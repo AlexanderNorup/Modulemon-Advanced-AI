@@ -54,6 +54,7 @@ public class Game implements ApplicationListener {
         cfg.height = HEIGHT;
         cfg.useGL30 = false;
         cfg.resizable = true;
+        cfg.foregroundFPS = 60;
         cfg.samples = 32; //Anti aliasing
         new LwjglApplication(this, cfg);
     }

@@ -1,6 +1,7 @@
 package dk.sdu.mmmi.modulemon.Player;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityParts.*;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterRegistry;
@@ -32,16 +33,17 @@ public class PlayerPlugin implements IGamePluginService {
     }
 
     private Entity createPlayer(GameData gameData) {
-        int xOffsetCorrection = 7;
-        int yOffsetCorrection = 20;
+        int xOffsetCorrection = 7; // Add to x when displaying
+        int yOffsetCorrection = 20; // Add to y when displaying
         int tilemapXPos = 5;
         int tilemapYPos = 44;
 
-        float x = (tilemapXPos)* TILE_SIZE + xOffsetCorrection;
-        float y =  (TILE_SIZE*(TILE_SIZE-1) - (tilemapYPos) * TILE_SIZE ) + yOffsetCorrection;
+        float x = (tilemapXPos)* TILE_SIZE ;
+        float y =  (TILE_SIZE*(TILE_SIZE-1) - (tilemapYPos) * TILE_SIZE );
 
         Entity player = new Player();
         PositionPart positionPart = new PositionPart(x, y);
+        positionPart.setVisualOffsetPos(new Vector2(xOffsetCorrection, yOffsetCorrection));
         player.add(positionPart);
         player.add(new MovingPart());
         player.add(new InteractPart(positionPart, 1));

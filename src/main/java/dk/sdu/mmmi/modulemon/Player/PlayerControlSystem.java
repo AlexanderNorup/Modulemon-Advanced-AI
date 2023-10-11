@@ -6,15 +6,13 @@ import dk.sdu.mmmi.modulemon.CommonMap.Data.Entity;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.World;
 import dk.sdu.mmmi.modulemon.CommonMap.Services.IEntityProcessingService;
+import dk.sdu.mmmi.modulemon.common.drawing.Position;
 
 import java.util.Collection;
 
 import static dk.sdu.mmmi.modulemon.common.data.GameKeys.*;
 
 public class PlayerControlSystem implements IEntityProcessingService {
-
-    private String current = "down";
-
     @Override
     public void process(GameData gameData, World world) {
         for (Entity player : world.getEntities(Player.class)) {
@@ -25,19 +23,6 @@ public class PlayerControlSystem implements IEntityProcessingService {
                 movingPart.setRight(gameData.getKeys().isDown(RIGHT));
                 movingPart.setUp(gameData.getKeys().isDown(UP));
                 movingPart.setDown(gameData.getKeys().isDown(DOWN));
-
-                if(gameData.getKeys().isDown(LEFT)){
-                    current = "left";
-                }
-                if(gameData.getKeys().isDown(RIGHT)){
-                    current = "right";
-                }
-                if(gameData.getKeys().isDown(UP)){
-                    current = "up";
-                }
-                if(gameData.getKeys().isDown(DOWN)){
-                    current = "down";
-                }
             }
 
             Collection<EntityPart> entityParts = player.getParts();
@@ -51,34 +36,30 @@ public class PlayerControlSystem implements IEntityProcessingService {
 
     private void updateShape(Entity entity) {
 
-        PositionPart positionPart = entity.getPart(PositionPart.class);
-        float x = positionPart.getX();
-        float y = positionPart.getY();
-
         SpritePart spritePart = entity.getPart(SpritePart.class);
+        PositionPart positionPart = entity.getPart(PositionPart.class);
 
 
         Texture result = null;
-        switch (current) {
-            case "right":
-               result = spritePart.getRightSprite();
-               break;
-            case "left":
+        switch (positionPart.getDirection()) {
+            case EAST:
+                result = spritePart.getRightSprite();
+                break;
+            case WEST:
                 result = spritePart.getLeftSprite();
                 break;
-            case "up":
+            case NORTH:
                 result = spritePart.getUpSprite();
                 break;
-            case "down":
+            case SOUTH:
                 result = spritePart.getDownSprite();
                 break;
-            default: System.out.println(("Did not match any direction"));
+            default:
+                System.out.println(("Did not match any direction"));
         }
 
         spritePart.setCurrentSprite(result);
         //entity.setSpriteTexture(result);
-        positionPart.setX(x);
-        positionPart.setY(y);
     }
 
 

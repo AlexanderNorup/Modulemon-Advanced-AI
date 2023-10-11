@@ -49,12 +49,12 @@ public class InteractPart implements EntityPart {
             float x;
             float y;
             if(interactPart != null){
-                x = interactPart.positionPart.getX();
-                y = interactPart.positionPart.getY();
+                x = interactPart.positionPart.getCurrentPos().x;
+                y = interactPart.positionPart.getCurrentPos().y;
             }else if(e.getPart(PositionPart.class) != null){
                 PositionPart pos = e.getPart(PositionPart.class);
-                x = pos.getX();
-                y = pos.getY();
+                x = pos.getCurrentPos().x;
+                y = pos.getCurrentPos().y;
             }else{
                 continue;
             }
@@ -71,8 +71,9 @@ public class InteractPart implements EntityPart {
     }
     
     public boolean isInRange(float x, float y) {
-        float thisX = this.positionPart.getX();
-        float thisY = this.positionPart.getY();
+        var currentPos = this.positionPart.getCurrentPos();
+        float thisX = currentPos.x;
+        float thisY = currentPos.y;
         Direction direction = this.positionPart.getDirection();
 
         boolean bothHaveSameX = (x-32 < thisX && thisX < x+32);
