@@ -66,6 +66,7 @@ public class InteractProcessing implements IPostEntityProcessingService {
                     if(monsterTeam1.getMonsterTeam().size() == 0 || monsterTeam2.getMonsterTeam().size() == 0){
                         TextMapEvent event = new TextMapEvent(new LinkedList<>(Collections.singletonList("You have no monsters. Go get some from a vending machine")));
                         mapView.addMapEvent(event);
+                        continue;
                     }
 
                     if (!monsterTeam1.hasAliveMonsters() || !monsterTeam2.hasAliveMonsters()) {

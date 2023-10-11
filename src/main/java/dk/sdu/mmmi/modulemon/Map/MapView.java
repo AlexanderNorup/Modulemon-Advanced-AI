@@ -227,31 +227,25 @@ public class MapView implements IGameViewService, IMapView {
                 if (entity.getType().equals(EntityType.PLAYER)) {
                     playerPosX = visualEntityPosition.x;
                     playerPosY = visualEntityPosition.y;
-
-                    /*
-                    The value of the leftmost position of the camera and the rightmost position of the camera
-                    gets compared to the player's position. If the player is too far to the left or the right,
-                    the camera will be "locked" in place at the leftmost or rightmost legal position,
-                    such that it does not go out of bounds. The same applies to the top and bottom positions.
-                     */
-
-
-//                    final float cameraSmoothingAnimationSpeed = 20f;
-                    var camTargetX = Math.min(Math.max(mapLeft, playerPosX), mapRight);
-                    var camTargetY = Math.min(Math.max(mapBottom, playerPosY), mapTop);
-//                    var camCurrentX = cam.position.x;
-//                    var camCurrentY = cam.position.y;
-//                    var camSmoothAnimationX = MathUtils.moveTowards(camCurrentX, camTargetX, cameraSmoothingAnimationSpeed, gameData.getDelta());
-//                    var camSmoothAnimationY = MathUtils.moveTowards(camCurrentY, camTargetY, cameraSmoothingAnimationSpeed, gameData.getDelta());
-
-                    cam.position.set(camTargetX,camTargetY,0);
-                    cam.update();
                 }
             }
         }
         tiledMapRenderer.getBatch().begin();
         tiledMapRenderer.renderTileLayer(overhangLayer);
         tiledMapRenderer.getBatch().end();
+
+        //Re-center camera
+        /*
+        The value of the leftmost position of the camera and the rightmost position of the camera
+        gets compared to the player's position. If the player is too far to the left or the right,
+        the camera will be "locked" in place at the leftmost or rightmost legal position,
+        such that it does not go out of bounds. The same applies to the top and bottom positions.
+         */
+        var camTargetX = Math.min(Math.max(mapLeft, playerPosX), mapRight);
+        var camTargetY = Math.min(Math.max(mapBottom, playerPosY), mapTop);
+        cam.position.set(camTargetX,camTargetY,0);
+        cam.update();
+
 
         // DEBUG DRAWING
         if(gameData.getKeys().isDown(GameKeys.K)){
@@ -279,16 +273,12 @@ public class MapView implements IGameViewService, IMapView {
             shapeRenderer.end();
         }
 
-
-
         // Draw events
         if (!mapEvents.isEmpty()) {
             mapEvents.peek().draw(gameData, spriteBatch, shapeRenderer);
         }
 
-
         //DRAW MENU START
-
         if (showMonsterTeam) {
             for (Entity entity : world.getEntities()) {
                 if (entity.getType().equals(EntityType.PLAYER)) {

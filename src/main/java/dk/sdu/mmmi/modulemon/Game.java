@@ -55,6 +55,7 @@ public class Game implements ApplicationListener {
         cfg.useGL30 = false;
         cfg.resizable = true;
         cfg.foregroundFPS = 60;
+        cfg.vSyncEnabled = true;
         cfg.samples = 32; //Anti aliasing
         new LwjglApplication(this, cfg);
     }
