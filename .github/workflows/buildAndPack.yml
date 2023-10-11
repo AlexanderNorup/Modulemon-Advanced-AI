@@ -34,7 +34,7 @@ jobs:
         with:
           name: Modulemon
           path: |
-            /build/libs/modulemon-2.0-SNAPSHOT.jar
+            build/libs/modulemon-2.0-SNAPSHOT.jar
 
 
   packr-build:
