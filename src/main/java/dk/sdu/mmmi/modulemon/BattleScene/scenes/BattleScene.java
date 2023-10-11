@@ -128,6 +128,12 @@ public class BattleScene {
 
         //HP Box
         float hpBarAnimationSpeed = 40f;
+        var biggestHpDiff = Math.max(Math.abs(this.intermediatePlayerHP - this.playerHP), Math.abs(this.intermediateEnemyHP - this.enemyHP));
+        if(biggestHpDiff > 50){
+            // If there's lots of hp to fill in, then speed it up.
+            hpBarAnimationSpeed = MathUtils.map(biggestHpDiff, 50, 5000, 40, 1500);
+        }
+
         this.intermediatePlayerHP = MathUtils.moveTowards(this.intermediatePlayerHP, this.playerHP, hpBarAnimationSpeed, dt);
         this.intermediateEnemyHP = MathUtils.moveTowards(this.intermediateEnemyHP, this.enemyHP, hpBarAnimationSpeed, dt);
 
