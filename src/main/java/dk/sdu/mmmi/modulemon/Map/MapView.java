@@ -31,6 +31,7 @@ import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
 import dk.sdu.mmmi.modulemon.common.data.IGameViewManager;
+import dk.sdu.mmmi.modulemon.common.drawing.MathUtils;
 import dk.sdu.mmmi.modulemon.common.drawing.PersonaRectangle;
 import dk.sdu.mmmi.modulemon.common.drawing.Rectangle;
 import dk.sdu.mmmi.modulemon.common.drawing.TextUtils;
@@ -233,8 +234,17 @@ public class MapView implements IGameViewService, IMapView {
                     the camera will be "locked" in place at the leftmost or rightmost legal position,
                     such that it does not go out of bounds. The same applies to the top and bottom positions.
                      */
-                    cam.position.set(Math.min(Math.max(mapLeft, playerPosX), mapRight),
-                            Math.min(Math.max(mapBottom, playerPosY), mapTop), 0);
+
+
+//                    final float cameraSmoothingAnimationSpeed = 20f;
+                    var camTargetX = Math.min(Math.max(mapLeft, playerPosX), mapRight);
+                    var camTargetY = Math.min(Math.max(mapBottom, playerPosY), mapTop);
+//                    var camCurrentX = cam.position.x;
+//                    var camCurrentY = cam.position.y;
+//                    var camSmoothAnimationX = MathUtils.moveTowards(camCurrentX, camTargetX, cameraSmoothingAnimationSpeed, gameData.getDelta());
+//                    var camSmoothAnimationY = MathUtils.moveTowards(camCurrentY, camTargetY, cameraSmoothingAnimationSpeed, gameData.getDelta());
+
+                    cam.position.set(camTargetX,camTargetY,0);
                     cam.update();
                 }
             }

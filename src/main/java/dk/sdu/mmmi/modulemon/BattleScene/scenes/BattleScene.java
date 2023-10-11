@@ -128,8 +128,8 @@ public class BattleScene {
 
         //HP Box
         float hpBarAnimationSpeed = 40f;
-        this.intermediatePlayerHP = moveTowards(this.intermediatePlayerHP, this.playerHP, hpBarAnimationSpeed, dt);
-        this.intermediateEnemyHP = moveTowards(this.intermediateEnemyHP, this.enemyHP, hpBarAnimationSpeed, dt);
+        this.intermediatePlayerHP = MathUtils.moveTowards(this.intermediatePlayerHP, this.playerHP, hpBarAnimationSpeed, dt);
+        this.intermediateEnemyHP = MathUtils.moveTowards(this.intermediateEnemyHP, this.enemyHP, hpBarAnimationSpeed, dt);
 
         _enemyHealthRect.setPosition(_enemyHealthBoxPosition);
         setHpBarDimentions(this.intermediateEnemyHP, this.maxEnemyHP, _enemyHealthBoxPosition, _enemyHPBoxFillRect, _enemyHPBoxBorderRect);
@@ -249,21 +249,6 @@ public class BattleScene {
             fillRect.setFillColor(Color.YELLOW);
         }else{
             fillRect.setFillColor(Color.RED);
-        }
-    }
-
-    private static float moveTowards(float initial, float target, float animationSpeed, float dt){
-        float diff = initial - target;
-        if(Math.abs(diff) < Math.max(animationSpeed*dt, .25f)){
-            return target;
-        }
-
-        if(diff > 0){
-            //We have to move left
-            return initial - animationSpeed * dt;
-        }else {
-            //We have to move right
-            return initial + animationSpeed * dt;
         }
     }
 
