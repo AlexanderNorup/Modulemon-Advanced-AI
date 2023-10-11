@@ -10,14 +10,12 @@ import com.badlogic.gdx.math.Vector2;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.Direction;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.Entity;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.World;
-import dk.sdu.mmmi.modulemon.common.animations.BaseAnimation;
+
 import static dk.sdu.mmmi.modulemon.CommonMap.Data.Direction.*;
 
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class MovingPart implements EntityPart {
 
@@ -34,7 +32,7 @@ public class MovingPart implements EntityPart {
     private float movingTimer = 0;
 
     public void setLeft(boolean left) {
-        if(left != this.left) {
+        if (left != this.left) {
             this.left = left;
             if (left) {
                 bufferedDirection = WEST;
@@ -46,7 +44,7 @@ public class MovingPart implements EntityPart {
     }
 
     public void setRight(boolean right) {
-        if(right != this.right) {
+        if (right != this.right) {
             this.right = right;
             if (right) {
                 bufferedDirection = EAST;
@@ -58,7 +56,7 @@ public class MovingPart implements EntityPart {
     }
 
     public void setUp(boolean up) {
-        if(up != this.up) {
+        if (up != this.up) {
             this.up = up;
             if (up) {
                 bufferedDirection = NORTH;
@@ -70,7 +68,7 @@ public class MovingPart implements EntityPart {
     }
 
     public void setDown(boolean down) {
-        if(down != this.down) {
+        if (down != this.down) {
             this.down = down;
             if (down) {
                 bufferedDirection = SOUTH;
@@ -81,35 +79,81 @@ public class MovingPart implements EntityPart {
         }
     }
 
-    private boolean anyDirectionKeyPressed(){
+    private boolean anyDirectionKeyPressed() {
         return down || up || left || right;
     }
 
+    static final float scale = 4;
+    static final float gridSize = 16 * scale;
+
+    static final float movementSpeed = 5f;
     public void process(GameData gameData, World world, Entity entity) {
         PositionPart positionPart = entity.getPart(PositionPart.class);
-        if(positionPart == null){
+        if (positionPart == null) {
             return;
         }
 
         float dt = gameData.getDelta();
-        float scale = 4;
-        float gridSize = 16 * scale;
 
         Vector2 currentPos = positionPart.getCurrentPos();
 
-        if(movingTimer <= 0 && (bufferedDirection != null || !queuedDirections.isEmpty())) {
-            // Not currently moving, ready to begin
-            Direction directionToMoveTowards = null;
-            if(bufferedDirection != null){
-                directionToMoveTowards = bufferedDirection;
-                bufferedDirection = null;
-            }else {
-                directionToMoveTowards = queuedDirections.getFirst();
+        if (positionPart.getTargetPos() != null) {
+            float velocity = movementSpeed * dt;
+            movingTimer += velocity;
+        }
+
+        float movementProgress = movingTimer;
+
+        do{
+            if (positionPart.getTargetPos() != null) {
+                // We have a goal and is going to do some movement.
+
+                // Movement progress may exceed 1. We don't want to move too far ahead, so we set cap it at one.
+                float cappedMovementProgress = Math.min(1, movementProgress);
+                movementProgress -= cappedMovementProgress; // If it capped above, there will still be some left in this variable.
+
+                var newVisualPosition = positionPart.getCurrentPos().cpy().interpolate(positionPart.getTargetPos(), cappedMovementProgress, Interpolation.linear);
+                positionPart.setVisualPos(newVisualPosition);
             }
 
+            // Did we get there?
+            if(movingTimer >= 1){
+                // We got there!
+                positionPart.setCurrentPos(positionPart.getTargetPos());
+                positionPart.setTargetPos(null);
+
+                movingTimer = Math.max(movingTimer-1f, 0); // Reset so can move again.
+            }
+
+            if(positionPart.getTargetPos() == null){
+                if(!this.setNextTargetPos(positionPart)){
+                    // We failed to set a next position. This must mean the entity dosn't want to go any further.
+                    //  Therefore, we break the loop
+                    movingTimer = 0; // Stop the timer as well
+                    break;
+                }
+            }
+        }while(movementProgress > 0);
+    }
+
+    /**
+     * @param positionPart The position part of which to set the potential target position from input.
+     * @return true if a new target position is set. Otherwise false.
+     */
+    private boolean setNextTargetPos(PositionPart positionPart) {
+        if (positionPart.getTargetPos() == null && (bufferedDirection != null || !queuedDirections.isEmpty())) {
+            // Not currently moving, ready to begin
+            Direction directionToMoveTowards = null;
+            if (bufferedDirection != null) {
+                directionToMoveTowards = bufferedDirection;
+                bufferedDirection = null;
+            } else {
+                directionToMoveTowards = queuedDirections.getFirst();
+            }
+            var currentPos = positionPart.getCurrentPos();
             var newTargetX = currentPos.x;
             var newTargetY = currentPos.y;
-            switch (directionToMoveTowards){
+            switch (directionToMoveTowards) {
                 case WEST:
                     newTargetX -= gridSize;
                     positionPart.setDirection(WEST);
@@ -129,38 +173,8 @@ public class MovingPart implements EntityPart {
             }
 
             positionPart.setTargetPos(new Vector2(newTargetX, newTargetY));
+            return true;
         }
-
-
-        if(positionPart.getTargetPos() != null){
-            // We have a target to move towards. Start by updating the moving timer!
-            float movementSpeed = 5f;
-            movingTimer += movementSpeed * dt;
-
-            if(movingTimer >= 1){
-                // We reached our target!
-                positionPart.setCurrentPos(positionPart.getTargetPos());
-                positionPart.setVisualPos(positionPart.getTargetPos());
-                positionPart.setTargetPos(null);
-
-                movingTimer = 0; // Reset so can move again.
-                if(!anyDirectionKeyPressed() && bufferedDirection != null){
-                    bufferedDirection = null;
-                }
-            }else{
-
-                // We have not reached the target yet. Move towards it!
-                //  Even though interpolate() returns Vector, it also modifies itself. Used for chaining I guess, but how I hate methods with side-effects.
-                //  And they're apprently too cool for .close(), so they do .cpy() instead.
-                var newVisualPosition = positionPart.getPureVisualPos().cpy().interpolate(positionPart.getTargetPos(), movingTimer, Interpolation.linear);
-                positionPart.setVisualPos(newVisualPosition);
-            }
-        }else{
-            // Not moving, or movement is cancelled. Reset moving timer, so we can move again!
-            movingTimer = 0;
-            positionPart.setVisualPos(currentPos);
-        }
+        return false;
     }
-
-
 }
