@@ -13,6 +13,7 @@ import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleCallback;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleView;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.*;
+import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleState;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
@@ -91,7 +92,7 @@ public class BattleView implements IGameViewService, IBattleView {
     /**
      * Initialize for IBattleView
      */
-    public void startBattle(List<IMonster> playerMonsters, List<IMonster> enemyMonsters, IBattleCallback callback) {
+    public void startBattle(List<IMonster> playerMonsters, List<IMonster> enemyMonsters, IBattleCallback callback, IBattleAIFactory battleAIFactory) {
         if (playerMonsters == null) {
             if (monsterRegistry == null) {
                 return;
@@ -124,6 +125,9 @@ public class BattleView implements IGameViewService, IBattleView {
         _battleMusic = loader.getMusicAsset("/music/battle_music_" + battleMusic_type.toLowerCase() + ".ogg", this.getClass());
         _winSound = loader.getSoundAsset("/sounds/you_won.ogg", this.getClass());
         _loseSound = loader.getSoundAsset("/sounds/you_lost.ogg", this.getClass());
+        if(battleAIFactory != null){
+            _battleSimulation.setAIFactory(battleAIFactory);
+        }
         _battleSimulation.StartBattle(player, enemy);
         _currentBattleState = _battleSimulation.getState().clone(); // Set an initial battle-state
         _battleCallback = callback;

@@ -11,7 +11,10 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleView;
+import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
 import dk.sdu.mmmi.modulemon.Game;
+import dk.sdu.mmmi.modulemon.MCTSBattleAI.MCTSBattleAIFactory;
+import dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory;
 import dk.sdu.mmmi.modulemon.common.AssetLoader;
 import dk.sdu.mmmi.modulemon.common.OSGiFileHandle;
 import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
@@ -47,6 +50,7 @@ public class MenuView implements IGameViewService {
     private String soundVolume = "";
     private String aiTime = "";
     private String battleTheme = "";
+    private String AI = "";
     private int battleThemeIndex = 0;
 
     private String title = "";
@@ -68,6 +72,15 @@ public class MenuView implements IGameViewService {
             "Use AI Alpha-beta pruning",
             "AI Processing Time",
             "Battle Music Theme",
+            "AI"
+    };
+
+    private int AIIndex = 0;
+
+    private String[] AIOptions = new String[]{
+            "MCTS",
+            "Simple",
+            "Minimax"
     };
 
     private Sound selectSound;
@@ -318,9 +331,17 @@ public class MenuView implements IGameViewService {
             }
             IGameViewService selectedView = views.get(currentOption);
             gvm.setView(selectedView);
-            if (selectedView instanceof IBattleView) {
+            if (selectedView instanceof IBattleView battleView) {
                 chooseSound.play(getSoundVolumeAsFloat());
-                ((IBattleView) selectedView).startBattle(null, null, null);
+                IBattleAIFactory desiredAI = null;
+                if(settings.getSetting("AI").equals("MCTS")){
+                    desiredAI = new MCTSBattleAIFactory();
+                } else if(settings.getSetting("AI").equals("Simple")){
+                    desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
+                }  else {
+                    desiredAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
+                }
+                battleView.startBattle(null, null, null, desiredAI);
             }
         } else {
             if (Objects.equals(menuOptions[currentOption], "Play")) {
@@ -393,6 +414,19 @@ public class MenuView implements IGameViewService {
                         break;
                     }
 
+                    if(menuOptions[currentOption].equalsIgnoreCase("AI")){
+                        AIIndex++;
+
+                        AIIndex = AIIndex % AIOptions.length;
+                        settings.setSetting(settingsRegistry.getBattleAISetting(), AIOptions[AIIndex]);
+
+                        AI = (String) settings.getSetting(settingsRegistry.getBattleAISetting());
+                        settingsValueList.set(6, AI);
+
+                        chooseSound.play(getSoundVolumeAsFloat());
+                        break;
+                    }
+
                     if (menuOptions[currentOption].equalsIgnoreCase("Battle Music Theme")) {
                         battleThemeIndex++;
 
@@ -451,6 +485,23 @@ public class MenuView implements IGameViewService {
                             settingsValueList.set(4, aiTime);
                             chooseSound.play(getSoundVolumeAsFloat());
                         }
+                        break;
+                    }
+
+
+                    if(menuOptions[currentOption].equalsIgnoreCase("AI")){
+                        if (AIIndex == 0) {
+                            AIIndex = AIOptions.length - 1;
+                        } else {
+                            AIIndex--;
+                        }
+
+                        settings.setSetting(settingsRegistry.getBattleAISetting(), AIOptions[AIIndex]);
+
+                        AI = (String) settings.getSetting(settingsRegistry.getBattleAISetting());
+                        settingsValueList.set(6, AI);
+
+                        chooseSound.play(getSoundVolumeAsFloat());
                         break;
                     }
 
@@ -541,6 +592,10 @@ public class MenuView implements IGameViewService {
             battleTheme = (String) settings.getSetting(settingsRegistry.getBattleMusicThemeSetting());
             settingsValueList.add(battleTheme);
             battleThemeIndex = Arrays.asList(musicThemes).indexOf(battleTheme); // Sets the music theme index to the position of the currently selected theme found in the settings file
+
+            AI = (String) settings.getSetting(settingsRegistry.getBattleAISetting());
+            settingsValueList.add(AI);
+            AIIndex = Arrays.asList(AIOptions).indexOf(AI);
         }
     }
 

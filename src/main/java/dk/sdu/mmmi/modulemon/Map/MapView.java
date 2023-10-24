@@ -692,7 +692,7 @@ public class MapView implements IGameViewService, IMapView {
             if (!playerWon) {
                 enemyMonsterTeamPart.healAllMonsters();
             }
-        });
+        }, null);
     }
 
     @Override

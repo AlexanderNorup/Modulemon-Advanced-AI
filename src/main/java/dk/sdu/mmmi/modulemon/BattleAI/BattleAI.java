@@ -4,6 +4,7 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAI;
 import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleState;
+import dk.sdu.mmmi.modulemon.CommonBattleSimulation.KnowledgeState;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
 import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
@@ -248,7 +249,7 @@ public class BattleAI implements IBattleAI {
 
         // Check if all the opposing participant's (known) monster are dead
         boolean allEnemyMonstersDead = enemy.getMonsterTeam().stream()
-                .filter(x -> knowledgeState.enemyMonsters.contains(x))  //only consider monsters we've seen
+                .filter(x -> knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
                 .allMatch(x -> x.getHitPoints()<=0);
         if (allEnemyMonstersDead) return true;
 
@@ -325,25 +326,5 @@ public class BattleAI implements IBattleAI {
          return battleState.isPlayersTurn()
                 ? battleState.getPlayer() // Return the player, if it is the player's turn
                 : battleState.getEnemy(); // Return the enemy, if it is the enemy's turn
-    }
-
-    private class KnowledgeState {
-        // Those of the enemy's monsters, the AI has seen
-        private List<IMonster> enemyMonsters;
-        // A map, mapping each of the enemy's monsters to a list of the moves, the AI has seen it use
-        private Map<IMonster, List<IMonsterMove>> monsterMoves;
-
-        public KnowledgeState() {
-            enemyMonsters = new ArrayList<>();
-            monsterMoves = new HashMap<>();
-        }
-
-        public List<IMonster> getEnemyMonsters() {
-            return enemyMonsters;
-        }
-
-        public Map<IMonster, List<IMonsterMove>> getMonsterMoves() {
-            return monsterMoves;
-        }
     }
 }

@@ -5,6 +5,7 @@ import dk.sdu.mmmi.modulemon.BattleSimulation.BattleSimulation;
 import dk.sdu.mmmi.modulemon.Collision.CollisionProcessing;
 import dk.sdu.mmmi.modulemon.Game;
 import dk.sdu.mmmi.modulemon.Interaction.InteractProcessing;
+import dk.sdu.mmmi.modulemon.MCTSBattleAI.MCTSBattleAIFactory;
 import dk.sdu.mmmi.modulemon.Map.MapView;
 import dk.sdu.mmmi.modulemon.MapEntities.MapEntityPlugin;
 import dk.sdu.mmmi.modulemon.Monster.BattleMonsterProcessor;
@@ -29,7 +30,8 @@ public class Main {
         var settings  = new Settings();
         var monsterRegistry = new MonsterRegistry();
         var battleMonsterProcessor = new BattleMonsterProcessor();
-        var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
+        var battleAI = new MCTSBattleAIFactory();
+        //var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
 //        var battleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
 
         var battleSimulation = new BattleSimulation();

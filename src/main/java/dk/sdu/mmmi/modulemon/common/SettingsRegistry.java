@@ -16,6 +16,8 @@ public class SettingsRegistry {
     private UUID ai_processing_time = UUID.randomUUID();
     private UUID rectangle_style = UUID.randomUUID();
     private UUID battle_theme = UUID.randomUUID();
+    private UUID battle_AI = UUID.randomUUID();
+
     private SettingsRegistry(){
         settingsMap = new HashMap<>();
         populateSettings();
@@ -34,6 +36,7 @@ public class SettingsRegistry {
         settingsMap.put(ai_processing_time, "AI processing time");
         settingsMap.put(rectangle_style, "personaRectangles");
         settingsMap.put(battle_theme, "battleMusicTheme");
+        settingsMap.put(battle_AI, "AI");
     }
 
     /*
@@ -63,6 +66,8 @@ public class SettingsRegistry {
     public String getBattleMusicThemeSetting(){
         return settingsMap.get(battle_theme);
     }
+
+    public String getBattleAISetting() { return settingsMap.get(battle_AI); }
 
 
     public static SettingsRegistry getInstance(){
