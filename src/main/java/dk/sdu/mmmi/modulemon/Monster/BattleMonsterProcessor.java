@@ -22,8 +22,6 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         float sourceAttack = (float) source.getAttack();
         float targetDefence = (float) target.getDefence();
 
-
-
         // Same type attack bonus. Effectively the same as STAB in that other game
         boolean same_attack_type = source.getMonsterType() == move.getType();
         float attack_bonus = 1;
@@ -32,8 +30,9 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
             attack_bonus = 1.5f;
         }
 
+        float monsterAttackDefence = (0.2f * sourceAttack + 3 + 20 ) / (targetDefence + 50);
 
-        int damage =  Math.round( ( (0.2f * sourceAttack + 3 + 20 ) / (targetDefence + 50) ) * moveDamage * attack_bonus * calculateTypeAdvantage(move.getType(), target.getMonsterType()) );
+        int damage =  Math.round( monsterAttackDefence * moveDamage * attack_bonus * calculateTypeAdvantage(move.getType(), target.getMonsterType()) );
         return damage;
     }
 
