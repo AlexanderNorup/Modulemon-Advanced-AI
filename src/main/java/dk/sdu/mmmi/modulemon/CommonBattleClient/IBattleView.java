@@ -10,7 +10,7 @@ import java.util.List;
 public interface IBattleView {
     // The init method should take the participants as arguments and create a BattleSimulation
     // I don't know if this is right, but that's how the interfaces are set up now
-    void startBattle(List<IMonster> playerMonsters, List<IMonster> enemyMonsters, IBattleCallback callback, IBattleAIFactory BattleAIFactory);
+    void startBattle(List<IMonster> playerMonsters, List<IMonster> enemyMonsters, IBattleCallback callback);
     IGameViewService getGameView();
     void forceBattleEnd();
 }

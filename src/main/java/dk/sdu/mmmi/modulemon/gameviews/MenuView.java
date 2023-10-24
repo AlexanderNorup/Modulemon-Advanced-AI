@@ -333,15 +333,7 @@ public class MenuView implements IGameViewService {
             gvm.setView(selectedView);
             if (selectedView instanceof IBattleView battleView) {
                 chooseSound.play(getSoundVolumeAsFloat());
-                IBattleAIFactory desiredAI = null;
-                if(settings.getSetting("AI").equals("MCTS")){
-                    desiredAI = new MCTSBattleAIFactory();
-                } else if(settings.getSetting("AI").equals("Simple")){
-                    desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
-                }  else {
-                    desiredAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
-                }
-                battleView.startBattle(null, null, null, desiredAI);
+                battleView.startBattle(null, null, null);
             }
         } else {
             if (Objects.equals(menuOptions[currentOption], "Play")) {
