@@ -259,7 +259,7 @@ public class MapView implements IGameViewService, IMapView {
                         var cell = collsionLayer.getCell(height, width);
                         if(cell.getTile().getProperties().containsKey("blocked")){
                             // Cell is blocked
-                            var newRect = createRectangle(this.rectToUse, height*tilePixelSize, width* tilePixelSize, tilePixelSize, tilePixelSize);
+                            var newRect = new Rectangle(height*tilePixelSize, width* tilePixelSize, tilePixelSize, tilePixelSize);
                             newRect.setFillColor(Color.RED);
                             collisionRectangles.add(newRect);
                         }
