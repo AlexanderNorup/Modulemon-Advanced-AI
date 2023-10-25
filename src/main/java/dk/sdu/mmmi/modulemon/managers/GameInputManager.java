@@ -57,5 +57,8 @@ public class GameInputManager extends InputAdapter {
         if(k == Input.Keys.ESCAPE){
             gameData.getKeys().setKey(GameKeys.ESCAPE, state);
         }
+        if(k == Input.Keys.FORWARD_DEL){
+            gameData.getKeys().setKey(GameKeys.DELETE, state);
+        }
     }
 }
