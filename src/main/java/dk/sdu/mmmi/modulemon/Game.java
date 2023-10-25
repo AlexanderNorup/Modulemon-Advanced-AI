@@ -178,6 +178,10 @@ public class Game implements ApplicationListener {
             if (settings.getSetting(SettingsRegistry.getInstance().getBattleMusicThemeSetting()) == null) {
                 settings.setSetting(SettingsRegistry.getInstance().getBattleMusicThemeSetting(), "Original");
             }
+
+            if (settings.getSetting(SettingsRegistry.getInstance().getBattleAISetting()) == null){
+                settings.setSetting(SettingsRegistry.getInstance().getBattleAISetting(), "MCTS");
+            }
             gvm.setSettings(settings);
         });
     }
