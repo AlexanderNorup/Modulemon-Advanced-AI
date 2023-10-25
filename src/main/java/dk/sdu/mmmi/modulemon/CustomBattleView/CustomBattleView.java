@@ -76,12 +76,11 @@ public class CustomBattleView implements IGameViewService {
         scene.setTeamBTextColor(Color.WHITE);
         scene.setStartBattleColor(Color.WHITE);
 
-
         if (cursorPosition >= 0 && cursorPosition <= 11) {
             boolean isTeamA = cursorPosition % 4 < 2;
-            int overOnTheOtherSide = cursorPosition / (isTeamA ? 4 : 2);
+            int offsetPerSide = cursorPosition / (isTeamA ? 4 : 2);
             scene.setTeamA(isTeamA);
-            var adjustedCursor = cursorPosition - 2 * overOnTheOtherSide;
+            var adjustedCursor = cursorPosition - 2 * offsetPerSide;
             if (!isTeamA) {
                 adjustedCursor += 2 * (cursorPosition / 4);
             }
@@ -108,6 +107,7 @@ public class CustomBattleView implements IGameViewService {
             gameViewManager.setDefaultView();
         }
 
+        // This is a hardcoded mess. Don't think too hard about it, it just works with the current setup.
         if (gameData.getKeys().isPressed(GameKeys.UP)) {
             selectSound.play(getSoundVolume());
             if (cursorPosition <= 12) {
