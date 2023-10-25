@@ -1,6 +1,7 @@
 package dk.sdu.mmmi.modulemon.CommonBattleClient;
 
 import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
+import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.common.services.IGameViewService;
 

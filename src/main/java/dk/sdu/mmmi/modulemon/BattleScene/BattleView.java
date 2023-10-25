@@ -13,11 +13,13 @@ import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleCallback;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleView;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.*;
+import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleState;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterRegistry;
+import dk.sdu.mmmi.modulemon.MCTSBattleAI.MCTSBattleAIFactory;
 import dk.sdu.mmmi.modulemon.common.AssetLoader;
 import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
 import dk.sdu.mmmi.modulemon.common.animations.BaseAnimation;
@@ -124,6 +126,7 @@ public class BattleView implements IGameViewService, IBattleView {
         _battleMusic = loader.getMusicAsset("/music/battle_music_" + battleMusic_type.toLowerCase() + ".ogg", this.getClass());
         _winSound = loader.getSoundAsset("/sounds/you_won.ogg", this.getClass());
         _loseSound = loader.getSoundAsset("/sounds/you_lost.ogg", this.getClass());
+        setBattleAIFactory();
         _battleSimulation.StartBattle(player, enemy);
         _currentBattleState = _battleSimulation.getState().clone(); // Set an initial battle-state
         _battleCallback = callback;
@@ -139,6 +142,18 @@ public class BattleView implements IGameViewService, IBattleView {
         BaseAnimation openingAnimation = new BattleSceneOpenAnimation(_battleScene);
         blockingAnimations.add(openingAnimation);
         _battleStarted = true;
+    }
+
+    private void setBattleAIFactory() {
+        IBattleAIFactory desiredAI;
+        if(settings.getSetting("AI").equals("MCTS")){
+            desiredAI = new MCTSBattleAIFactory();
+        } else if(settings.getSetting("AI").equals("Simple")){
+            desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
+        }  else {
+            desiredAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
+        }
+        _battleSimulation.setAIFactory(desiredAI);
     }
 
     @Override
