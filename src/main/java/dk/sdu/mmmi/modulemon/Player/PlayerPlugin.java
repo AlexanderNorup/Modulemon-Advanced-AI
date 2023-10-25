@@ -46,15 +46,15 @@ public class PlayerPlugin implements IGamePluginService {
         player.add(positionPart);
         player.add(new MovingPart());
         player.add(new InteractPart(positionPart, 1));
-        List<Texture> upSprite = Collections.singletonList(AssetLoader.getInstance().getTextureAsset("/assets/main-char-up5.png", Player.class));
-        List<Texture> downSprites = getAnimations("down", "walking", 8);
-        List<Texture> leftSprite = Collections.singletonList(AssetLoader.getInstance().getTextureAsset("/assets/main-char-left5.png", Player.class));
-        List<Texture> rightSprite = Collections.singletonList(AssetLoader.getInstance().getTextureAsset("/assets/main-char-right5.png", Player.class));
+        List<Texture> upSprite = getWalkingAnimation("up");
+        List<Texture> downSprites = getWalkingAnimation("down");
+        List<Texture> leftSprite = getWalkingAnimation("left");
+        List<Texture> rightSprite = getWalkingAnimation("right");
 
-        List<Texture> upIdleSprites = getAnimations("up", "idle", 3);
-        List<Texture> downIdleSprites = getAnimations("down", "idle", 3);
-        List<Texture> leftIdleSprites = getAnimations("left", "idle", 3);
-        List<Texture> rightIdleSprites = getAnimations("right", "idle", 3);
+        List<Texture> upIdleSprites = getIdleAnimation("up", 3);
+        List<Texture> downIdleSprites = getIdleAnimation("down", 3);
+        List<Texture> leftIdleSprites = getIdleAnimation("left", 3);
+        List<Texture> rightIdleSprites = getIdleAnimation("right", 3);
         player.add(new SpritePart(upSprite, downSprites, leftSprite, rightSprite, upIdleSprites, downIdleSprites, leftIdleSprites, rightIdleSprites));
         Queue<String> playerLines = new LinkedList<>();
         playerLines.add("Alright, lets battle!");
@@ -64,8 +64,16 @@ public class PlayerPlugin implements IGamePluginService {
         return player;
     }
 
+    private static List<Texture> getIdleAnimation(String direction, int frameCount){
+        return getAnimation(direction, "idle", frameCount);
+    }
+
+    private static List<Texture> getWalkingAnimation(String direction){
+        return getAnimation(direction, "walking", 8);
+    }
+
     @NotNull
-    private static List<Texture> getAnimations(String direction, String action, int frameCount) {
+    private static List<Texture> getAnimation(String direction, String action, int frameCount) {
         List<Texture> sprites = new ArrayList<>();
         for (int i = 1; i <= frameCount; i++) {
             Texture sprite = AssetLoader.getInstance().getTextureAsset("/assets/" + action + "Animations/main-char-" + direction + "-" + action + "" + i +".png", Player.class);
