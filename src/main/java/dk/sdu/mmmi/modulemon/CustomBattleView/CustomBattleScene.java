@@ -23,7 +23,9 @@ public class CustomBattleScene {
 
     // LibGDX Drawing stuff
     private String teamAAIText = "";
+    private boolean showTeamAAIArrow = false;
     private Color teamATextColor = Color.WHITE;
+    private boolean showTeamBAIArrow = false;
     private String teamBAIText = "";
     private Color teamBTextColor = Color.WHITE;
     private Color startBattleColor = Color.WHITE;
@@ -132,12 +134,16 @@ public class CustomBattleScene {
         final float arrowSpacingFromEdge = 20;
         final float controllerSelectorY = teamAContainer.getY() - gapAboveContainersText;
 
-        text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, teamAContainer.getX() + arrowSpacingFromEdge ,controllerSelectorY );
-        text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, teamAContainer.getX() - arrowSpacingFromEdge + teamAContainer.getWidth() , controllerSelectorY);
+        if(showTeamAAIArrow) {
+            text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, teamAContainer.getX() + arrowSpacingFromEdge, controllerSelectorY);
+            text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, teamAContainer.getX() - arrowSpacingFromEdge + teamAContainer.getWidth(), controllerSelectorY);
+        }
         text.drawNormalRoboto(spriteBatch, teamAAIText, teamATextColor, teamAContainer.getX() + teamAContainer.getWidth() / 2f, controllerSelectorY);
 
-        text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, teamBContainer.getX() + arrowSpacingFromEdge ,controllerSelectorY );
-        text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, teamBContainer.getX() - arrowSpacingFromEdge + teamBContainer.getWidth() , controllerSelectorY);
+        if(showTeamBAIArrow) {
+            text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, teamBContainer.getX() + arrowSpacingFromEdge, controllerSelectorY);
+            text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, teamBContainer.getX() - arrowSpacingFromEdge + teamBContainer.getWidth(), controllerSelectorY);
+        }
         text.drawNormalRoboto(spriteBatch, teamBAIText, teamBTextColor, teamBContainer.getX() + teamBContainer.getWidth() / 2f, controllerSelectorY);
 
         text.drawBigBoldRoboto(spriteBatch, "START BATTLE!", startBattleColor, gameData.getDisplayWidth() / 2f, 50 );
@@ -216,6 +222,14 @@ public class CustomBattleScene {
 
     public void setTeamBTextColor(Color teamBTextColor) {
         this.teamBTextColor = teamBTextColor;
+    }
+
+    public void setShowTeamAAIArrow(boolean showTeamAAIArrow) {
+        this.showTeamAAIArrow = showTeamAAIArrow;
+    }
+
+    public void setShowTeamBAIArrow(boolean showTeamBAIArrow) {
+        this.showTeamBAIArrow = showTeamBAIArrow;
     }
 
     public void setStartBattleColor(Color startBattleColor) {
