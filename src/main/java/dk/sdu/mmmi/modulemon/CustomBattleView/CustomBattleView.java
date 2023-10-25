@@ -104,22 +104,44 @@ public class CustomBattleView implements IGameViewService {
     @Override
     public void handleInput(GameData gameData, IGameViewManager gameViewManager) {
         if (gameData.getKeys().isDown(GameKeys.BACK)) {
-            chooseSound.play(getMusicVolume());
+            chooseSound.play(getSoundVolume());
             gameViewManager.setDefaultView();
         }
 
         if (gameData.getKeys().isPressed(GameKeys.UP)) {
-            selectSound.play(getMusicVolume());
-            cursorPosition -= 4;
+            selectSound.play(getSoundVolume());
+            if (cursorPosition <= 12) {
+                cursorPosition -= 4;
+            } else {
+                cursorPosition -= 2;
+            }
         } else if (gameData.getKeys().isPressed(GameKeys.DOWN)) {
-            selectSound.play(getMusicVolume());
-            cursorPosition += 4;
+            selectSound.play(getSoundVolume());
+            if (cursorPosition < 12) {
+                if (cursorPosition >= 8) {
+                    cursorPosition = cursorPosition % 4 < 2 ? 12 : 13;
+                } else {
+                    cursorPosition += 4;
+                }
+            } else {
+                cursorPosition += 2;
+            }
         } else if (gameData.getKeys().isPressed(GameKeys.RIGHT)) {
-            selectSound.play(getMusicVolume());
-            cursorPosition += 1;
+            selectSound.play(getSoundVolume());
+            if (cursorPosition == 14) {
+                cursorPosition = 13;
+            } else {
+                cursorPosition += 1;
+            }
         } else if (gameData.getKeys().isPressed(GameKeys.LEFT)) {
-            selectSound.play(getMusicVolume());
-            cursorPosition -= 1;
+            selectSound.play(getSoundVolume());
+            if (cursorPosition == 14) {
+                cursorPosition = 12;
+            } else if (cursorPosition == 12) {
+                cursorPosition -= 4;
+            } else {
+                cursorPosition -= 1;
+            }
         }
     }
 
