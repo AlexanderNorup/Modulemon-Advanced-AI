@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.TimeUtils;
 import dk.sdu.mmmi.modulemon.Battle.BattleParticipant;
+import dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory;
 import dk.sdu.mmmi.modulemon.BattleScene.animations.*;
 import dk.sdu.mmmi.modulemon.BattleScene.scenes.BattleScene;
 import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
@@ -152,6 +153,7 @@ public class BattleView implements IGameViewService, IBattleView {
             desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
         }  else {
             desiredAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
+            ((BattleAIFactory) desiredAI).setSettingsService(settings);
         }
         _battleSimulation.setAIFactory(desiredAI);
     }
