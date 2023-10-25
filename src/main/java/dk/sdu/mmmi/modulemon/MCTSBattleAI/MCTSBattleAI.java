@@ -233,7 +233,7 @@ public class MCTSBattleAI implements IBattleAI {
         var switchCount = participantToControl.getMonsterTeam().stream()
                 .filter(m -> m.getHitPoints() > 0 && m != participantToControl.getActiveMonster())
                 .count();
-        return node.getChildren().size() == (moveCount + switchCount);
+        return node.getChildren().size() >= (moveCount + switchCount);
     }
 
     private boolean isTerminal(IBattleState battleState) {
