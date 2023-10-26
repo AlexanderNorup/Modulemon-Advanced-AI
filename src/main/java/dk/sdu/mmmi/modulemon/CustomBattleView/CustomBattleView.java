@@ -10,6 +10,7 @@ import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterRegistry;
 import dk.sdu.mmmi.modulemon.common.AssetLoader;
 import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
+import dk.sdu.mmmi.modulemon.common.animations.BaseAnimation;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
 import dk.sdu.mmmi.modulemon.common.data.IGameViewManager;
@@ -17,10 +18,7 @@ import dk.sdu.mmmi.modulemon.common.drawing.MathUtils;
 import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 import dk.sdu.mmmi.modulemon.common.services.IGameViewService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CustomBattleView implements IGameViewService {
     private IGameSettings settings;
@@ -30,23 +28,27 @@ public class CustomBattleView implements IGameViewService {
     private IMonsterRegistry monsterRegistry;
     private IBattleSimulation battleSimulation;
 
+    private Queue<BaseAnimation> backgroundAnimations;
     private CustomBattleScene scene;
 
     // LibGDX Sound stuff
     private Sound selectSound;
     private Sound chooseSound;
+    private Sound wrongSound;
     private Music customBattleMusic;
 
     @Override
     public void init(IGameViewManager gameViewManager) {
         selectSound = AssetLoader.getInstance().getSoundAsset("/sounds/select.ogg", this.getClass());
         chooseSound = AssetLoader.getInstance().getSoundAsset("/sounds/choose.ogg", this.getClass());
+        wrongSound = AssetLoader.getInstance().getSoundAsset("/sounds/metal-pipe.ogg", this.getClass());
         customBattleMusic = AssetLoader.getInstance().getMusicAsset("/music/customBattleMenu.ogg", this.getClass());
         customBattleMusic.setVolume((int) settings.getSetting(settingsRegistry.getMusicVolumeSetting()) / 100f);
         customBattleMusic.setLooping(true);
         customBattleMusic.play();
 
         scene = new CustomBattleScene(settings);
+        backgroundAnimations = new LinkedList<>();
         redrawRoulettes = true;
     }
 
@@ -62,6 +64,14 @@ public class CustomBattleView implements IGameViewService {
     @Override
     public void update(GameData gameData, IGameViewManager gameViewManager) {
         cursorPosition = MathUtils.clamp(cursorPosition, 0, 14);
+
+        var nextAnimation = backgroundAnimations.peek();
+        if(nextAnimation != null){
+            nextAnimation.update(gameData);
+            if(nextAnimation.isFinished()){
+                backgroundAnimations.poll();
+            }
+        }
 
         if (redrawRoulettes) {
             var teamAAI = getSelectedAI(selectedTeamAAI);
@@ -194,6 +204,10 @@ public class CustomBattleView implements IGameViewService {
         var teamBAI = getSelectedAI(selectedTeamBAI);
 
         if(teamA.isEmpty() || teamB.isEmpty() || teamBAI == null){
+            wrongSound.play(1);
+            var anim = new ErrorTextAnimation(scene, "Add some monsters to both teams you dork!");
+            anim.start();
+            backgroundAnimations.add(anim);
             return;
         }
 
