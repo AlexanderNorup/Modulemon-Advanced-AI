@@ -54,6 +54,7 @@ public class BattleView implements IGameViewService, IBattleView {
     private Sound _winSound;
     private Sound _loseSound;
     private MenuState menuState = MenuState.DEFAULT;
+    private BattleSpeedController forcedAIDelay;
     private Queue<BaseAnimation> blockingAnimations;
     private Queue<BaseAnimation> backgroundAnimations;
     private IMonsterRegistry monsterRegistry;
@@ -134,6 +135,7 @@ public class BattleView implements IGameViewService, IBattleView {
         _battleMusic.play();
         _battleMusic.setLooping(true);
         menuState = MenuState.DEFAULT;
+        forcedAIDelay = new BattleSpeedController();
         _battleScene.setActionTitle("Your actions:");
         _battleScene.setActions(this.defaultActions);
 
@@ -147,11 +149,11 @@ public class BattleView implements IGameViewService, IBattleView {
 
     private void setBattleAIFactory() {
         IBattleAIFactory desiredAI;
-        if(settings.getSetting("AI").equals("MCTS")){
+        if (settings.getSetting("AI").equals("MCTS")) {
             desiredAI = new MCTSBattleAIFactory();
-        } else if(settings.getSetting("AI").equals("Simple")){
+        } else if (settings.getSetting("AI").equals("Simple")) {
             desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
-        }  else {
+        } else {
             desiredAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
             ((BattleAIFactory) desiredAI).setSettingsService(settings);
         }
@@ -221,6 +223,11 @@ public class BattleView implements IGameViewService, IBattleView {
         }
         stuckSince = 0; // No longer stuck.
 
+        var enemyAi = _battleSimulation.getOpponentAIFactory();
+        var playerAi = _battleSimulation.getPlayerAIFactory();
+        _battleScene.setEnemyControllerName(enemyAi == null ? "No AI" : enemyAi.toString());
+        _battleScene.setPlayerControllerName(playerAi == null ? "Your monster" : playerAi.toString());
+
         if (settings != null) {
             if (_battleMusic.getVolume() != (int) settings.getSetting(SettingsRegistry.getInstance().getMusicVolumeSetting()) / 100f) {
                 _battleMusic.setVolume((int) settings.getSetting(SettingsRegistry.getInstance().getMusicVolumeSetting()) / 100f);
@@ -286,10 +293,12 @@ public class BattleView implements IGameViewService, IBattleView {
                 if (event.getUsingParticipant().isPlayerControlled()) {
                     //Player attacked
                     PlayerBattleAttackAnimation battleAnimation = new PlayerBattleAttackAnimation(_battleScene, getAttackSound(event.getMove()), settings);
-                    battleAnimation.setOnEventDone(() -> {
-                        addEmptyAnimation(1000, true);
-                        _battleScene.setTextToDisplay("...");
-                    });
+                    if (forcedAIDelay.getSpeed() > 0) {
+                        battleAnimation.setOnEventDone(() -> {
+                            addEmptyAnimation(forcedAIDelay.getSpeed(), true);
+                            _battleScene.setTextToDisplay("...");
+                        });
+                    }
                     battleAnimation.start();
                     blockingAnimations.add(battleAnimation);
                     _battleScene.setHealthIndicatorText(String.format("-%d HP", event.getDamage()));
@@ -297,6 +306,12 @@ public class BattleView implements IGameViewService, IBattleView {
                     //Enemy attacked
                     EnemyBattleAttackAnimation battleAnimation = new EnemyBattleAttackAnimation(_battleScene, getAttackSound(event.getMove()), settings);
                     battleAnimation.start();
+                    if (_battleSimulation.isPlayerControlledByAI() && forcedAIDelay.getSpeed() > 0) {
+                        battleAnimation.setOnEventDone(() -> {
+                            addEmptyAnimation(forcedAIDelay.getSpeed(), true);
+                            _battleScene.setTextToDisplay("...");
+                        });
+                    }
                     blockingAnimations.add(battleAnimation);
                     _battleScene.setHealthIndicatorText(String.format("-%d HP", event.getDamage()));
                 }
@@ -420,11 +435,23 @@ public class BattleView implements IGameViewService, IBattleView {
 
     @Override
     public void handleInput(GameData gameData, IGameViewManager gameViewManager) {
-        if (!blockingAnimations.isEmpty() || !_isInitialized || (_battleSimulation != null && _battleSimulation.getState() != null && !_battleSimulation.getState().isPlayersTurn())) {
+        if (_battleSimulation != null && _battleSimulation.isPlayerControlledByAI()) {
+            menuState = MenuState.SPECTATOR;
+        }
+
+        if (
+                (
+                        !blockingAnimations.isEmpty()
+                                || !_isInitialized
+                                || (_battleSimulation != null && _battleSimulation.getState() != null && !_battleSimulation.getState().isPlayersTurn())
+                )
+                        && menuState != MenuState.SPECTATOR // Always show the UI when spectating
+        ) {
             //If any blocking animations, don't allow any input.
             _battleScene.setActionBoxAlpha(0.5f);
             return;
         }
+
         _battleScene.setActionBoxAlpha(1f);
         GameKeys keys = gameData.getKeys();
 
@@ -522,6 +549,33 @@ public class BattleView implements IGameViewService, IBattleView {
                     }
                 } else {
                     _battleScene.setTextToDisplay("This monster is already in battle.");
+                }
+            }
+        } else if (this.menuState == MenuState.SPECTATOR) {
+            _battleScene.setActionTitle("Spectating");
+            IBattleParticipant player = _battleSimulation.getState().getPlayer();
+            Object[] menuOptions = new Object[]{
+                    forcedAIDelay,
+                    "Quit spectating"
+            };
+
+            _battleScene.setActions(menuOptions);
+
+            //Get selected monster
+            Object selectedAction = menuOptions[this.selectedAction % menuOptions.length];
+            if (selectedAction instanceof String action) {
+                if (action.equalsIgnoreCase("Quit spectating")) {
+                    if (keys.isPressed(GameKeys.ACTION)) {
+                        handleBattleEnd(new VictoryBattleEvent("Player runs away", _battleSimulation.getState().getEnemy(), null));
+                    }
+                }
+            } else if (selectedAction instanceof BattleSpeedController speed) {
+                if (keys.isPressed(GameKeys.RIGHT)) {
+                    speed.increaseSpeed();
+                } else if (keys.isPressed(GameKeys.LEFT)) {
+                    speed.decreaseSpeed();
+                } else if (keys.isPressed(GameKeys.DELETE)) {
+                    speed.setSpeed(0);
                 }
             }
         }

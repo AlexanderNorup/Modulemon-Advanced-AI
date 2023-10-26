@@ -43,11 +43,12 @@ public class BattleScene {
     private Rectangle _playerHPBoxFillRect;
     private Rectangle _playerHPBoxBorderRect;
     private float _actionBoxAlpha = 1;
-
+    private String enemyControllerName;
     private String enemyMonsterName;
     private int enemyHP;
     private float intermediateEnemyHP = 0f;
     private int maxEnemyHP;
+    private String playerControllerName;
     private String playerMonsterName;
     private int playerHP;
     private float intermediatePlayerHP = 0f;
@@ -80,6 +81,8 @@ public class BattleScene {
         _enemyHPBoxFillRect = new Rectangle(-100,-100, 0, 0);
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
+        playerControllerName = "Your monster";
+        enemyControllerName = "Opponent";
         resetPositions();
     }
 
@@ -170,10 +173,10 @@ public class BattleScene {
         spriteBatch.begin();
 
         //Health box
-        textUtils.drawNormalRoboto(spriteBatch, "Opponent: " + this.enemyMonsterName, Color.BLACK, _enemyHealthBoxPosition.getX() + 10, _enemyHealthBoxPosition.getY() + 85);
+        textUtils.drawNormalRoboto(spriteBatch, this.enemyControllerName+": " + this.enemyMonsterName, Color.BLACK, _enemyHealthBoxPosition.getX() + 10, _enemyHealthBoxPosition.getY() + 85);
         textUtils.drawNormalRoboto(spriteBatch, "HP:", Color.BLACK, _enemyHealthBoxPosition.getX() + 10, _enemyHealthBoxPosition.getY() + 55);
         textUtils.drawNormalRoboto(spriteBatch, this.enemyHP+"/"+this.maxEnemyHP, Color.BLACK, _enemyHealthBoxPosition.getX() + 52, _enemyHealthBoxPosition.getY() + 28);
-        textUtils.drawNormalRoboto(spriteBatch, "Your monster: " + this.playerMonsterName, Color.BLACK, _playerHealthBoxPosition.getX() + 10, _playerHealthBoxPosition.getY() + 85);
+        textUtils.drawNormalRoboto(spriteBatch, this.playerControllerName+": " + this.playerMonsterName, Color.BLACK, _playerHealthBoxPosition.getX() + 10, _playerHealthBoxPosition.getY() + 85);
         textUtils.drawNormalRoboto(spriteBatch, "HP:", Color.BLACK, _playerHealthBoxPosition.getX() + 10, _playerHealthBoxPosition.getY() + 55);
         textUtils.drawNormalRoboto(spriteBatch, this.playerHP+"/"+this.maxPlayerHP, Color.BLACK, _playerHealthBoxPosition.getX() + 52, _playerHealthBoxPosition.getY() + 28);
 
@@ -277,6 +280,14 @@ public class BattleScene {
 
     public void setEnemyMonsterName(String enemyMonsterName) {
         this.enemyMonsterName = enemyMonsterName;
+    }
+
+    public void setEnemyControllerName(String enemyControllerName) {
+        this.enemyControllerName = enemyControllerName;
+    }
+
+    public void setPlayerControllerName(String playerControllerName) {
+        this.playerControllerName = playerControllerName;
     }
 
     public void setEnemyHP(int enemyHP) {
