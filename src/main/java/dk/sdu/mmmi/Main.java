@@ -3,6 +3,7 @@ package dk.sdu.mmmi;
 import dk.sdu.mmmi.modulemon.BattleScene.BattleView;
 import dk.sdu.mmmi.modulemon.BattleSimulation.BattleSimulation;
 import dk.sdu.mmmi.modulemon.Collision.CollisionProcessing;
+import dk.sdu.mmmi.modulemon.CustomBattleView.CustomBattleView;
 import dk.sdu.mmmi.modulemon.Game;
 import dk.sdu.mmmi.modulemon.Interaction.InteractProcessing;
 import dk.sdu.mmmi.modulemon.MCTSBattleAI.MCTSBattleAIFactory;
@@ -30,9 +31,10 @@ public class Main {
         var settings  = new Settings();
         var monsterRegistry = new MonsterRegistry();
         var battleMonsterProcessor = new BattleMonsterProcessor();
-        var battleAI = new MCTSBattleAIFactory();
-        //var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
-//        var battleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
+
+        var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
+        var mctsBattleAI = new MCTSBattleAIFactory();
+        var simpleBattleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
 
         var battleSimulation = new BattleSimulation();
         battleSimulation.setAIFactory(battleAI);
@@ -42,6 +44,16 @@ public class Main {
         battle.setBattleSimulation(battleSimulation);
         battle.setSettingsService(settings);
         battle.setMonsterRegistry(monsterRegistry);
+
+        var customBattle = new CustomBattleView();
+        customBattle.setSettings(settings);
+        customBattle.setBattleSimulation(battleSimulation);
+        customBattle.setBattleView(battle);
+        customBattle.setMonsterRegistry(monsterRegistry);
+        customBattle.addBattleAI(battleAI);
+        customBattle.addBattleAI(mctsBattleAI);
+        customBattle.addBattleAI(simpleBattleAI);
+
 
         // Map stuff
         var map = new MapView();
@@ -77,6 +89,7 @@ public class Main {
         var game = new Game();
         game.setSettingsService(settings);
         game.addGameViewServiceList(battle);
+        game.addGameViewServiceList(customBattle);
         game.addGameViewServiceList(map);
     }
 }

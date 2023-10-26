@@ -34,4 +34,9 @@ public class BattleAIFactory implements IBattleAIFactory {
     public void removeSettingsService(IGameSettings settings) {
         this.settings = null;
     }
+
+    @Override
+    public String toString() {
+        return "Minimax";
+    }
 }

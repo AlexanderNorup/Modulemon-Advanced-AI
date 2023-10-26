@@ -31,10 +31,7 @@ import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
 import dk.sdu.mmmi.modulemon.common.data.IGameViewManager;
-import dk.sdu.mmmi.modulemon.common.drawing.MathUtils;
-import dk.sdu.mmmi.modulemon.common.drawing.PersonaRectangle;
-import dk.sdu.mmmi.modulemon.common.drawing.Rectangle;
-import dk.sdu.mmmi.modulemon.common.drawing.TextUtils;
+import dk.sdu.mmmi.modulemon.common.drawing.*;
 import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 import dk.sdu.mmmi.modulemon.common.services.IGameViewService;
 
@@ -141,17 +138,6 @@ public class MapView implements IGameViewService, IMapView {
         cam.position.set(mapRight / 2f, mapTop / 2f, 0);
     }
 
-    private Rectangle createRectangle(Class<? extends Rectangle> clazz, float x, float y, float width, float height) {
-        try {
-            return (Rectangle) clazz.getDeclaredConstructors()[0].newInstance(x, y, width, height);
-        } catch (Exception ex) {
-            System.out.println("[WARNING] Failed to create rectangles of type: " + clazz.getName());
-        }
-        //Default to regular rectangle
-        return new Rectangle(x, y, width, height);
-    }
-
-
     @Override
     public void update(GameData gameData, IGameViewManager gameViewManager) {
         while (!gdxThreadTasks.isEmpty()) {
@@ -183,23 +169,23 @@ public class MapView implements IGameViewService, IMapView {
 
             if ((Boolean) settings.getSetting(SettingsRegistry.getInstance().getRectangleStyleSetting()) && !(pauseMenu instanceof PersonaRectangle)) {
                 rectToUse = PersonaRectangle.class;
-                summaryMenu = createRectangle(rectToUse, 100, 100, 380, 300);
-                pauseMenu = createRectangle(rectToUse, 100, 100, 200, 250);
-                monsterTeamMenu = createRectangle(rectToUse, 100, 100, 400, 550);
-                teamActionMenu = createRectangle(rectToUse, 100, 100, 200, 200);
+                summaryMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 380, 300);
+                pauseMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 200, 250);
+                monsterTeamMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 400, 550);
+                teamActionMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 200, 200);
             } else if (!(Boolean) settings.getSetting(SettingsRegistry.getInstance().getRectangleStyleSetting()) && (pauseMenu instanceof PersonaRectangle || pauseMenu == null)) {
                 rectToUse = Rectangle.class;
-                summaryMenu = createRectangle(rectToUse, 100, 100, 380, 300);
-                pauseMenu = createRectangle(rectToUse, 100, 100, 200, 250);
-                monsterTeamMenu = createRectangle(rectToUse, 100, 100, 400, 550);
-                teamActionMenu = createRectangle(rectToUse, 100, 100, 200, 200);
+                summaryMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 380, 300);
+                pauseMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 200, 250);
+                monsterTeamMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 400, 550);
+                teamActionMenu = DrawingUtils.createRectangle(rectToUse, 100, 100, 200, 200);
             }
         } else {
             mapMusic.setVolume(0.3f);
-            summaryMenu = createRectangle(Rectangle.class, 100, 100, 380, 300);
-            pauseMenu = createRectangle(Rectangle.class, 100, 100, 200, 250);
-            monsterTeamMenu = createRectangle(Rectangle.class, 100, 100, 400, 550);
-            teamActionMenu = createRectangle(Rectangle.class, 100, 100, 200, 200);
+            summaryMenu = DrawingUtils.createRectangle(Rectangle.class, 100, 100, 380, 300);
+            pauseMenu = DrawingUtils.createRectangle(Rectangle.class, 100, 100, 200, 250);
+            monsterTeamMenu = DrawingUtils.createRectangle(Rectangle.class, 100, 100, 400, 550);
+            teamActionMenu = DrawingUtils.createRectangle(Rectangle.class, 100, 100, 200, 200);
         }
     }
 
