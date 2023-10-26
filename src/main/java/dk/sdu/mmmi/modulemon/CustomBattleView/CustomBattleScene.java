@@ -1,17 +1,13 @@
 package dk.sdu.mmmi.modulemon.CustomBattleView;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.Disposable;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.Game;
 import dk.sdu.mmmi.modulemon.common.AssetLoader;
-import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.common.drawing.DrawingUtils;
 import dk.sdu.mmmi.modulemon.common.drawing.Position;
@@ -30,6 +26,10 @@ public class CustomBattleScene {
     private Color teamBTextColor = Color.WHITE;
     private Color startBattleColor = Color.WHITE;
 
+    private Position errorPosition = new Position(0,0);
+    private float errorSize = 0;
+    private float errorOpacity = 0;
+    private String errorText = "";
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
 
@@ -38,6 +38,9 @@ public class CustomBattleScene {
     private int selectedMonsterIndex = -1;
 
     public static final Color SelectColor = Color.valueOf("2a75bb");
+
+    private int screenWidth = 1280;
+    private int screenHeight = 720;
 
     private Rectangle teamAContainer;
     private Rectangle teamBContainer;
@@ -68,6 +71,8 @@ public class CustomBattleScene {
 
     public void draw(GameData gameData) {
         float dt = gameData.getDelta();
+        screenWidth = gameData.getDisplayWidth();
+        screenHeight = gameData.getDisplayHeight();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.setProjectionMatrix(Game.cam.combined);
@@ -138,16 +143,17 @@ public class CustomBattleScene {
             text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, teamAContainer.getX() + arrowSpacingFromEdge, controllerSelectorY);
             text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, teamAContainer.getX() - arrowSpacingFromEdge + teamAContainer.getWidth(), controllerSelectorY);
         }
-        text.drawNormalRoboto(spriteBatch, teamAAIText, teamATextColor, teamAContainer.getX() + teamAContainer.getWidth() / 2f, controllerSelectorY);
+        text.drawSmallRoboto(spriteBatch, teamAAIText, teamATextColor, teamAContainer.getX() + teamAContainer.getWidth() / 2f, controllerSelectorY);
 
         if(showTeamBAIArrow) {
             text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, teamBContainer.getX() + arrowSpacingFromEdge, controllerSelectorY);
             text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, teamBContainer.getX() - arrowSpacingFromEdge + teamBContainer.getWidth(), controllerSelectorY);
         }
-        text.drawNormalRoboto(spriteBatch, teamBAIText, teamBTextColor, teamBContainer.getX() + teamBContainer.getWidth() / 2f, controllerSelectorY);
+        text.drawSmallRoboto(spriteBatch, teamBAIText, teamBTextColor, teamBContainer.getX() + teamBContainer.getWidth() / 2f, controllerSelectorY);
 
         text.drawBigBoldRoboto(spriteBatch, "START BATTLE!", startBattleColor, gameData.getDisplayWidth() / 2f, 50 );
 
+        text.drawBigBoldRoboto(spriteBatch, errorText, new Color(1,0,0, errorOpacity), errorPosition.getX(), errorPosition.getY() );
         text.setCoordinateMode(TextUtils.CoordinateMode.TOP_LEFT);
         spriteBatch.end();
     }
@@ -234,6 +240,30 @@ public class CustomBattleScene {
 
     public void setStartBattleColor(Color startBattleColor) {
         this.startBattleColor = startBattleColor;
+    }
+
+    public void setErrorPosition(Position errorPosition) {
+        this.errorPosition = errorPosition;
+    }
+
+    public void setErrorOpacity(float errorOpacity) {
+        this.errorOpacity = errorOpacity;
+    }
+
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
+    }
+
+    public void setErrorSize(float errorSize) {
+        this.errorSize = errorSize;
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
     }
 
     private void calculateBoxSizes(GameData gameData) {
