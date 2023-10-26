@@ -17,12 +17,13 @@ public class PlayerControlSystem implements IEntityProcessingService {
     public void process(GameData gameData, World world) {
         for (Entity player : world.getEntities(Player.class)) {
             MovingPart movingPart = player.getPart(MovingPart.class);
-
+            var isMoving = false;
             if (movingPart != null) {
                 movingPart.setLeft(gameData.getKeys().isDown(LEFT));
                 movingPart.setRight(gameData.getKeys().isDown(RIGHT));
                 movingPart.setUp(gameData.getKeys().isDown(UP));
                 movingPart.setDown(gameData.getKeys().isDown(DOWN));
+                isMoving = movingPart.anyDirectionKeyPressed();
             }
 
             Collection<EntityPart> entityParts = player.getParts();
@@ -30,11 +31,11 @@ public class PlayerControlSystem implements IEntityProcessingService {
                 entityPart.process(gameData, world, player);
             }
 
-            updateShape(player);
+            updateShape(player, isMoving);
         }
     }
 
-    private void updateShape(Entity entity) {
+    private void updateShape(Entity entity, boolean isMoving) {
 
         SpritePart spritePart = entity.getPart(SpritePart.class);
         PositionPart positionPart = entity.getPart(PositionPart.class);
@@ -43,16 +44,16 @@ public class PlayerControlSystem implements IEntityProcessingService {
         Texture result = null;
         switch (positionPart.getDirection()) {
             case EAST:
-                result = spritePart.getRightSprite();
+                result = spritePart.getRightSprite(isMoving);
                 break;
             case WEST:
-                result = spritePart.getLeftSprite();
+                result = spritePart.getLeftSprite(isMoving);
                 break;
             case NORTH:
-                result = spritePart.getUpSprite();
+                result = spritePart.getUpSprite(isMoving);
                 break;
             case SOUTH:
-                result = spritePart.getDownSprite();
+                result = spritePart.getDownSprite(isMoving);
                 break;
             default:
                 System.out.println(("Did not match any direction"));

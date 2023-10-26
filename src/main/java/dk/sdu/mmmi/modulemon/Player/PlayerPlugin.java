@@ -11,11 +11,10 @@ import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.World;
 import dk.sdu.mmmi.modulemon.CommonMap.Services.IGamePluginService;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class PlayerPlugin implements IGamePluginService {
     private static final int TILE_SIZE = 64;
@@ -47,17 +46,40 @@ public class PlayerPlugin implements IGamePluginService {
         player.add(positionPart);
         player.add(new MovingPart());
         player.add(new InteractPart(positionPart, 1));
-        Texture upSprite = AssetLoader.getInstance().getTextureAsset("/assets/main-char-up5.png", Player.class);
-        Texture downSprite = AssetLoader.getInstance().getTextureAsset("/assets/main-char-down5.png", Player.class);
-        Texture leftSprite = AssetLoader.getInstance().getTextureAsset("/assets/main-char-left5.png", Player.class);
-        Texture rightSprite = AssetLoader.getInstance().getTextureAsset("/assets/main-char-right5.png", Player.class);
-        player.add(new SpritePart(upSprite, downSprite, leftSprite, rightSprite));
+        List<Texture> upSprite = getWalkingAnimation("up");
+        List<Texture> downSprites = getWalkingAnimation("down");
+        List<Texture> leftSprite = getWalkingAnimation("left");
+        List<Texture> rightSprite = getWalkingAnimation("right");
+
+        List<Texture> upIdleSprites = getIdleAnimation("up", 3);
+        List<Texture> downIdleSprites = getIdleAnimation("down", 3);
+        List<Texture> leftIdleSprites = getIdleAnimation("left", 3);
+        List<Texture> rightIdleSprites = getIdleAnimation("right", 3);
+        player.add(new SpritePart(upSprite, downSprites, leftSprite, rightSprite, upIdleSprites, downIdleSprites, leftIdleSprites, rightIdleSprites));
         Queue<String> playerLines = new LinkedList<>();
         playerLines.add("Alright, lets battle!");
         player.add(new TextDisplayPart(playerLines));
         addMonsterTeam(player, gameData);
 
         return player;
+    }
+
+    private static List<Texture> getIdleAnimation(String direction, int frameCount){
+        return getAnimation(direction, "idle", frameCount);
+    }
+
+    private static List<Texture> getWalkingAnimation(String direction){
+        return getAnimation(direction, "walking", 8);
+    }
+
+    @NotNull
+    private static List<Texture> getAnimation(String direction, String action, int frameCount) {
+        List<Texture> sprites = new ArrayList<>();
+        for (int i = 1; i <= frameCount; i++) {
+            Texture sprite = AssetLoader.getInstance().getTextureAsset("/assets/" + action + "Animations/main-char-" + direction + "-" + action + "" + i +".png", Player.class);
+            sprites.add(sprite);
+        }
+        return sprites;
     }
 
     private void addMonsterTeam(Entity entity, GameData gameData) {

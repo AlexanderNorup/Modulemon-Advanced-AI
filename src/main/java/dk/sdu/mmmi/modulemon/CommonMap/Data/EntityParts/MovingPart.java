@@ -79,7 +79,7 @@ public class MovingPart implements EntityPart {
         }
     }
 
-    private boolean anyDirectionKeyPressed() {
+    public boolean anyDirectionKeyPressed() {
         return down || up || left || right;
     }
 
