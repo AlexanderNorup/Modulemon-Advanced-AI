@@ -295,8 +295,9 @@ public class BattleView implements IGameViewService, IBattleView {
                     PlayerBattleAttackAnimation battleAnimation = new PlayerBattleAttackAnimation(_battleScene, getAttackSound(event.getMove()), settings);
                     if (forcedAIDelay.getSpeed() > 0) {
                         battleAnimation.setOnEventDone(() -> {
-                            addEmptyAnimation(forcedAIDelay.getSpeed(), true);
-                            _battleScene.setTextToDisplay("...");
+                            var anim = addEmptyAnimation(forcedAIDelay.getSpeed(), true);
+                            anim.setOnEventDone(() -> _battleScene.setShowEnemySpinner(false));
+                            _battleScene.setShowEnemySpinner(true);
                         });
                     }
                     battleAnimation.start();
@@ -308,8 +309,9 @@ public class BattleView implements IGameViewService, IBattleView {
                     battleAnimation.start();
                     if (_battleSimulation.isPlayerControlledByAI() && forcedAIDelay.getSpeed() > 0) {
                         battleAnimation.setOnEventDone(() -> {
-                            addEmptyAnimation(forcedAIDelay.getSpeed(), true);
-                            _battleScene.setTextToDisplay("...");
+                            var anim = addEmptyAnimation(forcedAIDelay.getSpeed(), true);
+                            anim.setOnEventDone(() -> _battleScene.setShowPlayerSpinner(false));
+                            _battleScene.setShowPlayerSpinner(true);
                         });
                     }
                     blockingAnimations.add(battleAnimation);
@@ -615,11 +617,12 @@ public class BattleView implements IGameViewService, IBattleView {
         this._isInitialized = false;
     }
 
-    private void addEmptyAnimation(int duration, boolean autoStart) {
+    private EmptyAnimation addEmptyAnimation(int duration, boolean autoStart) {
         EmptyAnimation emptyAnimation = new EmptyAnimation(duration);
         if (autoStart)
             emptyAnimation.start();
         blockingAnimations.add(emptyAnimation);
+        return emptyAnimation;
     }
 
     public void setSettingsService(IGameSettings settings) {
