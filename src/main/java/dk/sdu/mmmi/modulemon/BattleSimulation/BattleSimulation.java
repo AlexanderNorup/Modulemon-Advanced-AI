@@ -278,12 +278,7 @@ public class BattleSimulation implements IBattleSimulation {
     }
 
     public void setAIFactory(IBattleAIFactory factory) {
+        this.AI = null;
         this.AIFactory = factory;
     }
-
-    public void removeAIFactory(IBattleAIFactory factory) {
-        this.AIFactory = null;
-        this.AI = null;
-    }
-
 }

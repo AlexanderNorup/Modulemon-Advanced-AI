@@ -190,11 +190,18 @@ public class CustomBattleView implements IGameViewService {
         var teamA = Arrays.stream(getMonsterArray(selectedTeamAIndicies)).filter(Objects::nonNull).toList();
         var teamB = Arrays.stream(getMonsterArray(selectedTeamBIndicies)).filter(Objects::nonNull).toList();
 
-        if(teamA.isEmpty() || teamB.isEmpty()){
+        var teamAAI = getSelectedAI(selectedTeamAAI);
+        var teamBAI = getSelectedAI(selectedTeamBAI);
+
+        if(teamA.isEmpty() || teamB.isEmpty() || teamBAI == null){
             return;
         }
 
-        gameViewManager.setView((IGameViewService) battleView, false); // Do not dispose the map
+        System.out.println("Using Team A AI: " + teamAAI);
+        System.out.println("Using Team B AI: " + teamBAI);
+        battleSimulation.setAIFactory(teamBAI);
+
+        gameViewManager.setView(battleView.getGameView(), false); // Do not dispose the map
         customBattleMusic.stop();
         battleView.startBattle(teamA, teamB, result -> {
             customBattleMusic.play();
@@ -204,6 +211,9 @@ public class CustomBattleView implements IGameViewService {
             cursorPosition = 0;
             editingMode = false;
         });
+
+        // Set the battle AI after the startBattle method to override the configs.
+        battleSimulation.setAIFactory(teamBAI);
     }
 
     private void addToSelectedIndicies(Integer a) {
@@ -220,7 +230,7 @@ public class CustomBattleView implements IGameViewService {
         } else if (cursorPosition == 13) {
             var newBValue = scrollIndexWithNull(selectedTeamBAI, a, this.battleAIFactoryList.size() - 1);
             if(newBValue == null){
-                newBValue = 0;
+                newBValue = selectedTeamBAI == 0 ? this.battleAIFactoryList.size() - 1 : 0;
             }
             selectedTeamBAI = newBValue;
         }

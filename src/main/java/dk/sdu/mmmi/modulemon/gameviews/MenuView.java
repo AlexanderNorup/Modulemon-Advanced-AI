@@ -333,6 +333,7 @@ public class MenuView implements IGameViewService {
             gvm.setView(selectedView);
             if (selectedView instanceof IBattleView battleView) {
                 chooseSound.play(getSoundVolumeAsFloat());
+
                 battleView.startBattle(null, null, null);
             }
         } else {
