@@ -213,7 +213,7 @@ public class CustomBattleView implements IGameViewService {
 
         System.out.println("Using Team A AI: " + teamAAI);
         System.out.println("Using Team B AI: " + teamBAI);
-        battleSimulation.setAIFactory(teamBAI);
+        battleSimulation.setOpponentAIFactory(teamBAI);
 
         gameViewManager.setView(battleView.getGameView(), false); // Do not dispose the map
         customBattleMusic.stop();
@@ -227,7 +227,10 @@ public class CustomBattleView implements IGameViewService {
         });
 
         // Set the battle AI after the startBattle method to override the configs.
-        battleSimulation.setAIFactory(teamBAI);
+        battleSimulation.setOpponentAIFactory(teamBAI);
+        if(teamAAI != null) {
+            battleSimulation.setPlayerAIFactory(teamAAI);
+        }
     }
 
     private void addToSelectedIndicies(Integer a) {
