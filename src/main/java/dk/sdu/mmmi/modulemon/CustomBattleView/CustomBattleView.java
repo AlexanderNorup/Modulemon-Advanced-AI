@@ -18,7 +18,9 @@ import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 import dk.sdu.mmmi.modulemon.common.services.IGameViewService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class CustomBattleView implements IGameViewService {
     private IGameSettings settings;
@@ -45,25 +47,13 @@ public class CustomBattleView implements IGameViewService {
         customBattleMusic.play();
 
         scene = new CustomBattleScene(settings);
-
-        var monsters = monsterRegistry.getAllMonsters();
-
-        selectedTeamAIndicies = new Integer[6];
-        selectedTeamBIndicies = new Integer[6];
-        selectedTeamAIndicies[0] = 0;
-        selectedTeamAIndicies[1] = 3;
-        selectedTeamAIndicies[2] = 6;
-
-        selectedTeamBIndicies[0] = 2;
-
-        scene.setTeamAMonsters(getMonsterArray(selectedTeamAIndicies));
-        scene.setTeamBMonsters(getMonsterArray(selectedTeamBIndicies));
+        redrawRoulettes = true;
     }
 
     private Integer selectedTeamAAI = null;
     private Integer selectedTeamBAI = 1;
-    private Integer[] selectedTeamAIndicies;
-    private Integer[] selectedTeamBIndicies;
+    private Integer[] selectedTeamAIndicies = new Integer[6];
+    private Integer[] selectedTeamBIndicies = new Integer[6];
     private int cursorPosition = 0;
     private boolean editingMode = false;
     private boolean redrawRoulettes = true;
@@ -115,12 +105,11 @@ public class CustomBattleView implements IGameViewService {
         } else if (cursorPosition == 14) {
             scene.setStartBattleColor(CustomBattleScene.SelectColor);
             if (editingMode) {
-                System.out.println("SHOULD START A BATTLE!!");
+                startBattle(gameViewManager);
                 editingMode = false;
             }
         }
     }
-
 
     @Override
     public void draw(GameData gameData) {
@@ -140,11 +129,13 @@ public class CustomBattleView implements IGameViewService {
 
         if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
             editingMode = !editingMode;
+            chooseSound.play(getSoundVolume());
         }
 
-        if (gameData.getKeys().isPressed(GameKeys.DELETE) && cursorPosition < 12) {
+        if (gameData.getKeys().isPressed(GameKeys.DELETE) && cursorPosition < 13) {
             addToSelectedIndicies(null);
             editingMode = false;
+            chooseSound.play(getSoundVolume());
         }
 
         // This is a hardcoded mess. Don't think too hard about it, it just works with the current setup.
@@ -195,46 +186,67 @@ public class CustomBattleView implements IGameViewService {
         }
     }
 
+    private void startBattle(IGameViewManager gameViewManager){
+        var teamA = Arrays.stream(getMonsterArray(selectedTeamAIndicies)).filter(Objects::nonNull).toList();
+        var teamB = Arrays.stream(getMonsterArray(selectedTeamBIndicies)).filter(Objects::nonNull).toList();
+
+        if(teamA.isEmpty() || teamB.isEmpty()){
+            return;
+        }
+
+        gameViewManager.setView((IGameViewService) battleView, false); // Do not dispose the map
+        customBattleMusic.stop();
+        battleView.startBattle(teamA, teamB, result -> {
+            customBattleMusic.play();
+            gameViewManager.setView(this);
+            boolean teamAWon = result.getWinner() == result.getPlayer();
+            System.out.println("The winner is team: " +  (teamAWon ? "A" : "B") + "!");
+            cursorPosition = 0;
+            editingMode = false;
+        });
+    }
+
     private void addToSelectedIndicies(Integer a) {
         redrawRoulettes = true;
         if (cursorPosition < 12) {
+            var numMonsters = this.monsterRegistry.getMonsterAmount() - 1;
             if (isTeamA(cursorPosition)) {
-                setTeamIndicies(a, selectedTeamAIndicies);
+                selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)] = scrollIndexWithNull(selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)],a , numMonsters);
             } else {
-                setTeamIndicies(a, selectedTeamBIndicies);
+                selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)] = scrollIndexWithNull(selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)],a, numMonsters);
             }
-        } else if (a == null) {
-            return;
         } else if (cursorPosition == 12) {
-            selectedTeamAAI += a;
+            selectedTeamAAI = scrollIndexWithNull(selectedTeamAAI, a, this.battleAIFactoryList.size() - 1);
         } else if (cursorPosition == 13) {
-            selectedTeamBAI += a;
+            var newBValue = scrollIndexWithNull(selectedTeamBAI, a, this.battleAIFactoryList.size() - 1);
+            if(newBValue == null){
+                newBValue = 0;
+            }
+            selectedTeamBAI = newBValue;
         }
     }
 
-    private void setTeamIndicies(Integer a, Integer[] teamIndicies) {
+    private Integer scrollIndexWithNull(Integer input, Integer a, int maxValue) {
         if (a == null) {
-            teamIndicies[getGridAdjustedCursor(cursorPosition)] = a;
-            return;
+            return a;
         }
 
-        if (teamIndicies[getGridAdjustedCursor(cursorPosition)] == null) {
+        if (input == null) {
             if (a > 0){
-                teamIndicies[getGridAdjustedCursor(cursorPosition)] = 0;
-                return;
+                return 0;
             }else{
-                teamIndicies[getGridAdjustedCursor(cursorPosition)] = monsterRegistry.getMonsterAmount() - 1;
-                return;
+                return maxValue;
             }
         }
 
-        teamIndicies[getGridAdjustedCursor(cursorPosition)] += a;
+        var out = input + a;
 
-        if (teamIndicies[getGridAdjustedCursor(cursorPosition)] < 0
-                || teamIndicies[getGridAdjustedCursor(cursorPosition)] >= monsterRegistry.getMonsterAmount()) {
-            teamIndicies[getGridAdjustedCursor(cursorPosition)] = null;
-            return;
+        if (out < 0
+                || out > maxValue) {
+            return null;
         }
+
+        return out;
     }
 
     private boolean isTeamA(int cursorPosition) {
