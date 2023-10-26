@@ -155,7 +155,8 @@ public class BattleView implements IGameViewService, IBattleView {
             desiredAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
             ((BattleAIFactory) desiredAI).setSettingsService(settings);
         }
-        _battleSimulation.setAIFactory(desiredAI);
+        _battleSimulation.setOpponentAIFactory(desiredAI);
+        _battleSimulation.setPlayerAIFactory(null); // Null means the human controls the player.
     }
 
     @Override

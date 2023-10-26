@@ -25,5 +25,10 @@ public interface IBattleSimulation {
      */
     IBattleEvent getNextBattleEvent();
 
-    void setAIFactory(IBattleAIFactory BattleAIFactory);
+    boolean isPlayerControlledByAI();
+
+    void setOpponentAIFactory(IBattleAIFactory BattleAIFactory);
+    IBattleAIFactory getOpponentAIFactory();
+    void setPlayerAIFactory(IBattleAIFactory BattleAIFactory);
+    IBattleAIFactory getPlayerAIFactory();
 }

@@ -13,7 +13,6 @@ import dk.sdu.mmmi.modulemon.Monster.BattleMonsterProcessor;
 import dk.sdu.mmmi.modulemon.Monster.MonsterRegistry;
 import dk.sdu.mmmi.modulemon.NPC.NPCControlSystem;
 import dk.sdu.mmmi.modulemon.NPC.NPCPlugin;
-import dk.sdu.mmmi.modulemon.Player.Player;
 import dk.sdu.mmmi.modulemon.Player.PlayerControlSystem;
 import dk.sdu.mmmi.modulemon.Player.PlayerPlugin;
 import dk.sdu.mmmi.modulemon.Settings.Settings;
@@ -37,7 +36,7 @@ public class Main {
         var simpleBattleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
 
         var battleSimulation = new BattleSimulation();
-        battleSimulation.setAIFactory(battleAI);
+        battleSimulation.setOpponentAIFactory(battleAI);
         battleSimulation.setMonsterProcessor(battleMonsterProcessor);
 
         var battle = new BattleView();
