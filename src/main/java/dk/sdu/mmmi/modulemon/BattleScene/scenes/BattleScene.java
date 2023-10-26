@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import dk.sdu.mmmi.modulemon.BattleScene.BattleView;
 import dk.sdu.mmmi.modulemon.common.AssetLoader;
 import dk.sdu.mmmi.modulemon.common.drawing.*;
 
@@ -15,6 +16,11 @@ public class BattleScene {
     private Image _backdrop;
     private Image _playerBase;
     private Image _enemyBase;
+    private float _spinnerSpeed = -100f;
+    private Image _playerSpinner;
+    private Image _enemySpinner;
+    private boolean _showPlayerSpinner;
+    private boolean _showEnemySpinner;
     private String _playerMonsterSpritePath = "";
     private String _enemyMonsterSpritePath = "";
     private Image _playerMonster;
@@ -71,6 +77,8 @@ public class BattleScene {
         _backdrop = loader.getImageAsset("/battleart/backdrop1.png", this.getClass());
         _playerBase = loader.getImageAsset("/battleart/playerbase1.png", this.getClass());
         _enemyBase = loader.getImageAsset("/battleart/enemybase1.png", this.getClass());
+        _playerSpinner = loader.getImageAsset("/battleart/spinner.png", this.getClass());
+        _enemySpinner = loader.getImageAsset("/battleart/spinner.png", BattleView.class);
         _textBoxRect =  new Rectangle(-100,-100,  0,0); // All these values are dynamically calculated anyway
         _actionBoxRect = new Rectangle(-100,-100, BattleSceneDefaults.actionBoxWidth(), BattleSceneDefaults.actionBoxHeight());
         _enemyHealthRect = new Rectangle(-100,-100, BattleSceneDefaults.enemyHealthBoxWidth(), BattleSceneDefaults.enemyHealthBoxHeight());
@@ -99,11 +107,17 @@ public class BattleScene {
             _playerMonster.setOrigin(_playerMonster.getImageWidth() / 2, _playerMonster.getImageHeight() / 2);
             _playerMonster.setRotation(_playerMonsterRotation);
             _playerMonsterPosition.updatePosition(_playerMonster);
+
+            _playerSpinner.setOrigin(_playerSpinner.getImageWidth() / 2, _playerSpinner.getImageHeight() / 2);
+            _playerSpinner.setPosition(_playerBasePosition.getX() + _playerBase.getImageWidth()/2f  - _playerSpinner.getImageWidth()/2f, _playerBasePosition.getY()+160);
         }
         if(_enemyMonster != null) {
             _enemyMonster.setOrigin(_enemyMonster.getImageWidth() / 2, _enemyMonster.getImageHeight() / 2);
             _enemyMonster.setRotation(_enemyMonsterRotation);
             _enemyMonsterPosition.updatePosition(_enemyMonster);
+
+            _enemySpinner.setOrigin(_enemySpinner.getImageWidth() / 2, _enemySpinner.getImageHeight() / 2);
+            _enemySpinner.setPosition(_enemyBasePosition.getX() + _enemyBase.getImageWidth()/2f - _enemySpinner.getImageWidth()/2f, _enemyBasePosition.getY()+100);
         }
 
         _backdrop.setSize(this.gameWidth, this.gameHeight);
@@ -116,6 +130,16 @@ public class BattleScene {
 
         if (_enemyMonster != null)
             _enemyMonster.draw(spriteBatch, 1);
+
+        if(_showPlayerSpinner){
+            _playerSpinner.rotateBy(_spinnerSpeed * dt);
+            _playerSpinner.draw(spriteBatch, 1);
+        }
+
+        if(_showEnemySpinner){
+            _enemySpinner.rotateBy(_spinnerSpeed * dt);
+            _enemySpinner.draw(spriteBatch, 1);
+        }
 
         spriteBatch.end();
 
@@ -523,6 +547,14 @@ public class BattleScene {
         this._textBoxPosition = pos;
     }
 
+    public void setShowPlayerSpinner(boolean _showPlayerSpinner) {
+        this._showPlayerSpinner = _showPlayerSpinner;
+    }
+
+    public void setShowEnemySpinner(boolean _showEnemySpinner) {
+        this._showEnemySpinner = _showEnemySpinner;
+    }
+
     public void resetPositions() {
         _backdropPosition = BattleSceneDefaults.backdropPosition();
         _playerBasePosition = BattleSceneDefaults.playerBasePosition();
@@ -537,5 +569,7 @@ public class BattleScene {
         _healthIndicatorColor = BattleSceneDefaults.healthIndicatorColor();
         _enemyMonsterRotation = BattleSceneDefaults.enemyMonsterRotation();
         _playerMonsterRotation = BattleSceneDefaults.playerMonsterRotation();
+        _showEnemySpinner = false;
+        _showPlayerSpinner = false;
     }
 }
