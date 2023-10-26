@@ -36,13 +36,6 @@ public class SpritePart implements EntityPart {
         this.rightSprite = Collections.singletonList(rightSprite);
     }
 
-    public SpritePart(List<Texture> upSprite, List<Texture> downSprite, List<Texture> leftSprite, List<Texture> rightSprite) {
-        this.upSprite = upSprite;
-        this.downSprite = downSprite;
-        this.leftSprite = leftSprite;
-        this.rightSprite = rightSprite;
-    }
-
     public SpritePart(
             List<Texture> upSprite,
             List<Texture> downSprite,
@@ -62,27 +55,6 @@ public class SpritePart implements EntityPart {
         this.rightIdleSprite = rightIdleSprite;
         this.currentSpritePool = downIdleSprite;
     }
-
-    public SpritePart(
-            Texture upSprite,
-            Texture downSprite,
-            Texture leftSprite,
-            Texture rightSprite,
-            List<Texture> upIdleSprite,
-            List<Texture> downIdleSprite,
-            List<Texture> leftIdleSprite,
-            List<Texture> rightIdleSprite) {
-        this.upSprite = Collections.singletonList(upSprite);
-        this.downSprite = Collections.singletonList(downSprite);
-        this.leftSprite = Collections.singletonList(leftSprite);
-        this.rightSprite = Collections.singletonList(rightSprite);
-        this.upIdleSprite = upIdleSprite;
-        this.downIdleSprite = downIdleSprite;
-        this.leftIdleSprite = leftIdleSprite;
-        this.rightIdleSprite = rightIdleSprite;
-        this.currentSpritePool = downIdleSprite;
-    }
-
 
     public Texture getUpSprite(boolean isMoving) {
         if(!isMoving && upIdleSprite != null){
