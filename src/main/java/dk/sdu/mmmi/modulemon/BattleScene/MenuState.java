@@ -4,5 +4,6 @@ public enum MenuState {
     DEFAULT,
     FIGHT,
     SWITCH,
+    SPECTATOR,
     NONE
 }
