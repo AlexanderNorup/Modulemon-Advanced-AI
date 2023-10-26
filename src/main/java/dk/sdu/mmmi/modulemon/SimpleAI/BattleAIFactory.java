@@ -14,4 +14,9 @@ public class BattleAIFactory implements IBattleAIFactory {
     public IBattleAI getBattleAI(IBattleSimulation battleSimulation, IBattleParticipant participantToControl) {
         return new BattleAI(battleSimulation, participantToControl);
     }
+
+    @Override
+    public String toString() {
+        return "Simple AI";
+    }
 }
