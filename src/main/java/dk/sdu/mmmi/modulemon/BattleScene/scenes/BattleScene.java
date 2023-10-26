@@ -234,7 +234,7 @@ public class BattleScene {
         float hpBarOffsetX = 58;
         float hpBarOffsetY = 35;
         float hpBarHeight = 20;
-        float hpBarFullWidth = 225;
+        float hpBarFullWidth = 290;
 
         float hpBasedWidth = MathUtils.map(hp, 0, maxHp, 0, hpBarFullWidth);
         fillRect.setX(basePosition.getX() + hpBarOffsetX);
