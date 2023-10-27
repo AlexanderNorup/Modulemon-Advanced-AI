@@ -23,7 +23,7 @@ public class SpritePart implements EntityPart {
     private List<Texture> rightIdleSprite;
 
     private float timer = 0;
-    private float duration = 0.25f;
+    private float duration = 0.15f;
     private int frameIndex = 0;
 
     private Texture currentSprite;

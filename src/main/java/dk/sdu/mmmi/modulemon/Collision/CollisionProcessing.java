@@ -71,7 +71,7 @@ public class CollisionProcessing implements IPostEntityProcessingService {
                 loader.getSoundAsset("/sounds/bonk.ogg", this.getClass()).play( ((int) settings.getSetting(SettingsRegistry.getInstance().getSoundVolumeSetting()) / 100f) / 2f);
             }
             else loader.getSoundAsset("/sounds/bonk.ogg", this.getClass()).play( );
-            bonkCooldown = 0.5f;
+            bonkCooldown = 0.35f;
         }
     }
 
