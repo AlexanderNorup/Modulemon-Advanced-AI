@@ -73,7 +73,6 @@ public class BattleView implements IGameViewService, IBattleView {
 
     public Sound getAttackSound(IMonsterMove monsterMove) {
         Sound returnSound = null;
-
         try {
             returnSound = loader.getSoundAsset(monsterMove.getSoundPath(), monsterMove.getClass());
         } catch (GdxRuntimeException ex) {
@@ -252,8 +251,25 @@ public class BattleView implements IGameViewService, IBattleView {
             _battleScene.setTextBoxRectStyle(Rectangle.class);
         }
 
-
         updateHasRunOnce = true;
+
+        // Check the current AI is done thinking
+        if(_battleSimulation.hasNextBattleEvent()){
+            _battleScene.setShowEnemySpinner(false);
+            _battleScene.setShowPlayerSpinner(false);
+        }else{
+            if(_battleSimulation.isPlayerControlledByAI() && _battleSimulation.getState().isPlayersTurn()){
+                // there is no current event, and the player is controlled by an AI
+                _battleScene.setShowPlayerSpinner(true);
+                _battleScene.setShowEnemySpinner(false);
+            }else if(!_battleSimulation.getState().isPlayersTurn()){
+                _battleScene.setShowPlayerSpinner(false);
+                _battleScene.setShowEnemySpinner(true);
+            }else {
+                _battleScene.setShowEnemySpinner(false);
+                _battleScene.setShowPlayerSpinner(false);
+            }
+        }
 
         //Is there any animations active?
         if (!blockingAnimations.isEmpty()) {
@@ -295,9 +311,7 @@ public class BattleView implements IGameViewService, IBattleView {
                     PlayerBattleAttackAnimation battleAnimation = new PlayerBattleAttackAnimation(_battleScene, getAttackSound(event.getMove()), settings);
                     if (forcedAIDelay.getSpeed() > 0) {
                         battleAnimation.setOnEventDone(() -> {
-                            var anim = addEmptyAnimation(forcedAIDelay.getSpeed(), true);
-                            anim.setOnEventDone(() -> _battleScene.setShowEnemySpinner(false));
-                            _battleScene.setShowEnemySpinner(true);
+                            addEmptyAnimation(forcedAIDelay.getSpeed(), true);
                         });
                     }
                     battleAnimation.start();
@@ -309,9 +323,7 @@ public class BattleView implements IGameViewService, IBattleView {
                     battleAnimation.start();
                     if (_battleSimulation.isPlayerControlledByAI() && forcedAIDelay.getSpeed() > 0) {
                         battleAnimation.setOnEventDone(() -> {
-                            var anim = addEmptyAnimation(forcedAIDelay.getSpeed(), true);
-                            anim.setOnEventDone(() -> _battleScene.setShowPlayerSpinner(false));
-                            _battleScene.setShowPlayerSpinner(true);
+                            addEmptyAnimation(forcedAIDelay.getSpeed(), true);
                         });
                     }
                     blockingAnimations.add(battleAnimation);
@@ -331,14 +343,16 @@ public class BattleView implements IGameViewService, IBattleView {
                         blockingAnimations.add(changeOutAnimation);
                     }
 
-                    EmptyAnimation delay = new EmptyAnimation(1000);
+                    EmptyAnimation delay = addEmptyAnimation(forcedAIDelay.getSpeed(), true);
                     delay.setOnEventDone(() -> _currentBattleState = eventState);
                     blockingAnimations.add(delay);
 
                     PlayerChangeInAnimation changeInAnimation = new PlayerChangeInAnimation(_battleScene);
                     blockingAnimations.add(changeInAnimation);
 
-                    addEmptyAnimation(2000, false);
+                    if(forcedAIDelay.getSpeed() > 0) {
+                        addEmptyAnimation(forcedAIDelay.getSpeed(), false);
+                    }
                     this._battleScene.setTextToDisplay(battleEvent.getText());
                 } else {
                     if (causedByFaintingMonster) {
@@ -390,7 +404,9 @@ public class BattleView implements IGameViewService, IBattleView {
             } else {
                 //Unknown event (Or TextEvent)
                 _currentBattleState = eventState;
-                addEmptyAnimation(2000, true);
+                if(forcedAIDelay.getSpeed() > 0) {
+                    addEmptyAnimation(forcedAIDelay.getSpeed(), true);
+                }
                 this._battleScene.setTextToDisplay(battleEvent.getText());
             }
         }

@@ -261,6 +261,11 @@ public class BattleSimulation implements IBattleSimulation {
         return event;
     }
 
+    @Override
+    public boolean hasNextBattleEvent() {
+        return nextEvent != null;
+    }
+
     private IBattleAI getOpponentAI() {
         if (this.opponentAI ==null) {
             if (this.opponentAIFactory ==null) {

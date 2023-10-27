@@ -24,6 +24,7 @@ public interface IBattleSimulation {
      * Returns `null` if there is no more battle events
      */
     IBattleEvent getNextBattleEvent();
+    boolean hasNextBattleEvent();
 
     boolean isPlayerControlledByAI();
 
