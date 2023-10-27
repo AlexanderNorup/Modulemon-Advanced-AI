@@ -1,7 +1,5 @@
 package dk.sdu.mmmi.modulemon.BattleScene;
 
-import dk.sdu.mmmi.modulemon.common.drawing.MathUtils;
-
 public class BattleSpeedController {
 
     private static final int incrementAmount = 200;
@@ -25,6 +23,6 @@ public class BattleSpeedController {
 
     @Override
     public String toString() {
-        return "Battle delay: " + speed + "ms";
+        return "Min. turn delay: " + speed + "ms";
     }
 }

@@ -157,7 +157,7 @@ public class TextUtils {
     private Position getAdjustedCoordinates(GlyphLayout layout, float x, float y) {
         return switch (currentCoordinateMode) {
             case TOP_LEFT -> new Position(x, y);
-            case BOTTOM_RIGHT -> new Position(x - layout.width, y - layout.height);
+            case BOTTOM_RIGHT -> new Position(x - layout.width, y + layout.height);
             case CENTER -> new Position(x - (layout.width / 2f), y + (layout.height/2f));
         };
     }

@@ -59,12 +59,13 @@ public class CustomBattleView implements IGameViewService {
     private int cursorPosition = 0;
     private boolean editingMode = false;
     private boolean redrawRoulettes = true;
+    private boolean showingResults  = false;
 
 
     @Override
     public void update(GameData gameData, IGameViewManager gameViewManager) {
         cursorPosition = MathUtils.clamp(cursorPosition, 0, 14);
-
+        scene.setShowResults(showingResults);
         var nextAnimation = backgroundAnimations.peek();
         if(nextAnimation != null){
             nextAnimation.update(gameData);
@@ -138,8 +139,17 @@ public class CustomBattleView implements IGameViewService {
         }
 
         if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
+            if(showingResults){
+                showingResults = false;
+                return;
+            }
+
             editingMode = !editingMode;
             chooseSound.play(getSoundVolume());
+        }
+
+        if(showingResults){
+            return; // Don't allow any movement when showing results
         }
 
         if (gameData.getKeys().isPressed(GameKeys.DELETE) && cursorPosition < 13) {
@@ -221,8 +231,17 @@ public class CustomBattleView implements IGameViewService {
             customBattleMusic.play();
             gameViewManager.setView(this);
             boolean teamAWon = result.getWinner() == result.getPlayer();
-            System.out.println("The winner is team: " +  (teamAWon ? "A" : "B") + "!");
+            var winnerTeamName = teamAWon ?
+                                        (teamAAI == null ? "You" : teamAAI.toString())
+                                        : (teamBAI.toString());
+            scene.setResultsHeader("The winner is: " + winnerTeamName +"!");
+            scene.setResultLines(new String[]{
+                    "TODO: Collect some stats from the battle and display them here",
+                    "On multiple lines",
+                    "Wow! This is amazing!!"
+            });
             cursorPosition = 0;
+            showingResults = true;
             editingMode = false;
         });
 
