@@ -11,8 +11,6 @@ import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.World;
 import dk.sdu.mmmi.modulemon.CommonMap.Services.IGamePluginService;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
-import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -72,7 +70,6 @@ public class PlayerPlugin implements IGamePluginService {
         return getAnimation(direction, "walking", 8);
     }
 
-    @NotNull
     private static List<Texture> getAnimation(String direction, String action, int frameCount) {
         List<Texture> sprites = new ArrayList<>();
         for (int i = 1; i <= frameCount; i++) {

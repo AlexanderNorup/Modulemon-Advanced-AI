@@ -1,5 +1,4 @@
 plugins {
-    id("java-gradle-plugin")
     id("java")
 }
 
@@ -37,8 +36,8 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx-freetype:1.12.0")
     // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-backend-lwjgl
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:1.12.0")
-    api("com.badlogicgames.gdx:gdx-platform:1.12.0:natives-desktop")
-    api("com.badlogicgames.gdx:gdx-freetype-platform:1.12.0:natives-desktop")
+    implementation("com.badlogicgames.gdx:gdx-platform:1.12.0:natives-desktop")
+    implementation("com.badlogicgames.gdx:gdx-freetype-platform:1.12.0:natives-desktop")
 }
 
 tasks.test {
