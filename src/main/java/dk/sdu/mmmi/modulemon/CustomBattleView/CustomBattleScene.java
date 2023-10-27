@@ -42,6 +42,10 @@ public class CustomBattleScene {
     private int screenWidth = 1280;
     private int screenHeight = 720;
 
+    private boolean showResults;
+    private String resultsHeader;
+    private String[] resultLines;
+    private Rectangle resultContainer;
     private Rectangle teamAContainer;
     private Rectangle teamBContainer;
     private Rectangle[] teamAMonsterBoxes;
@@ -53,6 +57,7 @@ public class CustomBattleScene {
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
+        resultContainer = DrawingUtils.createRectangle(Rectangle.class, 0, 0, 0, 0);
         teamAContainer = DrawingUtils.createRectangle(Rectangle.class, 0, 0, 0, 0);
         teamBContainer = DrawingUtils.createRectangle(Rectangle.class, 0, 0, 0, 0);
         int teamSize = 6;
@@ -121,6 +126,7 @@ public class CustomBattleScene {
             teamBMonsterBoxes[i].draw(shapeRenderer, dt);
         }
 
+
         spriteBatch.end();
         shapeRenderer.end();
 
@@ -154,8 +160,44 @@ public class CustomBattleScene {
         text.drawBigBoldRoboto(spriteBatch, "START BATTLE!", startBattleColor, gameData.getDisplayWidth() / 2f, 50 );
 
         text.drawBigBoldRoboto(spriteBatch, errorText, new Color(1,0,0, errorOpacity), errorPosition.getX(), errorPosition.getY() );
-        text.setCoordinateMode(TextUtils.CoordinateMode.TOP_LEFT);
         spriteBatch.end();
+
+        if(showResults){
+            // Results need to be drawn on top of everything. Thus, we need two spritebatch-blocks again.
+            // One for the box, and another for the text
+            spriteBatch.begin();
+            shapeRenderer.setAutoShapeType(true);
+            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            resultContainer.draw(shapeRenderer, dt);
+            shapeRenderer.end();
+            spriteBatch.end();
+
+            // RESULTS TEXT SPRITE BATCH
+
+            spriteBatch.begin();
+            var topOfResults = resultContainer.getY() + resultContainer.getHeight();
+            var headerY = topOfResults - 50;
+            var textY = headerY - 60;
+            var lineHeight = 25;
+            var textX = resultContainer.getX() + 50;
+            text.setCoordinateMode(TextUtils.CoordinateMode.CENTER);
+            text.drawTitleFont(spriteBatch, resultsHeader, Color.BLACK, gameData.getDisplayWidth() / 2f, headerY );
+
+            text.setCoordinateMode(TextUtils.CoordinateMode.TOP_LEFT);
+            if(resultLines != null){
+                int i = 0;
+                for(String s : resultLines){
+                    text.drawNormalRoboto(spriteBatch, s, Color.BLACK, textX, textY - (i * lineHeight) );
+                    i++;
+                }
+            }
+
+            text.setCoordinateMode(TextUtils.CoordinateMode.CENTER);
+            text.drawSmallRoboto(spriteBatch, "Press [action] to continue!", Color.DARK_GRAY, gameData.getDisplayWidth() / 2f, resultContainer.getY() + 15 );
+            spriteBatch.end();
+        }
+        text.setCoordinateMode(TextUtils.CoordinateMode.TOP_LEFT);
     }
 
     private void drawMonsterWithName(IMonster monster, Rectangle rectangle, boolean drawMonsterSwitcher) {
@@ -258,6 +300,18 @@ public class CustomBattleScene {
         this.errorSize = errorSize;
     }
 
+    public void setShowResults(boolean showResults) {
+        this.showResults = showResults;
+    }
+
+    public void setResultsHeader(String resultsHeader) {
+        this.resultsHeader = resultsHeader;
+    }
+
+    public void setResultLines(String[] resultLines) {
+        this.resultLines = resultLines;
+    }
+
     public int getScreenWidth() {
         return screenWidth;
     }
@@ -279,6 +333,10 @@ public class CustomBattleScene {
         teamBContainer.setWidth(containerWidth);
         teamAContainer.setHeight(containerHeight);
         teamBContainer.setHeight(containerHeight);
+
+        resultContainer.setPosition(new Position(50, 50));
+        resultContainer.setWidth(gameData.getDisplayWidth() - 2*50);
+        resultContainer.setHeight(gameData.getDisplayHeight() - 2*50);
 
         final float monsterBoxSize = 110;
         final float topOfContainers = teamAContainer.getY() + teamAContainer.getHeight();

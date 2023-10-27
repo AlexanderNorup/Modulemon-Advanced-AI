@@ -31,6 +31,6 @@ public class MCTSBattleAIFactory implements IBattleAIFactory {
 
     @Override
     public String toString() {
-        return "Monte-Carlo Tree Search";
+        return "MCTS";
     }
 }
