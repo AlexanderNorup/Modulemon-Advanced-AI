@@ -13,6 +13,7 @@ import dk.sdu.mmmi.modulemon.CommonMap.Data.World;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityParts.InteractPart;
 import dk.sdu.mmmi.modulemon.CommonMap.Services.IPostEntityProcessingService;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
+import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,6 +24,8 @@ public class InteractProcessing implements IPostEntityProcessingService {
     private IMapView mapView;
 
     private InteractPair previousInteractPair = new InteractPair();
+
+    private IGameSettings settings;
 
     @Override
     public void process(GameData gameData, World world) {
@@ -95,9 +98,9 @@ public class InteractProcessing implements IPostEntityProcessingService {
 
                     BattleEvent battle;
                     if(entity.getType() == EntityType.PLAYER){
-                        battle = new BattleEvent(lines, entity, interactPart.getInteractWith(), mapView);
+                        battle = new BattleEvent(lines, entity, interactPart.getInteractWith(), mapView, settings);
                     }else{
-                        battle = new BattleEvent(lines, interactPart.getInteractWith(), entity, mapView);
+                        battle = new BattleEvent(lines, interactPart.getInteractWith(), entity, mapView, settings);
                     }
                     mapView.addMapEvent(battle);
                 }

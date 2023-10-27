@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.modulemon.Interaction;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,10 +11,13 @@ import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityParts.PositionPart;
 import dk.sdu.mmmi.modulemon.CommonMap.Data.EntityType;
 import dk.sdu.mmmi.modulemon.CommonMap.IMapEvent;
 import dk.sdu.mmmi.modulemon.CommonMap.IMapView;
+import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
+import dk.sdu.mmmi.modulemon.common.AssetLoader;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
 import dk.sdu.mmmi.modulemon.common.data.GameKeys;
 import dk.sdu.mmmi.modulemon.common.drawing.Rectangle;
 import dk.sdu.mmmi.modulemon.common.drawing.TextUtils;
+import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 
 import java.util.Queue;
 
@@ -24,10 +28,13 @@ public class BattleEvent implements IMapEvent {
     private Entity aggresor;
     private Entity victim;
     private IMapView mapView;
+    private Sound alertSound;
+    private boolean alertSoundPlayed = false;
+    private IGameSettings settings;
 
     private BattleState currentState;
 
-    public BattleEvent(Queue<String> lines, Entity aggressor, Entity victim, IMapView map) {
+    public BattleEvent(Queue<String> lines, Entity aggressor, Entity victim, IMapView map, IGameSettings settings) {
         if (lines == null || lines.isEmpty()) {
             throw new IllegalArgumentException("Argument 'lines' is null or has no elements");
         }
@@ -38,6 +45,8 @@ public class BattleEvent implements IMapEvent {
         this.victim = victim;
         this.lines = lines;
         this.mapView = map;
+        alertSound = AssetLoader.getInstance().getSoundAsset("/sounds/alert.ogg", this.getClass());
+        this.settings = settings;
         textBox = new Rectangle(20, 20, -1, -1);
         exlamationBox = new Rectangle(-1, -1, -1, -1);
         currentState = BattleState.BEFORE_BATTLE;
@@ -106,6 +115,11 @@ public class BattleEvent implements IMapEvent {
                     visualVictimPosition.x + 16,
                     visualVictimPosition.y + 85);
 
+        if(!alertSoundPlayed){
+            playAlertSound();
+        }
+
+
         TextUtils.getInstance().drawNormalRoboto(spriteBatch,
                 lines.peek(),
                 Color.BLACK,
@@ -120,6 +134,15 @@ public class BattleEvent implements IMapEvent {
                 (cam.position.y - cam.viewportHeight / 2f) + 40
         );
         spriteBatch.end();
+    }
+
+    private void playAlertSound(){
+        var volume =  settings != null
+                ? (float)settings.getSetting(SettingsRegistry.getInstance().getSoundVolumeSetting()) / 100f
+                : 0.6f;
+
+        alertSound.play(volume);
+        alertSoundPlayed = true;
     }
 
     @Override
