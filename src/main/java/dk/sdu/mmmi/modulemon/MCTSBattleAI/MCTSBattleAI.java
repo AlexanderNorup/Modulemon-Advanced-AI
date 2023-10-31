@@ -118,8 +118,13 @@ public class MCTSBattleAI implements IBattleAI {
                     .append(bestChildAction)
                     .append(" (Reward: ")
                     .append(bestChildOfCurrentlyExpanding.getReward())
-                    .append(")")
-                    .append('\n');
+                    .append(")");
+
+            if(isTerminal(currentlyExpanding.getState())){
+                stringBuilder.append(" [TERMINAL STATE]");
+            }
+
+            stringBuilder.append('\n');
 
             isMCTS = !isMCTS;
             turnCount++;
@@ -151,21 +156,13 @@ public class MCTSBattleAI implements IBattleAI {
             participant2 = participantToControl;
         }
 
-        Object action1 = new Object();
-        Object action2 = new Object();
-        IBattleParticipant lastParticipant = participant1;
-        List<IBattleState> states = new ArrayList<IBattleState>();
         while (!isTerminal(state) && depth < MAX_SIMULATE_DEPTH) {
-            action1 = chooseRandomAction(getParticipantFromState(state, participant1));
+            var action1  = chooseRandomAction(getParticipantFromState(state, participant1));
             state = simulateAction(participant1, action1, state);
-            states.add(state);
-            lastParticipant = participant1;
             if (!isTerminal(state)) {
                 // Need to check for terminal state here as well, since participant2 might have lost.
-                action2 = chooseRandomAction(getParticipantFromState(state, participant2));
+                var action2 = chooseRandomAction(getParticipantFromState(state, participant2));
                 state = simulateAction(participant2, action2, state);
-                states.add(state);
-                lastParticipant = participant2;
             }
             depth++;
         }
@@ -216,7 +213,7 @@ public class MCTSBattleAI implements IBattleAI {
 
     private Object chooseRandomAction(IBattleParticipant participant) {
         var possibleMoves = participant.getActiveMonster().getMoves();
-        var possibleSwitches = participant.getMonsterTeam();
+        var possibleSwitches = participant.getMonsterTeam().stream().filter(x -> x.getHitPoints() > 0 && !x.equals(participant.getActiveMonster())).toList();
         List<Object> possibleActions = Stream.concat(possibleMoves.stream(), possibleSwitches.stream()).toList();
         var rand = new Random();
         return possibleActions.get(rand.nextInt(possibleActions.size()));
@@ -253,10 +250,6 @@ public class MCTSBattleAI implements IBattleAI {
                 bestChild = child;
                 bestUCT = uct;
             }
-        }
-
-        if (bestChild == null) {
-            System.out.println("About to return null on best child");
         }
 
         return bestChild;
@@ -324,10 +317,6 @@ public class MCTSBattleAI implements IBattleAI {
                 .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster())
                 .count();
 
-        if ((moveCount + switchCount) <= 0) {
-            System.out.println("SYGT TRRÆLS");
-        }
-
         return node.getChildren().size() >= (moveCount + switchCount);
     }
 
@@ -348,9 +337,6 @@ public class MCTSBattleAI implements IBattleAI {
         boolean allEnemyMonstersDead = opposingParticipant.getMonsterTeam().stream()
 //                .filter(x -> knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
                 .allMatch(x -> x.getHitPoints() <= 0);
-        if (allEnemyMonstersDead && allOwnMonstersDead) {
-            System.out.println("WTF");
-        }
 
         return allEnemyMonstersDead || allOwnMonstersDead;
     }

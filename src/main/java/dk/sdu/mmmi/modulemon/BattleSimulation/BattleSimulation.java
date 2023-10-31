@@ -203,7 +203,7 @@ public class BattleSimulation implements IBattleSimulation {
 
         IMonster source = newState.getActiveParticipant().getActiveMonster();
         IBattleParticipant opposingParticipant = newState.getPlayer().equals(newState.getActiveParticipant())
-                ? newState.getPlayer() : newState.getEnemy();
+                ? newState.getEnemy() : newState.getPlayer();
         IMonster target = opposingParticipant.getActiveMonster();
 
         int damage = 0;
