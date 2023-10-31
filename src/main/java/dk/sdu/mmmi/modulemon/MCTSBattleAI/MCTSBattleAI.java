@@ -91,11 +91,11 @@ public class MCTSBattleAI implements IBattleAI {
         }
     }
 
-    private String explainNodeOptions(Node rootNode){
+    private String explainNodeOptions(Node rootNode) {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append("MCTS (").append(rootNode.getState().getPlayer().equals(this.participantToControl) ? "player" : "opponent").append(" side) has ").append(rootNode.getChildren().size()).append(" options. In decreasing order of reward they are:").append('\n');
-        for(var node : rootNode.getChildren().stream().sorted((a,b) -> Float.compare(a.getReward(), b.getReward())*-1).toArray()){
+        for (var node : rootNode.getChildren().stream().sorted((a, b) -> Float.compare(a.getReward(), b.getReward()) * -1).toArray()) {
             stringBuilder.append("- ").append(node.toString()).append('\n');
         }
 
@@ -138,7 +138,7 @@ public class MCTSBattleAI implements IBattleAI {
                     .append(bestChildOfCurrentlyExpanding.getReward())
                     .append(")");
 
-            if(isTerminal(currentlyExpanding.getState())){
+            if (isTerminal(currentlyExpanding.getState())) {
                 stringBuilder.append(" [TERMINAL STATE]");
             }
 
@@ -175,7 +175,7 @@ public class MCTSBattleAI implements IBattleAI {
         }
 
         while (!isTerminal(state) && depth < MAX_SIMULATE_DEPTH) {
-            var action1  = chooseRandomAction(getParticipantFromState(state, participant1));
+            var action1 = chooseRandomAction(getParticipantFromState(state, participant1));
             state = simulateAction(participant1, action1, state);
             if (!isTerminal(state)) {
                 // Need to check for terminal state here as well, since participant2 might have lost.
