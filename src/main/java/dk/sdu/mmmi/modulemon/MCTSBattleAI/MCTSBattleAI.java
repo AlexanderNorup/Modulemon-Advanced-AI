@@ -24,6 +24,7 @@ public class MCTSBattleAI implements IBattleAI {
     private long startTime;
     private int defaultTimeLimitMs = 1000;
     private IGameSettings settings = null;
+    private long  timeLimit = defaultTimeLimitMs;
     private final int MAX_SIMULATE_DEPTH = 20;
 
     private final float EXPLORATION_COEFFICIENT = (float) (1.0 / Math.sqrt(2));
@@ -36,10 +37,11 @@ public class MCTSBattleAI implements IBattleAI {
                 : battleSimulation.getState().getPlayer();
         this.battleSimulation = battleSimulation;
         this.settings = settings;
+        this.timeLimit = getTimeLimitms();
     }
 
     public boolean outOfTime() {
-        return ((System.nanoTime() - startTime) / 1000000) >= getTimeLimitms();
+        return ((System.nanoTime() - startTime) / 1000000) >= this.timeLimit;
     }
 
     private long getTimeLimitms() {
@@ -64,8 +66,7 @@ public class MCTSBattleAI implements IBattleAI {
         }
 
         startTime = System.nanoTime();
-        var rootNode = new Node(battleSimulation.getState().clone());
-
+        var rootNode = new Node(battleSimulation.getState().clone(), this.participantToControl);
         while (!outOfTime()) {
             var newNode = treePolicy(rootNode);
             var reward = defaultPolicy(newNode);
@@ -93,7 +94,7 @@ public class MCTSBattleAI implements IBattleAI {
         stringBuilder.append("MCTS is ").append(action).append(" because it sees the following best scenario:").append('\n');
 
         var currentlyExpanding = bestChild;
-        var isMCTS = true;
+        var isMCTS = false;
         int turnCount = 1;
         do {
             var children = currentlyExpanding.getChildren();
@@ -107,7 +108,16 @@ public class MCTSBattleAI implements IBattleAI {
             var bestChildAction = bestChildOfCurrentlyExpanding.getParentMove() != null ?
                     "using " + bestChildOfCurrentlyExpanding.getParentMove().getName()
                     : "switching to " + bestChildOfCurrentlyExpanding.getParentSwitch();
-            stringBuilder.append("- Turn ").append(turnCount).append(": ").append(user).append(" uses ").append(bestChildAction).append('\n');
+            stringBuilder.append("- Turn ")
+                    .append(turnCount)
+                    .append(": ")
+                    .append(user)
+                    .append(" uses ")
+                    .append(bestChildAction)
+                    .append(" (Reward: ")
+                    .append(bestChildOfCurrentlyExpanding.getReward())
+                    .append(")")
+                    .append('\n');
 
             isMCTS = !isMCTS;
             turnCount++;
@@ -128,15 +138,23 @@ public class MCTSBattleAI implements IBattleAI {
     private float defaultPolicy(Node node) {
         var state = node.getState().clone();
         var depth = 0;
+
+        IBattleParticipant participant1 = participantToControl;
+        IBattleParticipant participant2 = opposingParticipant;
+        if(node.getParticipant().equals(opposingParticipant)){
+            participant1 = opposingParticipant;
+            participant2 = participantToControl;
+        }
+
         while (!isTerminal(state) && depth < MAX_SIMULATE_DEPTH) {
-            var controllingAction = chooseRandomAction(participantToControl);
-            state = simulateAction(participantToControl, controllingAction, state);
-            var opposingAction = chooseRandomAction(opposingParticipant);
-            state = simulateAction(opposingParticipant, opposingAction, state);
+            var action1 = chooseRandomAction(participant1);
+            state = simulateAction(participant1, action1, state);
+            var action2 = chooseRandomAction(participant2);
+            state = simulateAction(participant2, action2, state);
             depth++;
         }
 
-        return getReward(state);
+        return getReward(state) * (1f/depth); // Making sure that the deeper, the worse reward
     }
 
     private float getReward(IBattleState battleState) {
@@ -161,7 +179,7 @@ public class MCTSBattleAI implements IBattleAI {
         var result = (float) ownMonsterHPSum / (ownMonsterHPSum + enemyMonsterHPSum);
 
         if (Float.isNaN(result)) {
-            throw new IllegalStateException("Calculated reward is NaA");
+            throw new IllegalStateException("Calculated reward is NaN");
         }
 
         // This will return 1 if all the enemy's monsters are dead, 0 if all the AI's monster
@@ -228,12 +246,12 @@ public class MCTSBattleAI implements IBattleAI {
         Node child;
         if (action instanceof IMonsterMove move) {
             child = new Node(
-                    battleSimulation.simulateDoMove(participantToControl, move, battleSimulation.getState()),
+                    battleSimulation.simulateDoMove(node.getParticipant(), move, node.getState()),
                     node,
                     move);
         } else if (action instanceof IMonster monster) {
             child = new Node(
-                    battleSimulation.simulateSwitchMonster(participantToControl, monster, battleSimulation.getState()),
+                    battleSimulation.simulateSwitchMonster(node.getParticipant(), monster, node.getState()),
                     node,
                     monster);
         } else {
@@ -244,10 +262,12 @@ public class MCTSBattleAI implements IBattleAI {
     }
 
     private Object untriedAction(Node node) {
-        var possibleMoves = participantToControl.getActiveMonster().getMoves();
-        var possibleSwitchActions = participantToControl.getMonsterTeam().stream()
-                .filter(m -> m.getHitPoints() > 0 && m != participantToControl.getActiveMonster()).toList();
+        var possibleMoves = node.getParticipant().getActiveMonster().getMoves();
+        var possibleSwitchActions = node.getParticipant().getMonsterTeam().stream()
+                .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster()).toList();
         List<Object> possibleActions = new ArrayList<Object>();
+        // TODO: If the node.getParticipant() is not us, then check the knowlegde state
+
         for (IMonsterMove move : possibleMoves) {
             if (node.getChildren().stream().noneMatch(c -> c.getParentMove() == move)) {
                 possibleActions.add(move);
@@ -259,17 +279,18 @@ public class MCTSBattleAI implements IBattleAI {
             }
         }
         var possibleActionCount = possibleActions.size();
-        if (possibleActionCount == 0) return -1;
-        else {
+        if (possibleActionCount == 0){
+            return -1;
+        }else {
             var rand = new Random();
             return possibleActions.get(rand.nextInt((int) possibleActionCount));
         }
     }
 
     private boolean fullyExpanded(Node node) {
-        var moveCount = participantToControl.getActiveMonster().getMoves().size();
-        var switchCount = participantToControl.getMonsterTeam().stream()
-                .filter(m -> m.getHitPoints() > 0 && m != participantToControl.getActiveMonster())
+        var moveCount = node.getParticipant().getActiveMonster().getMoves().size();
+        var switchCount = node.getParticipant().getMonsterTeam().stream()
+                .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster())
                 .count();
         return node.getChildren().size() >= (moveCount + switchCount);
     }

@@ -195,12 +195,13 @@ public class BattleSimulation implements IBattleSimulation {
 
     @Override
     public IBattleState simulateDoMove(IBattleParticipant battleParticipant, IMonsterMove move, IBattleState currentState) {
-        //Maybe add a check, that the battleParticipant is actually the active participant
 
         BattleState newState = (BattleState) currentState.clone();
+        if(!newState.getActiveParticipant().equals(battleParticipant)){
+            throw new IllegalStateException("Simulated move for battle participant, is not the active participant!");
+        }
 
-        var callingParticipant = newState.getPlayer().equals(battleParticipant) ? newState.getPlayer() : newState.getEnemy();
-        IMonster source = callingParticipant.getActiveMonster();
+        IMonster source = newState.getActiveParticipant().getActiveMonster();
         IBattleParticipant opposingParticipant;
         if (newState.isPlayersTurn()) {
             opposingParticipant = newState.getEnemy();
@@ -235,9 +236,10 @@ public class BattleSimulation implements IBattleSimulation {
     @Override
     public IBattleState simulateSwitchMonster(IBattleParticipant participant, IMonster monster, IBattleState currentState) {
         BattleState newState = (BattleState) currentState.clone();
-
-        var callingParticipant = newState.getPlayer().equals(participant) ? newState.getPlayer() : newState.getEnemy();
-        callingParticipant.setActiveMonster(monster.clone());
+        if(!newState.getActiveParticipant().equals(participant)){
+            throw new IllegalStateException("Simulated switch for battle participant, is not the active participant!");
+        }
+        newState.getActiveParticipant().setActiveMonster(monster.clone());
 
         switchTurns(newState);
 
