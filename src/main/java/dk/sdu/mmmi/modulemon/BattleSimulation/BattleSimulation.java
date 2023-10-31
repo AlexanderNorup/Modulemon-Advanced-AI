@@ -199,7 +199,8 @@ public class BattleSimulation implements IBattleSimulation {
 
         BattleState newState = (BattleState) currentState.clone();
 
-        IMonster source = newState.getActiveParticipant().getActiveMonster();
+        var callingParticipant = newState.getPlayer().equals(battleParticipant) ? newState.getPlayer() : newState.getEnemy();
+        IMonster source = callingParticipant.getActiveMonster();
         IBattleParticipant opposingParticipant;
         if (newState.isPlayersTurn()) {
             opposingParticipant = newState.getEnemy();
@@ -233,10 +234,10 @@ public class BattleSimulation implements IBattleSimulation {
 
     @Override
     public IBattleState simulateSwitchMonster(IBattleParticipant participant, IMonster monster, IBattleState currentState) {
-
         BattleState newState = (BattleState) currentState.clone();
 
-        newState.getActiveParticipant().setActiveMonster(monster.clone());
+        var callingParticipant = newState.getPlayer().equals(participant) ? newState.getPlayer() : newState.getEnemy();
+        callingParticipant.setActiveMonster(monster.clone());
 
         switchTurns(newState);
 

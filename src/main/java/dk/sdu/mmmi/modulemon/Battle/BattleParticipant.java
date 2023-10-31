@@ -46,6 +46,9 @@ public class BattleParticipant implements IBattleParticipant {
 
     @Override
     public void setActiveMonster(IMonster monster) {
+        if(monster == null || !this.monsterTeam.stream().anyMatch(x-> x.equals(monster))){
+            throw new IllegalArgumentException("You are not allowed to set active monster to a monster that's not on your team!");
+        }
         this.activeMonster = monster;
     }
 
@@ -66,7 +69,6 @@ public class BattleParticipant implements IBattleParticipant {
             }
         }
         return new BattleParticipant(cloneTeam, cloneActiveMonster, this.playerControlled, this.uuid);
-
     }
 
     @Override
