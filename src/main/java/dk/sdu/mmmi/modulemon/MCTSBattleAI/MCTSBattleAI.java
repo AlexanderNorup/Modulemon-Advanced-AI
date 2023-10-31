@@ -94,7 +94,7 @@ public class MCTSBattleAI implements IBattleAI {
     private String explainNodeOptions(Node rootNode){
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("MCTS has ").append(rootNode.getChildren().size()).append(" options. In decreasing order of reward they are:").append('\n');
+        stringBuilder.append("MCTS (").append(rootNode.getState().getPlayer().equals(this.participantToControl) ? "player" : "opponent").append(" side) has ").append(rootNode.getChildren().size()).append(" options. In decreasing order of reward they are:").append('\n');
         for(var node : rootNode.getChildren().stream().sorted((a,b) -> Float.compare(a.getReward(), b.getReward())*-1).toArray()){
             stringBuilder.append("- ").append(node.toString()).append('\n');
         }
