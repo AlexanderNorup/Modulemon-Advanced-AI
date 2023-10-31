@@ -60,7 +60,7 @@ public class MCTSBattleAI implements IBattleAI {
 
     @Override
     public void doAction() {
-        System.out.println("Starting action finding (time limit: " + this.timeLimit + ")");
+        System.out.printf("Starting action finding (time limit: %dms)%n", this.timeLimit);
         numSimulatedActions = 0;
 
         // Update state, should the enemy have changed their monster
@@ -78,7 +78,9 @@ public class MCTSBattleAI implements IBattleAI {
 
         var bestChild = bestChild(rootNode, 0);
 
-        System.out.println(explainBestChild(bestChild));
+        System.out.println(String.format("Simulated %d actions in %dms", this.numSimulatedActions, ((System.nanoTime() - startTime) / 1000000)));
+        System.out.println(explainNodeOptions(rootNode));
+//        System.out.println(explainBestChild(bestChild));
 
         if (bestChild.getParentMove() != null) {
             battleSimulation.doMove(participantToControl, bestChild.getParentMove());
@@ -89,12 +91,28 @@ public class MCTSBattleAI implements IBattleAI {
         }
     }
 
+    private String explainNodeOptions(Node rootNode){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("MCTS has ").append(rootNode.getChildren().size()).append(" options. In decreasing order of reward they are:").append('\n');
+        for(var node : rootNode.getChildren().stream().sorted((a,b) -> Float.compare(a.getReward(), b.getReward())*-1).toArray()){
+            stringBuilder.append("- ").append(node.toString()).append('\n');
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Will iterate the best rewards under a given node.
+     * A nice way to get an overview over what the best scenario (according to MCTS) below a certain Node is.
+     * It's not suuper usefull, because it has to assume the player is playing in their favour, which they often arent.
+     */
     private String explainBestChild(Node bestChild) {
         StringBuilder stringBuilder = new StringBuilder();
         String action = bestChild.getParentMove() != null ?
                 "using " + bestChild.getParentMove().getName()
                 : "switching to " + bestChild.getParentSwitch();
-        stringBuilder.append("MCTS is ").append(action).append(" because it sees the following best scenario: (Simulated ").append(this.numSimulatedActions).append(" actions)").append('\n');
+        stringBuilder.append("Looking forward from ").append(action).append(", it sees the following best scenario:").append('\n');
 
         var currentlyExpanding = bestChild;
         var isMCTS = false;

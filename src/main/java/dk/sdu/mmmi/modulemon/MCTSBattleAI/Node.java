@@ -103,4 +103,19 @@ public class Node {
     private IBattleParticipant getOpposingParticipant(IBattleParticipant current, IBattleState state) {
         return state.getPlayer().equals(current) ? state.getEnemy() : state.getPlayer();
     }
+
+    @Override
+    public String toString() {
+        if(this.parent != null){
+            String action = "doing nothing";
+            if(this.parentMove != null){
+                action = String.format("%s using %s", this.parent.getParticipant().getActiveMonster().getName(), this.parentMove);
+            }else if(this.parentSwitch != null){
+                action = "Switching to " + this.parentSwitch;
+            }
+            return String.format("%s (Reward: %.8f)", action, this.reward);
+        }else{
+            return "Root node";
+        }
+    }
 }

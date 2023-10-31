@@ -142,6 +142,6 @@ public class Monster implements IMonster {
 
     @Override
     public String toString() {
-        return this.getName();
+        return String.format("%s (HP: %d/%d)", this.getName(), this.getHitPoints(), this.getMaxHitPoints());
     }
 }
