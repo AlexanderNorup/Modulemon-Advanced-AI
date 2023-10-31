@@ -202,12 +202,8 @@ public class BattleSimulation implements IBattleSimulation {
         }
 
         IMonster source = newState.getActiveParticipant().getActiveMonster();
-        IBattleParticipant opposingParticipant;
-        if (newState.isPlayersTurn()) {
-            opposingParticipant = newState.getEnemy();
-        } else {
-            opposingParticipant = newState.getPlayer();
-        }
+        IBattleParticipant opposingParticipant = newState.getPlayer().equals(newState.getActiveParticipant())
+                ? newState.getPlayer() : newState.getEnemy();
         IMonster target = opposingParticipant.getActiveMonster();
 
         int damage = 0;
@@ -218,14 +214,11 @@ public class BattleSimulation implements IBattleSimulation {
         int newHitPoints = target.getHitPoints()-damage;
         if (newHitPoints>0) {
             target.setHitPoints(newHitPoints);
-
         } else {
             target.setHitPoints(0);
             Optional<IMonster> nextMonster = opposingParticipant.getMonsterTeam().stream().filter(x -> x.getHitPoints() > 0).findFirst();
 
-            if (nextMonster.isPresent()) {
-                opposingParticipant.setActiveMonster(nextMonster.get());
-            }
+            nextMonster.ifPresent(opposingParticipant::setActiveMonster);
         }
 
         switchTurns(newState);
@@ -239,7 +232,7 @@ public class BattleSimulation implements IBattleSimulation {
         if(!newState.getActiveParticipant().equals(participant)){
             throw new IllegalStateException("Simulated switch for battle participant, is not the active participant!");
         }
-        newState.getActiveParticipant().setActiveMonster(monster.clone());
+        newState.getActiveParticipant().setActiveMonster(monster);
 
         switchTurns(newState);
 

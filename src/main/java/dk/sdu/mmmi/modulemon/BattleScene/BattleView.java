@@ -149,6 +149,7 @@ public class BattleView implements IGameViewService, IBattleView {
         IBattleAIFactory desiredAI;
         if (settings.getSetting("AI").equals("MCTS")) {
             desiredAI = new MCTSBattleAIFactory();
+            ((MCTSBattleAIFactory) desiredAI).setSettingsService(settings);
         } else if (settings.getSetting("AI").equals("Simple")) {
             desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
         } else {

@@ -24,8 +24,8 @@ public class MCTSBattleAI implements IBattleAI {
     private long startTime;
     private int defaultTimeLimitMs = 1000;
     private IGameSettings settings = null;
-    private long  timeLimit = defaultTimeLimitMs;
-    private final int MAX_SIMULATE_DEPTH = 20;
+    private long timeLimit = defaultTimeLimitMs;
+    private final int MAX_SIMULATE_DEPTH = 5;
 
     private final float EXPLORATION_COEFFICIENT = (float) (1.0 / Math.sqrt(2));
 
@@ -56,9 +56,12 @@ public class MCTSBattleAI implements IBattleAI {
         return (int) limitObj;
     }
 
+    private int numSimulatedActions = 0;
+
     @Override
     public void doAction() {
-        System.out.println("Starting action finding");
+        System.out.println("Starting action finding (time limit: " + this.timeLimit + ")");
+        numSimulatedActions = 0;
 
         // Update state, should the enemy have changed their monster
         if (!knowledgeState.getEnemyMonsters().contains(opposingParticipant.getActiveMonster())) {
@@ -91,7 +94,7 @@ public class MCTSBattleAI implements IBattleAI {
         String action = bestChild.getParentMove() != null ?
                 "using " + bestChild.getParentMove().getName()
                 : "switching to " + bestChild.getParentSwitch();
-        stringBuilder.append("MCTS is ").append(action).append(" because it sees the following best scenario:").append('\n');
+        stringBuilder.append("MCTS is ").append(action).append(" because it sees the following best scenario: (Simulated ").append(this.numSimulatedActions).append(" actions)").append('\n');
 
         var currentlyExpanding = bestChild;
         var isMCTS = false;
@@ -106,13 +109,12 @@ public class MCTSBattleAI implements IBattleAI {
             var user = isMCTS ? "MCTS" : "The player";
 
             var bestChildAction = bestChildOfCurrentlyExpanding.getParentMove() != null ?
-                    "using " + bestChildOfCurrentlyExpanding.getParentMove().getName()
-                    : "switching to " + bestChildOfCurrentlyExpanding.getParentSwitch();
+                    " uses " + bestChildOfCurrentlyExpanding.getParentMove().getName()
+                    : " switches to " + bestChildOfCurrentlyExpanding.getParentSwitch();
             stringBuilder.append("- Turn ")
                     .append(turnCount)
                     .append(": ")
                     .append(user)
-                    .append(" uses ")
                     .append(bestChildAction)
                     .append(" (Reward: ")
                     .append(bestChildOfCurrentlyExpanding.getReward())
@@ -128,6 +130,9 @@ public class MCTSBattleAI implements IBattleAI {
     }
 
     private void backpropagation(Node node, float reward) {
+        if (Float.isNaN(reward)) {
+            throw new IllegalArgumentException("Reward must be a number");
+        }
         do {
             node.incrementTimesVisited();
             node.setReward(node.getReward() + reward);
@@ -141,20 +146,41 @@ public class MCTSBattleAI implements IBattleAI {
 
         IBattleParticipant participant1 = participantToControl;
         IBattleParticipant participant2 = opposingParticipant;
-        if(node.getParticipant().equals(opposingParticipant)){
+        if (node.getParticipant().equals(opposingParticipant)) {
             participant1 = opposingParticipant;
             participant2 = participantToControl;
         }
 
+        Object action1 = new Object();
+        Object action2 = new Object();
+        IBattleParticipant lastParticipant = participant1;
+        List<IBattleState> states = new ArrayList<IBattleState>();
         while (!isTerminal(state) && depth < MAX_SIMULATE_DEPTH) {
-            var action1 = chooseRandomAction(participant1);
+            action1 = chooseRandomAction(getParticipantFromState(state, participant1));
             state = simulateAction(participant1, action1, state);
-            var action2 = chooseRandomAction(participant2);
-            state = simulateAction(participant2, action2, state);
+            states.add(state);
+            lastParticipant = participant1;
+            if (!isTerminal(state)) {
+                // Need to check for terminal state here as well, since participant2 might have lost.
+                action2 = chooseRandomAction(getParticipantFromState(state, participant2));
+                state = simulateAction(participant2, action2, state);
+                states.add(state);
+                lastParticipant = participant2;
+            }
             depth++;
         }
 
-        return getReward(state) * (1f/depth); // Making sure that the deeper, the worse reward
+        var reward = getReward(state);
+
+        if (reward > 0) {
+            reward *= (1f / depth); // Making sure that the deeper, the worse reward
+        }
+
+        return reward;
+    }
+
+    private IBattleParticipant getParticipantFromState(IBattleState state, IBattleParticipant existingParticipant) {
+        return state.getPlayer().equals(existingParticipant) ? state.getPlayer() : state.getEnemy();
     }
 
     private float getReward(IBattleState battleState) {
@@ -197,6 +223,7 @@ public class MCTSBattleAI implements IBattleAI {
     }
 
     private IBattleState simulateAction(IBattleParticipant actor, Object action, IBattleState currentState) {
+        this.numSimulatedActions++;
         if (action instanceof IMonsterMove move) {
             return battleSimulation.simulateDoMove(actor, move, currentState);
         } else if (action instanceof IMonster monster) {
@@ -226,6 +253,10 @@ public class MCTSBattleAI implements IBattleAI {
                 bestChild = child;
                 bestUCT = uct;
             }
+        }
+
+        if (bestChild == null) {
+            System.out.println("About to return null on best child");
         }
 
         return bestChild;
@@ -279,9 +310,9 @@ public class MCTSBattleAI implements IBattleAI {
             }
         }
         var possibleActionCount = possibleActions.size();
-        if (possibleActionCount == 0){
+        if (possibleActionCount == 0) {
             return -1;
-        }else {
+        } else {
             var rand = new Random();
             return possibleActions.get(rand.nextInt((int) possibleActionCount));
         }
@@ -292,24 +323,36 @@ public class MCTSBattleAI implements IBattleAI {
         var switchCount = node.getParticipant().getMonsterTeam().stream()
                 .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster())
                 .count();
+
+        if ((moveCount + switchCount) <= 0) {
+            System.out.println("SYGT TRRÆLS");
+        }
+
         return node.getChildren().size() >= (moveCount + switchCount);
     }
 
     private boolean isTerminal(IBattleState battleState) {
-        IBattleParticipant enemy = battleState.getPlayer().equals(this.participantToControl)
-                ? battleState.getEnemy()
-                : battleState.getPlayer();
+        IBattleParticipant thisParticipant = battleState.getPlayer();
+        IBattleParticipant opposingParticipant = battleState.getEnemy();
+
+        if (!thisParticipant.equals(this.participantToControl)) {
+            opposingParticipant = battleState.getPlayer();
+            thisParticipant = battleState.getEnemy();
+        }
 
         // Check if all the AIs monsters are dead
-        boolean allOwnMonstersDead = participantToControl.getMonsterTeam().stream()
+        boolean allOwnMonstersDead = thisParticipant.getMonsterTeam().stream()
                 .allMatch(x -> x.getHitPoints() <= 0);
-        if (allOwnMonstersDead) return true;
 
         // Check if all the opposing participant's (known) monster are dead
-        boolean allEnemyMonstersDead = enemy.getMonsterTeam().stream()
-                .filter(x -> knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
+        boolean allEnemyMonstersDead = opposingParticipant.getMonsterTeam().stream()
+//                .filter(x -> knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
                 .allMatch(x -> x.getHitPoints() <= 0);
-        return allEnemyMonstersDead;
+        if (allEnemyMonstersDead && allOwnMonstersDead) {
+            System.out.println("WTF");
+        }
+
+        return allEnemyMonstersDead || allOwnMonstersDead;
     }
 
     @Override
