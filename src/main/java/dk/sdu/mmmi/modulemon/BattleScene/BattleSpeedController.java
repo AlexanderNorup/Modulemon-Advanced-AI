@@ -2,8 +2,8 @@ package dk.sdu.mmmi.modulemon.BattleScene;
 
 public class BattleSpeedController {
 
-    private static final int incrementAmount = 200;
-    private int speed = 1000;
+    private static final int incrementAmount = 100;
+    private int speed = 1500;
 
     public void increaseSpeed(){
         speed +=incrementAmount;

@@ -2,6 +2,7 @@ package dk.sdu.mmmi.modulemon.common.animations;
 
 import com.badlogic.gdx.utils.TimeUtils;
 import dk.sdu.mmmi.modulemon.common.data.GameData;
+import dk.sdu.mmmi.modulemon.common.drawing.MathUtils;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -66,7 +67,7 @@ public abstract class BaseAnimation {
         return Timeline[Timeline.length - 1];
     }
 
-    public boolean isStarted(){
+    public boolean isStarted() {
         return this.isStarted;
     }
 
@@ -110,18 +111,36 @@ public abstract class BaseAnimation {
         return intermediateValues;
     }
 
-    public void runEventDoneIfSet(){
-        if(this.onEventDone != null){
+    public void runEventDoneIfSet() {
+        if (this.onEventDone != null) {
             this.onEventDone.run();
         }
     }
 
+    public void forceEndAnimation() {
+        millisecondCounter = animationStartMillis + getAnimationLength();
+        isFinished = true;
+    }
 
-    public void setOnEventDone(Runnable runnable){
+    public void rescaleAnimation(int newLength) {
+        if (newLength <= 0) {
+            forceEndAnimation();
+        }
+
+        var oldAnimationLength = getAnimationLength();
+        var newTimeLine = new int[Timeline.length];
+        for (int i = 0; i < newTimeLine.length; i++) {
+            newTimeLine[i] = (int) MathUtils.map(Timeline[i], 0, oldAnimationLength, 0, newLength);
+        }
+        currentTimelineIndex = 0;
+        Timeline = newTimeLine;
+    }
+
+    public void setOnEventDone(Runnable runnable) {
         this.onEventDone = runnable;
     }
 
-    public Runnable getOnEventDone(){
+    public Runnable getOnEventDone() {
         return this.onEventDone;
     }
 }

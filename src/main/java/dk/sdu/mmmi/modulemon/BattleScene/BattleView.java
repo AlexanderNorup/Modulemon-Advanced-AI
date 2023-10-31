@@ -64,7 +64,6 @@ public class BattleView implements IGameViewService, IBattleView {
 
     private IGameViewManager gameViewManager;
 
-
     /**
      * Creates the necessary variables used for custom fonts.
      */
@@ -282,6 +281,15 @@ public class BattleView implements IGameViewService, IBattleView {
             BaseAnimation currentAnimation = blockingAnimations.peek();
             if (!currentAnimation.isStarted()) {
                 currentAnimation.start();
+            }
+
+            if(forcedAIDelay.getSpeed() <= 0){
+                currentAnimation.forceEndAnimation();
+            }else if(currentAnimation.getAnimationLength() > forcedAIDelay.getSpeed()
+                    && menuState == MenuState.SPECTATOR){ // We only rescale animations while spectating
+                // While we can re-scale all animations (even to be longer), we only
+                // scale animations that are longer than our forcedAIDelay.
+                currentAnimation.rescaleAnimation(forcedAIDelay.getSpeed());
             }
 
             currentAnimation.update(gameData);
