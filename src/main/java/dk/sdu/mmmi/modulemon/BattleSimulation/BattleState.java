@@ -46,4 +46,9 @@ public class BattleState implements IBattleState {
         clone.setActiveParticipant(activeParticipant);
         return clone;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s vs. %s (it is %s's turn)", this.player.getActiveMonster(), this.enemy.getActiveMonster(), this.activeParticipant.getActiveMonster().getName());
+    }
 }

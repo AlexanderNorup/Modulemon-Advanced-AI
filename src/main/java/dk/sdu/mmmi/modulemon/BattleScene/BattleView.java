@@ -53,6 +53,7 @@ public class BattleView implements IGameViewService, IBattleView {
     private Music _battleMusic;
     private Sound _winSound;
     private Sound _loseSound;
+    private Sound _crashSound;
     private MenuState menuState = MenuState.DEFAULT;
     private BattleSpeedController forcedAIDelay;
     private Queue<BaseAnimation> blockingAnimations;
@@ -126,6 +127,7 @@ public class BattleView implements IGameViewService, IBattleView {
         _battleMusic = loader.getMusicAsset("/music/battle_music_" + battleMusic_type.toLowerCase() + ".ogg", this.getClass());
         _winSound = loader.getSoundAsset("/sounds/you_won.ogg", this.getClass());
         _loseSound = loader.getSoundAsset("/sounds/you_lost.ogg", this.getClass());
+        _crashSound = loader.getSoundAsset("/sounds/metal-pipe.ogg", this.getClass());
         setBattleAIFactory();
         _battleSimulation.StartBattle(player, enemy);
         _currentBattleState = _battleSimulation.getState().clone(); // Set an initial battle-state
@@ -149,6 +151,7 @@ public class BattleView implements IGameViewService, IBattleView {
         IBattleAIFactory desiredAI;
         if (settings.getSetting("AI").equals("MCTS")) {
             desiredAI = new MCTSBattleAIFactory();
+            ((MCTSBattleAIFactory) desiredAI).setSettingsService(settings);
         } else if (settings.getSetting("AI").equals("Simple")) {
             desiredAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
         } else {
@@ -206,7 +209,6 @@ public class BattleView implements IGameViewService, IBattleView {
         this._battleScene = battleScene;
     }
 
-
     @Override
     public void update(GameData gameData, IGameViewManager gameViewManager) {
         if (!_isInitialized || _battleSimulation == null || !_battleStarted) {
@@ -253,18 +255,18 @@ public class BattleView implements IGameViewService, IBattleView {
         updateHasRunOnce = true;
 
         // Check the current AI is done thinking
-        if(_battleSimulation.hasNextBattleEvent()){
+        if (_battleSimulation.hasNextBattleEvent()) {
             _battleScene.setShowEnemySpinner(false);
             _battleScene.setShowPlayerSpinner(false);
-        }else{
-            if(_battleSimulation.isPlayerControlledByAI() && _battleSimulation.getState().isPlayersTurn()){
+        } else {
+            if (_battleSimulation.isPlayerControlledByAI() && _battleSimulation.getState().isPlayersTurn()) {
                 // there is no current event, and the player is controlled by an AI
                 _battleScene.setShowPlayerSpinner(true);
                 _battleScene.setShowEnemySpinner(false);
-            }else if(!_battleSimulation.getState().isPlayersTurn()){
+            } else if (!_battleSimulation.getState().isPlayersTurn()) {
                 _battleScene.setShowPlayerSpinner(false);
                 _battleScene.setShowEnemySpinner(true);
-            }else {
+            } else {
                 _battleScene.setShowEnemySpinner(false);
                 _battleScene.setShowPlayerSpinner(false);
             }
@@ -283,10 +285,10 @@ public class BattleView implements IGameViewService, IBattleView {
                 currentAnimation.start();
             }
 
-            if(forcedAIDelay.getSpeed() <= 0){
+            if (forcedAIDelay.getSpeed() <= 0) {
                 currentAnimation.forceEndAnimation();
-            }else if(currentAnimation.getAnimationLength() > forcedAIDelay.getSpeed()
-                    && menuState == MenuState.SPECTATOR){ // We only rescale animations while spectating
+            } else if (currentAnimation.getAnimationLength() > forcedAIDelay.getSpeed()
+                    && menuState == MenuState.SPECTATOR) { // We only rescale animations while spectating
                 // While we can re-scale all animations (even to be longer), we only
                 // scale animations that are longer than our forcedAIDelay.
                 currentAnimation.rescaleAnimation(forcedAIDelay.getSpeed());
@@ -358,7 +360,7 @@ public class BattleView implements IGameViewService, IBattleView {
                     PlayerChangeInAnimation changeInAnimation = new PlayerChangeInAnimation(_battleScene);
                     blockingAnimations.add(changeInAnimation);
 
-                    if(forcedAIDelay.getSpeed() > 0) {
+                    if (forcedAIDelay.getSpeed() > 0) {
                         addEmptyAnimation(forcedAIDelay.getSpeed(), false);
                     }
                     this._battleScene.setTextToDisplay(battleEvent.getText());
@@ -409,10 +411,24 @@ public class BattleView implements IGameViewService, IBattleView {
                     e.start();
                     blockingAnimations.add(e);
                 }
+            } else if (battleEvent instanceof AICrashedEvent crashEvent) {
+                BaseAnimation anim;
+                if (crashEvent.getParticipant().equals(_battleSimulation.getState().getPlayer())) {
+                    anim = new PlayerCrashAnimation(_battleScene);
+                } else {
+                    anim = new EnemyCrashAnimation(_battleScene);
+                }
+
+                this._crashSound.play((int) settings.getSetting(SettingsRegistry.getInstance().getSoundVolumeSetting()) / 100f);
+                anim.start();
+                anim.setOnEventDone(() -> _battleScene.resetPositions());
+                blockingAnimations.add(anim);
+                _currentBattleState = battleEvent.getState();
+                this._battleScene.setTextToDisplay(battleEvent.getText());
             } else {
                 //Unknown event (Or TextEvent)
                 _currentBattleState = eventState;
-                if(forcedAIDelay.getSpeed() > 0) {
+                if (forcedAIDelay.getSpeed() > 0) {
                     addEmptyAnimation(forcedAIDelay.getSpeed(), true);
                 }
                 this._battleScene.setTextToDisplay(battleEvent.getText());

@@ -78,4 +78,9 @@ public class BattleParticipant implements IBattleParticipant {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Participant with %s (UUID: %s...)", this.activeMonster.toString(), this.uuid.toString().substring(0,5));
+    }
 }

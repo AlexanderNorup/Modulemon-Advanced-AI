@@ -32,7 +32,9 @@ public class Main {
         var battleMonsterProcessor = new BattleMonsterProcessor();
 
         var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
+        battleAI.setSettingsService(settings);
         var mctsBattleAI = new MCTSBattleAIFactory();
+        mctsBattleAI.setSettingsService(settings);
         var simpleBattleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
 
         var battleSimulation = new BattleSimulation();
