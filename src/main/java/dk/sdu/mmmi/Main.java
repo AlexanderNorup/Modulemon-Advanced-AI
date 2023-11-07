@@ -5,6 +5,7 @@ import dk.sdu.mmmi.modulemon.BattleSimulation.BattleSimulation;
 import dk.sdu.mmmi.modulemon.Collision.CollisionProcessing;
 import dk.sdu.mmmi.modulemon.CustomBattleView.CustomBattleView;
 import dk.sdu.mmmi.modulemon.Game;
+import dk.sdu.mmmi.modulemon.HeadlessBattleView.HeadlessBattleView;
 import dk.sdu.mmmi.modulemon.Interaction.InteractProcessing;
 import dk.sdu.mmmi.modulemon.MCTSBattleAI.MCTSBattleAIFactory;
 import dk.sdu.mmmi.modulemon.Map.MapView;
@@ -55,6 +56,13 @@ public class Main {
         customBattle.addBattleAI(mctsBattleAI);
         customBattle.addBattleAI(simpleBattleAI);
 
+        var headlessBattle = new HeadlessBattleView();
+        headlessBattle.setSettings(settings);
+        headlessBattle.addBattleAI(battleAI);
+        headlessBattle.addBattleAI(mctsBattleAI);
+        headlessBattle.addBattleAI(simpleBattleAI);
+        headlessBattle.setMonsterRegistry(monsterRegistry);
+
 
         // Map stuff
         var map = new MapView();
@@ -91,6 +99,7 @@ public class Main {
         game.setSettingsService(settings);
         game.addGameViewServiceList(battle);
         game.addGameViewServiceList(customBattle);
+        game.addGameViewServiceList(headlessBattle);
         game.addGameViewServiceList(map);
     }
 }

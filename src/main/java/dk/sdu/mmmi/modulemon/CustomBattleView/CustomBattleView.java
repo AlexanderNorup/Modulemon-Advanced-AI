@@ -350,7 +350,7 @@ public class CustomBattleView implements IGameViewService {
     }
 
     private IBattleAIFactory getSelectedAI(Integer index) {
-        if (index == null) {
+        if (index == null || battleAIFactoryList.size() == 0) {
             return null;
         }
         return this.battleAIFactoryList.get(index % battleAIFactoryList.size());
