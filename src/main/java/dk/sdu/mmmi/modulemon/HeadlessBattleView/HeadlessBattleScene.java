@@ -47,7 +47,7 @@ public class HeadlessBattleScene {
         int textGap = 75;
         int leftOffset = 150;
         int topOffset = 50;
-        var textHeight = 15;
+
         for (var i = 0; i < teams.length; i++) {
             var teamTextColor = teamIndex == i ? SelectColor : Color.WHITE;
             var AITextColor = AIIndex == i ? SelectColor : Color.WHITE;
@@ -56,6 +56,7 @@ public class HeadlessBattleScene {
             text.setCoordinateMode(TextUtils.CoordinateMode.BOTTOM_RIGHT);
             text.drawBigBoldRoboto(spriteBatch, teams[i], teamTextColor, screenWidth / 2f, yPos);
             text.setCoordinateMode(TextUtils.CoordinateMode.CENTER);
+            var textHeight = 15;
             text.drawNormalBoldRoboto(spriteBatch, AIText, AITextColor, screenWidth / 2f + leftOffset, yPos + textHeight);
             if (choosing && AIIndex == i) {
                 var arrowSpacingFromEdge = 20;
@@ -69,6 +70,7 @@ public class HeadlessBattleScene {
         var amountHeight = (screenHeight / 2f) - 100;
         text.drawNormalBoldRoboto(spriteBatch, "Battle amount:", choosing ? Color.WHITE : amountColor, screenWidth / 2f, amountHeight);
         text.setCoordinateMode(TextUtils.CoordinateMode.CENTER);
+        var textHeight = 7.5f;
         if (choosing && AIIndex == -1) {
             var arrowSpacingFromEdge = 20;
             var textLength = 125;
