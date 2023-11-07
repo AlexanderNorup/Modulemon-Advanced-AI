@@ -11,18 +11,13 @@ public class MonsterMove implements IMonsterMove {
     private MonsterType type;
     private String soundPath;
 
-    public MonsterMove(String name, int damage, MonsterType type, String soundPath) {
+    private float accuracy = 1f;
+    public MonsterMove(String name, int damage, MonsterType type, String soundPath, float accuracy) {
         this.name = name;
         this.damage = damage;
         this.type = type;
         this.soundPath = soundPath;
-    }
-
-    public MonsterMove(String name, int damage, MonsterType type) {
-        this.name = name;
-        this.damage = damage;
-        this.type = type;
-        this.soundPath = "sounds/tackle.ogg";
+        this.accuracy = accuracy;
     }
 
     @Override
@@ -58,5 +53,9 @@ public class MonsterMove implements IMonsterMove {
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    public float getAccuracy() {
+        return accuracy;
     }
 }
