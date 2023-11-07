@@ -16,7 +16,6 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 public class MCTSBattleAI implements IBattleAI {
-
     private KnowledgeState knowledgeState;
     private IBattleParticipant participantToControl;
     private IBattleParticipant opposingParticipant;
@@ -30,7 +29,9 @@ public class MCTSBattleAI implements IBattleAI {
     private final float EXPLORATION_COEFFICIENT = (float) (1.0 / Math.sqrt(2));
 
     public MCTSBattleAI(IBattleSimulation battleSimulation, IBattleParticipant participantToControl, IGameSettings settings) {
-        knowledgeState = new KnowledgeState();
+        var enableKnowlegdeStates = (Boolean) settings.getSetting(SettingsRegistry.getInstance().getAIKnowlegdeStateEnabled());
+        System.out.println(String.format("MCTS AI using knowledge states: %b", enableKnowlegdeStates));
+        knowledgeState = new KnowledgeState(!enableKnowlegdeStates);
         this.participantToControl = participantToControl;
         this.opposingParticipant = participantToControl == battleSimulation.getState().getPlayer()
                 ? battleSimulation.getState().getEnemy()
@@ -138,7 +139,7 @@ public class MCTSBattleAI implements IBattleAI {
                     .append(bestChildOfCurrentlyExpanding.getReward())
                     .append(")");
 
-            if (isTerminal(currentlyExpanding.getState())) {
+            if (isTerminal(currentlyExpanding.getState(), true)) {
                 stringBuilder.append(" [TERMINAL STATE]");
             }
 
@@ -174,10 +175,10 @@ public class MCTSBattleAI implements IBattleAI {
             participant2 = participantToControl;
         }
 
-        while (!isTerminal(state) && depth < MAX_SIMULATE_DEPTH) {
+        while (!isTerminal(state, false) && depth < MAX_SIMULATE_DEPTH) {
             var action1 = chooseRandomAction(getParticipantFromState(state, participant1));
             state = simulateAction(participant1, action1, state);
-            if (!isTerminal(state)) {
+            if (!isTerminal(state, false)) {
                 // Need to check for terminal state here as well, since participant2 might have lost.
                 var action2 = chooseRandomAction(getParticipantFromState(state, participant2));
                 state = simulateAction(participant2, action2, state);
@@ -240,6 +241,9 @@ public class MCTSBattleAI implements IBattleAI {
     private IBattleState simulateAction(IBattleParticipant actor, Object action, IBattleState currentState) {
         this.numSimulatedActions++;
         if (action instanceof IMonsterMove move) {
+            if(move instanceof EmptyMove){
+                return battleSimulation.simulateDoMove(actor, null, currentState);
+            }
             return battleSimulation.simulateDoMove(actor, move, currentState);
         } else if (action instanceof IMonster monster) {
             return battleSimulation.simulateSwitchMonster(actor, monster, currentState);
@@ -248,7 +252,7 @@ public class MCTSBattleAI implements IBattleAI {
     }
 
     private Node treePolicy(Node node) {
-        while (!isTerminal(node.getState())) {
+        while (!isTerminal(node.getState(), true)) {
             if (!fullyExpanded(node)) {
                 return expandNode(node);
             } else {
@@ -287,10 +291,17 @@ public class MCTSBattleAI implements IBattleAI {
 
         Node child;
         if (action instanceof IMonsterMove move) {
-            child = new Node(
-                    battleSimulation.simulateDoMove(node.getParticipant(), move, node.getState()),
-                    node,
-                    move);
+            if(move instanceof EmptyMove){
+                child = new Node(
+                        battleSimulation.simulateDoMove(node.getParticipant(), null, node.getState()),
+                        node,
+                        move);
+            }else {
+                child = new Node(
+                        battleSimulation.simulateDoMove(node.getParticipant(), move, node.getState()),
+                        node,
+                        move);
+            }
         } else if (action instanceof IMonster monster) {
             child = new Node(
                     battleSimulation.simulateSwitchMonster(node.getParticipant(), monster, node.getState()),
@@ -304,22 +315,21 @@ public class MCTSBattleAI implements IBattleAI {
     }
 
     private Object untriedAction(Node node) {
-        var possibleMoves = node.getParticipant().getActiveMonster().getMoves();
-        var possibleSwitchActions = node.getParticipant().getMonsterTeam().stream()
-                .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster()).toList();
+        var allActions = getAllActionsForNode(node);
         List<Object> possibleActions = new ArrayList<Object>();
-        // TODO: If the node.getParticipant() is not us, then check the knowlegde state
 
-        for (IMonsterMove move : possibleMoves) {
-            if (node.getChildren().stream().noneMatch(c -> c.getParentMove() == move)) {
-                possibleActions.add(move);
+        for (var action : allActions ) {
+            if(action instanceof IMonsterMove move) {
+                if (node.getChildren().stream().noneMatch(c -> c.getParentMove() == move)) {
+                    possibleActions.add(move);
+                }
+            }else if(action instanceof IMonster switchMonster){
+                if (node.getChildren().stream().noneMatch(c -> c.getParentSwitch() == switchMonster)) {
+                    possibleActions.add(switchMonster);
+                }
             }
         }
-        for (IMonster monster : possibleSwitchActions) {
-            if (node.getChildren().stream().noneMatch(c -> c.getParentSwitch() == monster)) {
-                possibleActions.add(monster);
-            }
-        }
+
         var possibleActionCount = possibleActions.size();
         if (possibleActionCount == 0) {
             return -1;
@@ -329,16 +339,36 @@ public class MCTSBattleAI implements IBattleAI {
         }
     }
 
-    private boolean fullyExpanded(Node node) {
-        var moveCount = node.getParticipant().getActiveMonster().getMoves().size();
-        var switchCount = node.getParticipant().getMonsterTeam().stream()
-                .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster())
-                .count();
+    public List<Object> getAllActionsForNode(Node node){
+        var monster = node.getParticipant().getActiveMonster();
+        var possibleMoves = monster.getMoves();
+        var possibleSwitchActions = node.getParticipant().getMonsterTeam().stream()
+                .filter(m -> m.getHitPoints() > 0 && m != node.getParticipant().getActiveMonster()).toList();
 
-        return node.getChildren().size() >= (moveCount + switchCount);
+        boolean useKnowledgeState = !node.getParticipant().equals(this.participantToControl);
+
+        // If useKnowledgeState is true, then filter away all moves that haven't been seen before.
+        var actions =  Stream.concat(possibleMoves.stream().filter(x -> !useKnowledgeState || this.knowledgeState.hasSeenMove(monster, x)),
+                possibleSwitchActions.stream().filter(x -> !useKnowledgeState || this.knowledgeState.hasSeenMonster(x))).toList();
+
+        if(actions.isEmpty()){
+            if(useKnowledgeState){
+                actions = new ArrayList<>(1);
+                actions.add(new EmptyMove());
+            }else{
+                throw new IllegalStateException(String.format("There were no actions for the node: %s", node));
+            }
+        }
+
+        return actions;
     }
 
-    private boolean isTerminal(IBattleState battleState) {
+    private boolean fullyExpanded(Node node) {
+        var numActions = getAllActionsForNode(node).size();
+        return node.getChildren().size() >= numActions ;
+    }
+
+    private boolean isTerminal(IBattleState battleState, boolean useKnowlegdeState) {
         IBattleParticipant thisParticipant = battleState.getPlayer();
         IBattleParticipant opposingParticipant = battleState.getEnemy();
 
@@ -353,7 +383,7 @@ public class MCTSBattleAI implements IBattleAI {
 
         // Check if all the opposing participant's (known) monster are dead
         boolean allEnemyMonstersDead = opposingParticipant.getMonsterTeam().stream()
-//                .filter(x -> knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
+                .filter(x -> !useKnowlegdeState || knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
                 .allMatch(x -> x.getHitPoints() <= 0);
 
         return allEnemyMonstersDead || allOwnMonstersDead;

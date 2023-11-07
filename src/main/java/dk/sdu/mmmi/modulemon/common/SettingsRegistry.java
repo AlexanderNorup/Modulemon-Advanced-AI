@@ -13,6 +13,7 @@ public class SettingsRegistry {
     private UUID music_volume = UUID.randomUUID();
     private UUID sound_volume = UUID.randomUUID();
     private UUID ai_alphaBeta = UUID.randomUUID();
+    private UUID ai_knowlegdeState = UUID.randomUUID();
     private UUID ai_processing_time = UUID.randomUUID();
     private UUID rectangle_style = UUID.randomUUID();
     private UUID battle_theme = UUID.randomUUID();
@@ -33,6 +34,7 @@ public class SettingsRegistry {
         settingsMap.put(music_volume, "musicVolume");
         settingsMap.put(sound_volume, "soundVolume");
         settingsMap.put(ai_alphaBeta, "AI alpha-beta pruning");
+        settingsMap.put(ai_knowlegdeState, "AI knowlegde state");
         settingsMap.put(ai_processing_time, "AI processing time");
         settingsMap.put(rectangle_style, "personaRectangles");
         settingsMap.put(battle_theme, "battleMusicTheme");
@@ -51,6 +53,9 @@ public class SettingsRegistry {
         return settingsMap.get(sound_volume);
     }
 
+    public String getAIKnowlegdeStateEnabled(){
+        return settingsMap.get(ai_knowlegdeState);
+    }
     public String getAIAlphaBetaSetting(){
         return settingsMap.get(ai_alphaBeta);
     }

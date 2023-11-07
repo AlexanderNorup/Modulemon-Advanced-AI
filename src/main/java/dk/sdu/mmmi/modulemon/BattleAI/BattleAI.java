@@ -30,7 +30,9 @@ public class BattleAI implements IBattleAI {
 
 
     public BattleAI(IBattleSimulation battleSimulation, IBattleParticipant participantToControl, IGameSettings settings) {
-        knowledgeState = new KnowledgeState();
+        var enableKnowlegdeStates = (Boolean) settings.getSetting(SettingsRegistry.getInstance().getAIKnowlegdeStateEnabled());
+        System.out.println(String.format("Minimax AI using knowledge states: %b", enableKnowlegdeStates));
+        knowledgeState = new KnowledgeState(!enableKnowlegdeStates);
         this.participantToControl = participantToControl;
         this.opposingParticipant = participantToControl == battleSimulation.getState().getPlayer()
                 ? battleSimulation.getState().getEnemy()
@@ -249,7 +251,7 @@ public class BattleAI implements IBattleAI {
 
         // Check if all the opposing participant's (known) monster are dead
         boolean allEnemyMonstersDead = enemy.getMonsterTeam().stream()
-                .filter(x -> knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
+                .filter(x -> knowledgeState.hasSeenMonster(x))  //only consider monsters we've seen
                 .allMatch(x -> x.getHitPoints()<=0);
         if (allEnemyMonstersDead) return true;
 
@@ -272,7 +274,7 @@ public class BattleAI implements IBattleAI {
 
         int enemyMonsterHPSum = 0;
         for(IMonster monster : opposingParticipant.getMonsterTeam()) {
-            if (knowledgeState.getEnemyMonsters().contains(monster)) {
+            if (knowledgeState.hasSeenMonster(monster)) {
                 if (monster.getHitPoints()>0) enemyMonsterHPSum += monster.getHitPoints();
             }
         }
@@ -291,8 +293,7 @@ public class BattleAI implements IBattleAI {
 
         for (IMonsterMove move : activeParticipant.getActiveMonster().getMoves()) {
             if (!activeParticipant.equals(participantToControl)) {
-                if (!(knowledgeState.getMonsterMoves().containsKey(activeParticipant.getActiveMonster()) &&
-                        knowledgeState.getMonsterMoves().get(activeParticipant.getActiveMonster()).contains(move))){
+                if (!(knowledgeState.hasSeenMove(activeParticipant.getActiveMonster(), move))){
                     continue; // If we have not seen this move, don't consider the option where it is used
                 }
             }
@@ -306,7 +307,7 @@ public class BattleAI implements IBattleAI {
 
         for (IMonster monster : activeParticipant.getMonsterTeam()) {
             if (!activeParticipant.equals(participantToControl)) {
-                if (!knowledgeState.getEnemyMonsters().contains(monster)){
+                if (!knowledgeState.hasSeenMonster(monster)){
                     continue;
                 }
             }
