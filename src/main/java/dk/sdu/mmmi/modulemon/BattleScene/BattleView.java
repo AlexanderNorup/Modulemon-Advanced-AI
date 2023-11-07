@@ -47,6 +47,7 @@ public class BattleView implements IGameViewService, IBattleView {
     private boolean _isInitialized;
     private boolean _battleStarted;
     private IBattleCallback _battleCallback;
+    private int _numTurns;
     private IBattleSimulation _battleSimulation;
     private IBattleState _currentBattleState;
     private BattleScene _battleScene;
@@ -131,6 +132,7 @@ public class BattleView implements IGameViewService, IBattleView {
         setBattleAIFactory();
         _battleSimulation.StartBattle(player, enemy);
         _currentBattleState = _battleSimulation.getState().clone(); // Set an initial battle-state
+        _numTurns = 0;
         _battleCallback = callback;
         _battleMusic.play();
         _battleMusic.setLooping(true);
@@ -174,7 +176,7 @@ public class BattleView implements IGameViewService, IBattleView {
 
     public void handleBattleEnd(VictoryBattleEvent victoryBattleEvent) {
         if (_battleCallback != null) {
-            _battleCallback.onBattleEnd(new BattleResult(victoryBattleEvent.getWinner(), _battleSimulation.getState().getPlayer(), _battleSimulation.getState().getEnemy()));
+            _battleCallback.onBattleEnd(new BattleResult(victoryBattleEvent.getWinner(), _battleSimulation.getState().getPlayer(), _battleSimulation.getState().getEnemy(), _numTurns));
         } else {
             gameViewManager.setDefaultView();
         }
@@ -314,6 +316,7 @@ public class BattleView implements IGameViewService, IBattleView {
         if (battleEvent != null) {
             IBattleState eventState = battleEvent.getState();
             if (battleEvent instanceof MoveBattleEvent) {
+                this._numTurns++;
                 _currentBattleState = eventState;
                 MoveBattleEvent event = (MoveBattleEvent) battleEvent;
                 if (event.getUsingParticipant().isPlayerControlled()) {
@@ -342,6 +345,7 @@ public class BattleView implements IGameViewService, IBattleView {
 
                 this._battleScene.setTextToDisplay(event.getText());
             } else if (battleEvent instanceof ChangeMonsterBattleEvent) {
+                this._numTurns++;
                 ChangeMonsterBattleEvent event = (ChangeMonsterBattleEvent) battleEvent;
                 boolean causedByFaintingMonster = event instanceof MonsterFaintChangeBattleEvent;
                 if (event.getParticipant().isPlayerControlled()) {
