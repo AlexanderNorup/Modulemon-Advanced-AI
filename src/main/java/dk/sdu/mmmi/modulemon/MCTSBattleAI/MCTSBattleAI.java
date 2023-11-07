@@ -11,6 +11,7 @@ import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
 import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -77,7 +78,9 @@ public class MCTSBattleAI implements IBattleAI {
             backpropagation(newNode, reward);
         }
 
-        var bestChild = bestChild(rootNode, 0);
+        var minTurnTillWin = rootNode.getChildren().stream().map(Node::getTurnsTillWin).min(Integer::compare).orElse(Integer.MAX_VALUE);
+        var bestChild = rootNode.getChildren().stream().filter(x -> x.getTurnsTillWin() <= minTurnTillWin)
+                .max((a,b) -> Float.compare(a.getReward(), b.getReward())).orElseThrow();
 
         System.out.println(String.format("Expanded %d nodes, based on %d simulated actions in %dms",  rootNode.getTimesVisited(), this.numSimulatedActions, ((System.nanoTime() - startTime) / 1000000)));
         System.out.println(explainNodeOptions(rootNode));
@@ -157,9 +160,23 @@ public class MCTSBattleAI implements IBattleAI {
         if (Float.isNaN(reward)) {
             throw new IllegalArgumentException("Reward must be a number");
         }
+
+        if(!node.getParticipant().equals(this.participantToControl) && isTerminal(node.getState(), true)){
+            // This is a final node where this AI wins.
+            // Let's take note of that
+            node.setTurnsTillWin(0);
+        }
+
         do {
             node.incrementTimesVisited();
             node.setReward(node.getReward() + reward);
+            if(!node.getChildren().isEmpty()){
+                node.setTurnsTillWin(node.getChildren().stream()
+                        .map(Node::getTurnsTillWin)
+                        .filter(x -> x != Integer.MAX_VALUE)
+                        .min(Integer::compare)
+                        .orElse(Integer.MAX_VALUE - 1) + 1);
+            }
             node = node.getParent();
         } while (node != null);
     }
@@ -383,7 +400,7 @@ public class MCTSBattleAI implements IBattleAI {
 
         // Check if all the opposing participant's (known) monster are dead
         boolean allEnemyMonstersDead = opposingParticipant.getMonsterTeam().stream()
-                .filter(x -> !useKnowlegdeState || knowledgeState.getEnemyMonsters().contains(x))  //only consider monsters we've seen
+                .filter(x -> !useKnowlegdeState || knowledgeState.hasSeenMonster(x))  //only consider monsters we've seen
                 .allMatch(x -> x.getHitPoints() <= 0);
 
         return allEnemyMonstersDead || allOwnMonstersDead;
