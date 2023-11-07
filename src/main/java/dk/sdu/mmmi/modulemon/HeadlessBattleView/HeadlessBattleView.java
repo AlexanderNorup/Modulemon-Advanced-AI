@@ -192,6 +192,17 @@ public class HeadlessBattleView implements IGameViewService {
 
     @Override
     public void handleInput(GameData gameData, IGameViewManager gameViewManager) {
+        if (doneBattling) {
+            if (gameData.getKeys().isPressed(GameKeys.ACTION) || gameData.getKeys().isPressed(GameKeys.BACK)) {
+                doneBattling = false;
+                teamAWins = 0;
+                teamBWins = 0;
+                completedBattles = 0;
+                menuMusic.play();
+            }
+            return;
+        }
+
         if (gameData.getKeys().isPressed(GameKeys.BACK)) {
             chooseSound.play(getSoundVolume());
             if (editingMode) {
@@ -205,16 +216,6 @@ public class HeadlessBattleView implements IGameViewService {
         }
 
         if (battling) {
-            return;
-        }
-        if (doneBattling) {
-            if (gameData.getKeys().isPressed(GameKeys.ACTION) || gameData.getKeys().isPressed(GameKeys.BACK)) {
-                doneBattling = false;
-                teamAWins = 0;
-                teamBWins = 0;
-                completedBattles = 0;
-                menuMusic.play();
-            }
             return;
         }
 
@@ -264,7 +265,6 @@ public class HeadlessBattleView implements IGameViewService {
                 battling = true;
             } else if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
                 chooseSound.play(getSoundVolume());
-                scene.setChoosing(true);
                 editingMode = true;
             }
         }
