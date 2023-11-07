@@ -78,7 +78,7 @@ public class MCTSBattleAI implements IBattleAI {
 
         var bestChild = bestChild(rootNode, 0);
 
-        System.out.println(String.format("Simulated %d actions in %dms", this.numSimulatedActions, ((System.nanoTime() - startTime) / 1000000)));
+        System.out.println(String.format("Expanded %d nodes, based on %d simulated actions in %dms",  rootNode.getTimesVisited(), this.numSimulatedActions, ((System.nanoTime() - startTime) / 1000000)));
         System.out.println(explainNodeOptions(rootNode));
 //        System.out.println(explainBestChild(bestChild));
 
