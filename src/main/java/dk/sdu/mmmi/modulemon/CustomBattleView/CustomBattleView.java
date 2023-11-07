@@ -32,6 +32,8 @@ public class CustomBattleView implements IGameViewService {
     private Queue<BaseAnimation> backgroundAnimations;
     private CustomBattleScene scene;
 
+    private Random random = new Random();
+
     // LibGDX Sound stuff
     private Sound selectSound;
     private Sound chooseSound;
@@ -139,6 +141,25 @@ public class CustomBattleView implements IGameViewService {
             }
         }
 
+        if (gameData.getKeys().isDown(GameKeys.K) && cursorPosition < 12) {
+            // Shuffle random monsters
+            if (gameData.getKeys().isDown(GameKeys.LEFT_CTRL)) {
+                // If holding CTRL, randomize both teams
+                for (int i = 0; i < selectedTeamAIndicies.length; i++) {
+                    selectedTeamAIndicies[i] = random.nextInt(monsterRegistry.getMonsterAmount());
+                    selectedTeamBIndicies[i] = random.nextInt(monsterRegistry.getMonsterAmount());
+                }
+            } else {
+                if (isTeamA(cursorPosition)) {
+                    selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)] = random.nextInt(monsterRegistry.getMonsterAmount());
+                } else {
+                    selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)] = random.nextInt(monsterRegistry.getMonsterAmount());
+                }
+            }
+            redrawRoulettes = true;
+            chooseSound.play(getSoundVolume());
+        }
+
         if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
             if (showingResults) {
                 showingResults = false;
@@ -154,7 +175,16 @@ public class CustomBattleView implements IGameViewService {
         }
 
         if (gameData.getKeys().isPressed(GameKeys.DELETE) && cursorPosition < 13) {
-            addToSelectedIndicies(null);
+            if (gameData.getKeys().isDown(GameKeys.LEFT_CTRL)) {
+                // If holding CTRL, empty both teams
+                for (int i = 0; i < selectedTeamAIndicies.length; i++) {
+                    selectedTeamAIndicies[i] = null;
+                    selectedTeamBIndicies[i] = null;
+                }
+            } else {
+                addToSelectedIndicies(null);
+            }
+            redrawRoulettes = true;
             editingMode = false;
             chooseSound.play(getSoundVolume());
         }
