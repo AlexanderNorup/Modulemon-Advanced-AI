@@ -25,7 +25,7 @@ public class MCTSBattleAI implements IBattleAI {
     private int defaultTimeLimitMs = 1000;
     private IGameSettings settings = null;
     private long timeLimit = defaultTimeLimitMs;
-    private final int MAX_SIMULATE_DEPTH = 5;
+    private final int MAX_SIMULATE_DEPTH = 20;
 
     private final float EXPLORATION_COEFFICIENT = (float) (1.0 / Math.sqrt(2));
 
