@@ -7,6 +7,7 @@ import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
 
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -51,7 +52,13 @@ public class BattleSimulation implements IBattleSimulation {
         }
 
         // Assign first turn
-        IMonster firstMonster = monsterProcessor.whichMonsterStarts(player.getActiveMonster(), enemy.getActiveMonster());
+        IMonster firstMonster;
+        if(this.playerAIFactory != null && player.getActiveMonster().getName().equals(enemy.getActiveMonster().getName())){
+            Random rand = new Random();
+            firstMonster = rand.nextFloat() > 0.5 ? player.getActiveMonster() : enemy.getActiveMonster();
+        } else {
+            firstMonster = monsterProcessor.whichMonsterStarts(player.getActiveMonster(), enemy.getActiveMonster());
+        }
         IBattleParticipant firstToTakeTurn = firstMonster == player.getActiveMonster() ? player : enemy;
 
         this.battleState = new BattleState(player, enemy);
