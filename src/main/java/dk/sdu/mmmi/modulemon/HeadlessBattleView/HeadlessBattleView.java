@@ -131,10 +131,11 @@ public class HeadlessBattleView implements IGameViewService {
             battlingScene.setTeamBWins(teamBWins);
             battlingScene.setBattleProgress((float) completedBattles / battleAmounts[battleAmountIndex]);
             battlingScene.setCurrentBattles(currentBattles);
-            battleWaitMusic.setVolume(MathUtils.clamp(battleWaitMusic.getVolume() - 0.0025f, 0, 1));
             if (battleWaitMusic.getVolume() <= 0) {
                 battleWaitMusic.stop();
                 battleWaitMusic.setVolume(getSoundVolume());
+            } else {
+                battleWaitMusic.setVolume(MathUtils.clamp(battleWaitMusic.getVolume() - 0.0025f, 0, 1));
             }
         } else {
             cursorPosition = MathUtils.clamp(cursorPosition, 0, 3);
