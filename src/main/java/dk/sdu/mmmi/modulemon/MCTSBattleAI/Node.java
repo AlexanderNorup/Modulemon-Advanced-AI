@@ -16,7 +16,6 @@ public class Node {
     private IMonster parentSwitch = null;
     private float reward = 0;
     private int timesVisited = 0;
-    private int turnsTillWin = Integer.MAX_VALUE;
     public Node(IBattleState state, IBattleParticipant participant) {
         // Constructor used when creating root node
         this.state = state;
@@ -85,18 +84,6 @@ public class Node {
         this.reward = reward;
     }
 
-    public void setTimesVisited(int timesVisited) {
-        this.timesVisited = timesVisited;
-    }
-
-    public int getTurnsTillWin() {
-        return turnsTillWin;
-    }
-
-    public void setTurnsTillWin(int turnsTillWin) {
-        this.turnsTillWin = turnsTillWin;
-    }
-
     public int getTimesVisited() {
         return timesVisited;
     }
@@ -126,7 +113,7 @@ public class Node {
             }else if(this.parentSwitch != null){
                 action = "Switching to " + this.parentSwitch;
             }
-            return String.format("%s (Reward: %.8f; Winning in %d turns)", action, this.reward, this.getTurnsTillWin());
+            return String.format("%s (Reward: %.8f)", action, this.reward);
         }else{
             return "Root node";
         }
