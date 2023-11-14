@@ -176,7 +176,17 @@ public class BattleView implements IGameViewService, IBattleView {
 
     public void handleBattleEnd(VictoryBattleEvent victoryBattleEvent) {
         if (_battleCallback != null) {
-            _battleCallback.onBattleEnd(new BattleResult(victoryBattleEvent.getWinner(), _battleSimulation.getState().getPlayer(), _battleSimulation.getState().getEnemy(), _numTurns));
+            var starter = _battleSimulation.playerStarted()
+                    ? _battleSimulation.getState().getPlayer()
+                    : _battleSimulation.getState().getEnemy();
+            var result = new BattleResult(
+                    victoryBattleEvent.getWinner(),
+                    _battleSimulation.getState().getPlayer(),
+                    _battleSimulation.getState().getEnemy(),
+                    starter,
+                    _numTurns
+            );
+            _battleCallback.onBattleEnd(result);
         } else {
             gameViewManager.setDefaultView();
         }

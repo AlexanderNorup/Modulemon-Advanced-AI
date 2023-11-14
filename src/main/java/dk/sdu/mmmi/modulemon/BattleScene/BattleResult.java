@@ -8,11 +8,13 @@ public class BattleResult implements IBattleResult {
     private IBattleParticipant player;
     private IBattleParticipant enemy;
     private int turnCount;
+    private IBattleParticipant starter;
 
-    public BattleResult(IBattleParticipant winner, IBattleParticipant player, IBattleParticipant enemy, int turnCount) {
+    public BattleResult(IBattleParticipant winner, IBattleParticipant player, IBattleParticipant enemy, IBattleParticipant starter, int turnCount) {
         this.winner = winner;
         this.player = player;
         this.enemy = enemy;
+        this.starter = starter;
         this.turnCount = turnCount;
     }
 
@@ -32,7 +34,13 @@ public class BattleResult implements IBattleResult {
     }
 
     @Override
+    public IBattleParticipant getStarter() {
+        return starter;
+    }
+
+    @Override
     public int getTurns() {
         return turnCount;
     }
+
 }
