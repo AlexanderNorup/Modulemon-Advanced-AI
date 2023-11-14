@@ -12,19 +12,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class BattleSimulation implements IBattleSimulation {
-
     private BattleState battleState;
-
     private IBattleEvent nextEvent;
     private Runnable onNextEvent;
-
     private IBattleAI opponentAI;
     private IBattleAIFactory opponentAIFactory;
     private IBattleAI playerAI;
     private IBattleAIFactory playerAIFactory;
     private IBattleMonsterProcessor monsterProcessor;
-
     private ExecutorService AIExecutor = Executors.newFixedThreadPool(1);
+    private boolean playerStarted;
 
     @Override
     public void StartBattle(IBattleParticipant player, IBattleParticipant enemy) {
@@ -60,6 +57,7 @@ public class BattleSimulation implements IBattleSimulation {
             firstMonster = monsterProcessor.whichMonsterStarts(player.getActiveMonster(), enemy.getActiveMonster());
         }
         IBattleParticipant firstToTakeTurn = firstMonster == player.getActiveMonster() ? player : enemy;
+        this.playerStarted = firstMonster == player.getActiveMonster();
 
         this.battleState = new BattleState(player, enemy);
         this.battleState.setActiveParticipant(firstToTakeTurn);
@@ -342,6 +340,11 @@ public class BattleSimulation implements IBattleSimulation {
 
     public IBattleAIFactory getPlayerAIFactory() {
         return playerAIFactory;
+    }
+
+    @Override
+    public boolean playerStarted() {
+        return this.playerStarted;
     }
 
     @Override

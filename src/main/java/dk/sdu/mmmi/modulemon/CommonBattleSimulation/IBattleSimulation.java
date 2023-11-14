@@ -32,4 +32,5 @@ public interface IBattleSimulation {
     IBattleAIFactory getOpponentAIFactory();
     void setPlayerAIFactory(IBattleAIFactory BattleAIFactory);
     IBattleAIFactory getPlayerAIFactory();
+    boolean playerStarted();
 }

@@ -19,6 +19,11 @@ public class HeadlessBattlingScene {
     private float titleCounter = 0;
     private int teamAWins = 0;
     private int teamBWins = 0;
+    private int teamAStartWins = 0;
+    private int teamBStartWins = 0;
+    private float avgTurnsToWinA = 0.0f;
+    private float avgTurnsToWinB = 0.0f;
+
     private int currentBattles = 0;
     private float battleProgress = 0;
     private boolean doneBattling = false;
@@ -66,13 +71,28 @@ public class HeadlessBattlingScene {
         final int winYGap = 50;
         final int boxOffset = 125;
         text.setCoordinateMode(TextUtils.CoordinateMode.CENTER);
-        text.drawBigBoldRoboto(spriteBatch, "Team A Wins", Color.BLACK, aXPos, screenHeight / 2f + boxOffset);
-        text.drawBigBoldRoboto(spriteBatch, "Team B Wins", Color.BLACK, bXPos, screenHeight / 2f + boxOffset);
 
-        text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamAWins), Color.BLACK, aXPos, screenHeight / 2f - winYGap + boxOffset);
-        text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamBWins), Color.BLACK, bXPos, screenHeight / 2f - winYGap + boxOffset);
-        text.drawNormalBoldRoboto(spriteBatch, String.format("Ongoing battles: %d", currentBattles), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 2);
-        text.drawBigBoldRoboto(spriteBatch, String.format("Battle progress %.1f %%", battleProgress * 100), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 3);
+        var winTextHeight = screenHeight / 2f + boxOffset;
+        var winNumHeight = winTextHeight - winYGap;
+        text.drawBigBoldRoboto(spriteBatch, "Team A Wins", Color.BLACK, aXPos, winTextHeight);
+        text.drawBigBoldRoboto(spriteBatch, "Team B Wins", Color.BLACK, bXPos, winTextHeight);
+        text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamAWins), Color.BLACK, aXPos, winNumHeight);
+        text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamBWins), Color.BLACK, bXPos, winNumHeight);
+        var startingWinTextHeight = winTextHeight - (winYGap * 2);
+        var startingWinNumHeight = winTextHeight - (winYGap * 2.5f);
+        text.drawSmallBoldRoboto(spriteBatch, "Wins when starting", Color.BLACK, aXPos, startingWinTextHeight);
+        text.drawSmallBoldRoboto(spriteBatch, "Wins when starting", Color.BLACK, bXPos, startingWinTextHeight);
+        text.drawSmallRoboto(spriteBatch, String.valueOf(teamAStartWins), Color.BLACK, aXPos, startingWinNumHeight);
+        text.drawSmallRoboto(spriteBatch, String.valueOf(teamBStartWins), Color.BLACK, bXPos, startingWinNumHeight);
+        var turnsToWinTextHeight = winTextHeight - (winYGap * 3.5f);
+        var turnsToWinNumHeight = winTextHeight - (winYGap * 4f);
+        text.drawSmallBoldRoboto(spriteBatch, "AVG turns to win", Color.BLACK, aXPos, turnsToWinTextHeight);
+        text.drawSmallBoldRoboto(spriteBatch, "AVG turns to win", Color.BLACK, bXPos, turnsToWinTextHeight);
+        text.drawSmallRoboto(spriteBatch, String.valueOf(avgTurnsToWinA), Color.BLACK, aXPos, turnsToWinNumHeight);
+        text.drawSmallRoboto(spriteBatch, String.valueOf(avgTurnsToWinB), Color.BLACK, bXPos, turnsToWinNumHeight);
+
+        text.drawNormalBoldRoboto(spriteBatch, String.format("Ongoing battles: %d", currentBattles), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 3f);
+        text.drawBigBoldRoboto(spriteBatch, String.format("Battle progress %.1f %%", battleProgress * 100), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 4f);
         if (doneBattling) {
             text.drawNormalRoboto(spriteBatch, "Press [action] to return", Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 5);
         }
@@ -93,7 +113,7 @@ public class HeadlessBattlingScene {
     }
 
     private void calculateBoxSizes(GameData gameData) {
-        final int bottomOffset = 400;
+        final int bottomOffset = 250;
         final int monsterContainerCenterOffset = 20;
         final int freeSpaceToLeaveAtTop = 200;
         final float containerWidth = 300;
@@ -112,6 +132,24 @@ public class HeadlessBattlingScene {
 
     public void setTeamBWins(int teamBWins) {
         this.teamBWins = teamBWins;
+    }
+
+    public void setTeamAStartWins(int teamAStartWins) {
+        this.teamAStartWins = teamAStartWins;
+    }
+
+    public void setTeamBStartWins(int teamBStartWins) {
+        this.teamBStartWins = teamBStartWins;
+    }
+
+    public void setAvgTurnsToWinA(float avgTurnsToWinA) {
+        if(!Float.isNaN(avgTurnsToWinA))
+            this.avgTurnsToWinA = avgTurnsToWinA;
+    }
+
+    public void setAvgTurnsToWinB(float avgTurnsToWinB) {
+        if(!Float.isNaN(avgTurnsToWinB))
+            this.avgTurnsToWinB = avgTurnsToWinB;
     }
 
     public void setDoneBattling(boolean doneBattling) {

@@ -11,8 +11,6 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.AICrashedEvent;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.ChangeMonsterBattleEvent;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.VictoryBattleEvent;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
-import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
-import dk.sdu.mmmi.modulemon.CommonMap.Data.Entity;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterRegistry;
 import dk.sdu.mmmi.modulemon.Monster.BattleMonsterProcessor;
@@ -49,7 +47,11 @@ public class HeadlessBattleView implements IGameViewService {
     private HeadlessBattleScene scene;
     private HeadlessBattlingScene battlingScene;
     private int teamAWins = 0;
+    private int teamAStartWins = 0;
+    private int winTurnsA = 0;
     private int teamBWins = 0;
+    private int teamBStartWins = 0;
+    private int winTurnsB = 0;
     private int completedBattles = 0;
     private boolean battling = false;
     private boolean doneBattling = false;
@@ -83,6 +85,10 @@ public class HeadlessBattleView implements IGameViewService {
             int battleAmount = battleAmounts[battleAmountIndex];
             battlingScene.setTeamAWins(teamAWins);
             battlingScene.setTeamBWins(teamBWins);
+            battlingScene.setTeamAStartWins(teamAStartWins);
+            battlingScene.setTeamBStartWins(teamBStartWins);
+            battlingScene.setAvgTurnsToWinA((float)winTurnsA / teamAWins);
+            battlingScene.setAvgTurnsToWinB((float)winTurnsB / teamBWins);
             battlingScene.setBattleProgress(((float) completedBattles / battleAmount));
             battlingScene.setCurrentBattles(currentBattles);
             battlingScene.setDoneBattling(doneBattling);
@@ -92,8 +98,16 @@ public class HeadlessBattleView implements IGameViewService {
                         var battleResult = battleResultFuture.get();
                         if (battleResult.getWinner() == battleResult.getPlayer()) {
                             teamAWins++;
+                            if(battleResult.getStarter() == battleResult.getWinner()){
+                                teamAStartWins++;
+                            }
+                            winTurnsA += battleResult.getTurns();
                         } else {
                             teamBWins++;
+                            if(battleResult.getStarter() == battleResult.getWinner()){
+                                teamBStartWins++;
+                            }
+                            winTurnsB += battleResult.getTurns();
                         }
                         completedBattles++;
                         currentBattles--;
@@ -129,6 +143,10 @@ public class HeadlessBattleView implements IGameViewService {
             battlingScene.setDoneBattling(true);
             battlingScene.setTeamAWins(teamAWins);
             battlingScene.setTeamBWins(teamBWins);
+            battlingScene.setTeamAStartWins(teamAStartWins);
+            battlingScene.setTeamBStartWins(teamBStartWins);
+            battlingScene.setAvgTurnsToWinA((float)winTurnsA / teamAWins);
+            battlingScene.setAvgTurnsToWinA((float)winTurnsB / teamBWins);
             battlingScene.setBattleProgress((float) completedBattles / battleAmounts[battleAmountIndex]);
             battlingScene.setCurrentBattles(currentBattles);
             if (battleWaitMusic.getVolume() <= 0) {
@@ -197,8 +215,15 @@ public class HeadlessBattleView implements IGameViewService {
             if (gameData.getKeys().isPressed(GameKeys.ACTION) || gameData.getKeys().isPressed(GameKeys.BACK)) {
                 doneBattling = false;
                 teamAWins = 0;
+                teamAStartWins = 0;
+                winTurnsA = 0;
                 teamBWins = 0;
+                teamBStartWins = 0;
+                winTurnsB = 0;
                 completedBattles = 0;
+                battlingScene.setAvgTurnsToWinA(0.0f);
+                battlingScene.setAvgTurnsToWinB(0.0f);
+                battleWaitMusic.stop();
                 menuMusic.play();
             }
             return;
@@ -248,11 +273,11 @@ public class HeadlessBattleView implements IGameViewService {
         } else {
             if (gameData.getKeys().isPressed(GameKeys.DOWN)) {
                 selectSound.play(getSoundVolume());
-                cursorPosition++;
+                cursorPosition = cursorPosition >= 3 ? 0 : cursorPosition+1;
             }
             if (gameData.getKeys().isPressed(GameKeys.UP)) {
                 selectSound.play(getSoundVolume());
-                cursorPosition--;
+                cursorPosition = cursorPosition <= 0 ? 3 : cursorPosition-1;;
             }
             if (gameData.getKeys().isPressed(GameKeys.ACTION) && cursorPosition == 3) {
                 chooseSound.play(getSoundVolume());
@@ -262,6 +287,7 @@ public class HeadlessBattleView implements IGameViewService {
                     battleResults.add(runBattle());
                 }
                 menuMusic.stop();
+                battleWaitMusic.setVolume(getSoundVolume());
                 battleWaitMusic.play();
                 battling = true;
             } else if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
@@ -306,7 +332,8 @@ public class HeadlessBattleView implements IGameViewService {
                     var winner = victoryBattleEvent.getWinner() == battleSim.getState().getPlayer()
                             ? battleSim.getState().getPlayer()
                             : battleSim.getState().getEnemy();
-                    return new BattleResult(winner, battleSim.getState().getPlayer(), battleSim.getState().getEnemy());
+                    var starter = battleSim.playerStarted() ? battleSim.getState().getPlayer() : battleSim.getState().getEnemy();
+                    return new BattleResult(winner, battleSim.getState().getPlayer(), battleSim.getState().getEnemy(), starter, turns);
                 } else if (event instanceof ChangeMonsterBattleEvent || event instanceof MoveBattleEvent) {
                     turns++;
                 } else if (event instanceof AICrashedEvent) {
