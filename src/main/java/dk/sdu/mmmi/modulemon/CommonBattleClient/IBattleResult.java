@@ -6,4 +6,5 @@ public interface IBattleResult {
     IBattleParticipant getWinner();
     IBattleParticipant getPlayer();
     IBattleParticipant getEnemy();
+    int getTurns();
 }

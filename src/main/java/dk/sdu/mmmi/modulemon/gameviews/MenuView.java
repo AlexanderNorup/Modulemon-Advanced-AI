@@ -72,7 +72,8 @@ public class MenuView implements IGameViewService {
             "Use AI Alpha-beta pruning",
             "AI Processing Time",
             "Battle Music Theme",
-            "AI"
+            "AI",
+            "Use AI knowledge states",
     };
 
     private int AIIndex = 0;
@@ -561,6 +562,18 @@ public class MenuView implements IGameViewService {
                     settings.setSetting(settingsRegistry.getAIAlphaBetaSetting(), true);
                 }
                 chooseSound.play(getSoundVolumeAsFloat());
+            } else if (menuOptions[currentOption].equalsIgnoreCase("Use AI knowledge states")) {
+                /*
+                If setting for using knowledge states in the AI,
+                 */
+                if (((Boolean) settings.getSetting(settingsRegistry.getAIKnowlegdeStateEnabled()))) {
+                    settingsValueList.set(7, "Off");
+                    settings.setSetting(settingsRegistry.getAIKnowlegdeStateEnabled(), false);
+                } else {
+                    settingsValueList.set(7, "On");
+                    settings.setSetting(settingsRegistry.getAIKnowlegdeStateEnabled(), true);
+                }
+                chooseSound.play(getSoundVolumeAsFloat());
             }
         }
     }
@@ -588,6 +601,8 @@ public class MenuView implements IGameViewService {
 
             AI = (String) settings.getSetting(settingsRegistry.getBattleAISetting());
             settingsValueList.add(AI);
+
+            settingsValueList.add((Boolean) settings.getSetting(settingsRegistry.getAIKnowlegdeStateEnabled()) ? "On" : "Off");
             AIIndex = Arrays.asList(AIOptions).indexOf(AI);
         }
     }
