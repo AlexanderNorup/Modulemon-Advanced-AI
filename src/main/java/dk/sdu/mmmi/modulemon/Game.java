@@ -175,6 +175,9 @@ public class Game implements ApplicationListener {
             if (settings.getSetting(SettingsRegistry.getInstance().getAIAlphaBetaSetting()) == null) {
                 settings.setSetting(SettingsRegistry.getInstance().getAIAlphaBetaSetting(), true);
             }
+            if (settings.getSetting(SettingsRegistry.getInstance().getAIKnowlegdeStateEnabled()) == null) {
+                settings.setSetting(SettingsRegistry.getInstance().getAIKnowlegdeStateEnabled(), true);
+            }
             if (settings.getSetting(SettingsRegistry.getInstance().getBattleMusicThemeSetting()) == null) {
                 settings.setSetting(SettingsRegistry.getInstance().getBattleMusicThemeSetting(), "Original");
             }

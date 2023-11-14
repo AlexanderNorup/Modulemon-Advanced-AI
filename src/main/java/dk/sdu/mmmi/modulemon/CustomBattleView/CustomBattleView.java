@@ -3,6 +3,7 @@ package dk.sdu.mmmi.modulemon.CustomBattleView;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.TimeUtils;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleView;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
@@ -30,6 +31,8 @@ public class CustomBattleView implements IGameViewService {
 
     private Queue<BaseAnimation> backgroundAnimations;
     private CustomBattleScene scene;
+
+    private Random random = new Random();
 
     // LibGDX Sound stuff
     private Sound selectSound;
@@ -59,7 +62,7 @@ public class CustomBattleView implements IGameViewService {
     private int cursorPosition = 0;
     private boolean editingMode = false;
     private boolean redrawRoulettes = true;
-    private boolean showingResults  = false;
+    private boolean showingResults = false;
 
 
     @Override
@@ -67,9 +70,9 @@ public class CustomBattleView implements IGameViewService {
         cursorPosition = MathUtils.clamp(cursorPosition, 0, 14);
         scene.setShowResults(showingResults);
         var nextAnimation = backgroundAnimations.peek();
-        if(nextAnimation != null){
+        if (nextAnimation != null) {
             nextAnimation.update(gameData);
-            if(nextAnimation.isFinished()){
+            if (nextAnimation.isFinished()) {
                 backgroundAnimations.poll();
             }
         }
@@ -138,8 +141,27 @@ public class CustomBattleView implements IGameViewService {
             }
         }
 
+        if (gameData.getKeys().isDown(GameKeys.K) && cursorPosition < 12) {
+            // Shuffle random monsters
+            if (gameData.getKeys().isDown(GameKeys.LEFT_CTRL)) {
+                // If holding CTRL, randomize both teams
+                for (int i = 0; i < selectedTeamAIndicies.length; i++) {
+                    selectedTeamAIndicies[i] = random.nextInt(monsterRegistry.getMonsterAmount());
+                    selectedTeamBIndicies[i] = random.nextInt(monsterRegistry.getMonsterAmount());
+                }
+            } else {
+                if (isTeamA(cursorPosition)) {
+                    selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)] = random.nextInt(monsterRegistry.getMonsterAmount());
+                } else {
+                    selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)] = random.nextInt(monsterRegistry.getMonsterAmount());
+                }
+            }
+            redrawRoulettes = true;
+            chooseSound.play(getSoundVolume());
+        }
+
         if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
-            if(showingResults){
+            if (showingResults) {
                 showingResults = false;
                 return;
             }
@@ -148,12 +170,21 @@ public class CustomBattleView implements IGameViewService {
             chooseSound.play(getSoundVolume());
         }
 
-        if(showingResults){
+        if (showingResults) {
             return; // Don't allow any movement when showing results
         }
 
         if (gameData.getKeys().isPressed(GameKeys.DELETE) && cursorPosition < 13) {
-            addToSelectedIndicies(null);
+            if (gameData.getKeys().isDown(GameKeys.LEFT_CTRL)) {
+                // If holding CTRL, empty both teams
+                for (int i = 0; i < selectedTeamAIndicies.length; i++) {
+                    selectedTeamAIndicies[i] = null;
+                    selectedTeamBIndicies[i] = null;
+                }
+            } else {
+                addToSelectedIndicies(null);
+            }
+            redrawRoulettes = true;
             editingMode = false;
             chooseSound.play(getSoundVolume());
         }
@@ -206,14 +237,14 @@ public class CustomBattleView implements IGameViewService {
         }
     }
 
-    private void startBattle(IGameViewManager gameViewManager){
+    private void startBattle(IGameViewManager gameViewManager) {
         var teamA = Arrays.stream(getMonsterArray(selectedTeamAIndicies)).filter(Objects::nonNull).toList();
         var teamB = Arrays.stream(getMonsterArray(selectedTeamBIndicies)).filter(Objects::nonNull).toList();
 
         var teamAAI = getSelectedAI(selectedTeamAAI);
         var teamBAI = getSelectedAI(selectedTeamBAI);
 
-        if(teamA.isEmpty() || teamB.isEmpty() || teamBAI == null){
+        if (teamA.isEmpty() || teamB.isEmpty() || teamBAI == null) {
             wrongSound.play(1);
             var anim = new ErrorTextAnimation(scene, "Add some monsters to both teams you dork!");
             anim.start();
@@ -227,19 +258,27 @@ public class CustomBattleView implements IGameViewService {
 
         gameViewManager.setView(battleView.getGameView(), false); // Do not dispose the map
         customBattleMusic.stop();
+        long startTime = TimeUtils.millis();
         battleView.startBattle(teamA, teamB, result -> {
             customBattleMusic.play();
             gameViewManager.setView(this);
             boolean teamAWon = result.getWinner() == result.getPlayer();
             var winnerTeamName = teamAWon ?
-                                        (teamAAI == null ? "You" : teamAAI.toString())
-                                        : (teamBAI.toString());
-            scene.setResultsHeader("The winner is: " + winnerTeamName +"!");
-            scene.setResultLines(new String[]{
-                    "TODO: Collect some stats from the battle and display them here",
-                    "On multiple lines",
-                    "Wow! This is amazing!!"
-            });
+                    (teamAAI == null ? "You" : teamAAI.toString())
+                    : (teamBAI.toString());
+            scene.setResultsHeader("The winner is: " + winnerTeamName + "!");
+
+            var resultLines = new ArrayList<String>() {{
+                add(String.format("Total turns: %d", result.getTurns()));
+                add(String.format("Battle time: %.2f seconds", (TimeUtils.timeSinceMillis(startTime) / 1000f)));
+                add(String.format("The winning team ended up as so:"));
+            }};
+
+            for (var monster : result.getWinner().getMonsterTeam()) {
+                resultLines.add(String.format("  - %s", monster));
+            }
+
+            scene.setResultLines(resultLines.toArray(new String[resultLines.size()]));
             cursorPosition = 0;
             showingResults = true;
             editingMode = false;
@@ -247,7 +286,7 @@ public class CustomBattleView implements IGameViewService {
 
         // Set the battle AI after the startBattle method to override the configs.
         battleSimulation.setOpponentAIFactory(teamBAI);
-        if(teamAAI != null) {
+        if (teamAAI != null) {
             battleSimulation.setPlayerAIFactory(teamAAI);
         }
     }
@@ -257,15 +296,15 @@ public class CustomBattleView implements IGameViewService {
         if (cursorPosition < 12) {
             var numMonsters = this.monsterRegistry.getMonsterAmount() - 1;
             if (isTeamA(cursorPosition)) {
-                selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)] = scrollIndexWithNull(selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)],a , numMonsters);
+                selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)] = scrollIndexWithNull(selectedTeamAIndicies[getGridAdjustedCursor(cursorPosition)], a, numMonsters);
             } else {
-                selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)] = scrollIndexWithNull(selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)],a, numMonsters);
+                selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)] = scrollIndexWithNull(selectedTeamBIndicies[getGridAdjustedCursor(cursorPosition)], a, numMonsters);
             }
         } else if (cursorPosition == 12) {
             selectedTeamAAI = scrollIndexWithNull(selectedTeamAAI, a, this.battleAIFactoryList.size() - 1);
         } else if (cursorPosition == 13) {
             var newBValue = scrollIndexWithNull(selectedTeamBAI, a, this.battleAIFactoryList.size() - 1);
-            if(newBValue == null){
+            if (newBValue == null) {
                 newBValue = selectedTeamBAI == 0 ? this.battleAIFactoryList.size() - 1 : 0;
             }
             selectedTeamBAI = newBValue;
@@ -278,9 +317,9 @@ public class CustomBattleView implements IGameViewService {
         }
 
         if (input == null) {
-            if (a > 0){
+            if (a > 0) {
                 return 0;
-            }else{
+            } else {
                 return maxValue;
             }
         }

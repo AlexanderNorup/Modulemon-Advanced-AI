@@ -179,7 +179,7 @@ public class CustomBattleScene {
             var topOfResults = resultContainer.getY() + resultContainer.getHeight();
             var headerY = topOfResults - 50;
             var textY = headerY - 60;
-            var lineHeight = 25;
+            var lineHeight = 30;
             var textX = resultContainer.getX() + 50;
             text.setCoordinateMode(TextUtils.CoordinateMode.CENTER);
             text.drawTitleFont(spriteBatch, resultsHeader, Color.BLACK, gameData.getDisplayWidth() / 2f, headerY );

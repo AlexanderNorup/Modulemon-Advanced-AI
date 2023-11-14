@@ -285,6 +285,7 @@ public class BattleSimulation implements IBattleSimulation {
                 getOpponentAI().doAction();
             } catch (Exception ex) {
                 System.out.println(ex);
+                ex.printStackTrace();
                 nextEvent = new AICrashedEvent(String.format("The opponent %s controller has crashed!", this.opponentAIFactory), this.battleState.getActiveParticipant(), ex, battleState.clone());
                 onNextEvent = this::switchTurns;
             }
@@ -309,6 +310,7 @@ public class BattleSimulation implements IBattleSimulation {
                     getPlayerAI().doAction();
                 } catch (Exception ex) {
                     System.out.println(ex);
+                    ex.printStackTrace();
                     nextEvent = new AICrashedEvent(String.format("The player %s controller has crashed!", this.playerAIFactory), this.battleState.getActiveParticipant(), ex, battleState.clone());
                     onNextEvent = this::switchTurns;
                 }
