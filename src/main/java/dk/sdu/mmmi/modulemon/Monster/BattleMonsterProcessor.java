@@ -4,6 +4,8 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleMonsterProcessor;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
 
+import java.util.Random;
+
 public class BattleMonsterProcessor implements IBattleMonsterProcessor {
 
     @Override
@@ -32,7 +34,7 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
 
         float monsterAttackDefence = (0.2f * sourceAttack + 3 + 20 ) / (targetDefence + 50);
 
-        int damage =  Math.round( monsterAttackDefence * moveDamage * attack_bonus * calculateTypeAdvantage(move.getType(), target.getMonsterType()) );
+        int damage =  Math.round( monsterAttackDefence * moveDamage * attack_bonus * calculateTypeAdvantage(move.getType(), target.getMonsterType()) * calculateCriticalHit(source) );
         return damage;
     }
 
@@ -92,4 +94,27 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         }
     }
 
+    public float calculateCriticalHit (Monster monster) {
+        float baseSpeed = (float) monster.getSpeed();
+
+        float threshold = (float) (baseSpeed / 0.5);
+
+        // To ensure threshold doesn't go above 255
+        if (threshold > 255) {
+            threshold = 255;
+        }
+
+        Random random = new Random();
+        //Generate random number between 0-255
+        float randomVal = random.nextInt(256);
+        //true if the generated number is less than the threshold
+        boolean criticalHit = randomVal >= threshold;
+
+        if (criticalHit) {
+            System.out.println("critical hit");
+            return 1.5f;
+        } else {
+            return 1f;
+        }
+    }
 }
