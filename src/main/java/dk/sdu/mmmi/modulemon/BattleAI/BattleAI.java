@@ -27,6 +27,19 @@ public class BattleAI implements IBattleAI {
     private int defaultTimeLimitms = 1000;
     private IGameSettings settings = null;
 
+    public BattleAI(IBattleSimulation battleSimulation, IBattleParticipant participant, IGameSettings settings, boolean useAlphaBeta){
+        var enableKnowlegdeStates = (Boolean) settings.getSetting(SettingsRegistry.getInstance().getAIKnowlegdeStateEnabled());
+        System.out.println(String.format("Minimax AI using knowledge states: %b", enableKnowlegdeStates));
+        knowledgeState = new KnowledgeState(!enableKnowlegdeStates);
+        this.participantToControl = participant;
+        this.opposingParticipant = participantToControl == battleSimulation.getState().getPlayer()
+                ? battleSimulation.getState().getEnemy()
+                : battleSimulation.getState().getPlayer();
+        this.battleSimulation = battleSimulation;
+        defaultUseAlphaBetaPruning = useAlphaBeta;
+        defaultTimeLimitms = (Integer) settings.getSetting(SettingsRegistry.getInstance().getAIProcessingTimeSetting());
+    }
+
 
 
     public BattleAI(IBattleSimulation battleSimulation, IBattleParticipant participantToControl, IGameSettings settings) {

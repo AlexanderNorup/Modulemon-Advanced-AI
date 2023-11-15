@@ -34,6 +34,8 @@ public class Main {
 
         var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
         battleAI.setSettingsService(settings);
+        var nonAlphaBetaBattleAI = new dk.sdu.mmmi.modulemon.BattleAI.NoABBattleAIFactory();
+        nonAlphaBetaBattleAI.setSettingsService(settings);
         var mctsBattleAI = new MCTSBattleAIFactory();
         mctsBattleAI.setSettingsService(settings);
         var simpleBattleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
@@ -55,12 +57,14 @@ public class Main {
         customBattle.addBattleAI(battleAI);
         customBattle.addBattleAI(mctsBattleAI);
         customBattle.addBattleAI(simpleBattleAI);
+        customBattle.addBattleAI(nonAlphaBetaBattleAI);
 
         var headlessBattle = new HeadlessBattleView();
         headlessBattle.setSettings(settings);
         headlessBattle.addBattleAI(battleAI);
         headlessBattle.addBattleAI(mctsBattleAI);
         headlessBattle.addBattleAI(simpleBattleAI);
+        headlessBattle.addBattleAI(nonAlphaBetaBattleAI);
         headlessBattle.setMonsterRegistry(monsterRegistry);
 
 

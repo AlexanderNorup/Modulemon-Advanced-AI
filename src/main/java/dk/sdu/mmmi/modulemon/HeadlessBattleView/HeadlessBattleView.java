@@ -318,6 +318,8 @@ public class HeadlessBattleView implements IGameViewService {
         battleSim.setMonsterProcessor(processor);
         battleSim.setPlayerAIFactory(teamAAI);
         battleSim.setOpponentAIFactory(teamBAI);
+        battlingScene.setTeamAAIName(teamAAI.toString());
+        battlingScene.setTeamBAIName(teamBAI.toString());
 
         battleSim.StartBattle(teamAPlayer, teamBPlayer);
         currentBattles++;
