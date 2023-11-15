@@ -23,6 +23,8 @@ public class HeadlessBattlingScene {
     private int teamBStartWins = 0;
     private float avgTurnsToWinA = 0.0f;
     private float avgTurnsToWinB = 0.0f;
+    private String teamAAIName;
+    private String teamBAIName;
 
     private int currentBattles = 0;
     private float battleProgress = 0;
@@ -76,6 +78,8 @@ public class HeadlessBattlingScene {
         var winNumHeight = winTextHeight - winYGap;
         text.drawBigBoldRoboto(spriteBatch, "Team A Wins", Color.BLACK, aXPos, winTextHeight);
         text.drawBigBoldRoboto(spriteBatch, "Team B Wins", Color.BLACK, bXPos, winTextHeight);
+        text.drawSmallRoboto(spriteBatch, teamAAIName, Color.BLACK, aXPos, winTextHeight - 20);
+        text.drawSmallRoboto(spriteBatch, teamBAIName, Color.BLACK, bXPos, winTextHeight - 20);
         text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamAWins), Color.BLACK, aXPos, winNumHeight);
         text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamBWins), Color.BLACK, bXPos, winNumHeight);
         var startingWinTextHeight = winTextHeight - (winYGap * 2);
@@ -150,6 +154,14 @@ public class HeadlessBattlingScene {
     public void setAvgTurnsToWinB(float avgTurnsToWinB) {
         if(!Float.isNaN(avgTurnsToWinB))
             this.avgTurnsToWinB = avgTurnsToWinB;
+    }
+
+    public void setTeamAAIName(String teamAAI) {
+        this.teamAAIName = teamAAI;
+    }
+
+    public void setTeamBAIName(String teamBAI) {
+        this.teamBAIName = teamBAI;
     }
 
     public void setDoneBattling(boolean doneBattling) {

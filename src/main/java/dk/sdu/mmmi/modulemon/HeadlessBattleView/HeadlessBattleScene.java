@@ -60,8 +60,8 @@ public class HeadlessBattleScene {
             text.drawNormalBoldRoboto(spriteBatch, AIText, AITextColor, screenWidth / 2f + leftOffset, yPos + textHeight);
             if (choosing && AIIndex == i) {
                 var arrowSpacingFromEdge = 20;
-                var textLength = 200;
-                var horizontalOffset = 250;
+                var textLength = 220;
+                var horizontalOffset = 260;
                 text.drawNormalRoboto(spriteBatch, "<", Color.WHITE, screenWidth / 2f + horizontalOffset + arrowSpacingFromEdge - textLength, yPos + textHeight);
                 text.drawNormalRoboto(spriteBatch, ">", Color.WHITE, screenWidth / 2f + horizontalOffset - arrowSpacingFromEdge, yPos + textHeight);
             }
