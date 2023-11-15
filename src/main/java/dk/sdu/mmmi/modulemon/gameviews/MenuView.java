@@ -470,7 +470,7 @@ public class MenuView implements IGameViewService {
 
                     if (menuOptions[currentOption].equalsIgnoreCase("AI Processing Time")) {
                         // Sets the minimum processing time to 500 ms
-                        if (((int) settings.getSetting(settingsRegistry.getAIProcessingTimeSetting()) > 500)) {
+                        if (((int) settings.getSetting(settingsRegistry.getAIProcessingTimeSetting()) > 100)) {
                             // Decreases the processing time by 100 ms
                             int ai_processing_time = (int) settings.getSetting(settingsRegistry.getAIProcessingTimeSetting()) - 100;
                             settings.setSetting(settingsRegistry.getAIProcessingTimeSetting(), ai_processing_time);

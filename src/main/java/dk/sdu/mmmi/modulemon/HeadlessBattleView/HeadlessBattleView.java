@@ -146,7 +146,7 @@ public class HeadlessBattleView implements IGameViewService {
             battlingScene.setTeamAStartWins(teamAStartWins);
             battlingScene.setTeamBStartWins(teamBStartWins);
             battlingScene.setAvgTurnsToWinA((float)winTurnsA / teamAWins);
-            battlingScene.setAvgTurnsToWinA((float)winTurnsB / teamBWins);
+            battlingScene.setAvgTurnsToWinB((float)winTurnsB / teamBWins);
             battlingScene.setBattleProgress((float) completedBattles / battleAmounts[battleAmountIndex]);
             battlingScene.setCurrentBattles(currentBattles);
             if (battleWaitMusic.getVolume() <= 0) {
