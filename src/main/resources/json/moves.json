@@ -124,5 +124,13 @@
     "damage": 60,
     "type": "AIR",
     "sound": "/sounds/screech.ogg"
+  },
+  {
+    "id": "kamikaze",
+    "name": "Kamikaze",
+    "damage": 120,
+    "type": "AIR",
+    "sound": "/sounds/screech.ogg",
+    "accuracy": 0.4
   }
 ]
