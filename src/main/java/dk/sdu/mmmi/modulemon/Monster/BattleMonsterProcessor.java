@@ -24,6 +24,7 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         float sourceAttack = (float) source.getAttack();
         float targetDefence = (float) target.getDefence();
 
+        if (!doAccuracyHit(move.getAccuracy())) { return 0; }
         // Same type attack bonus. Effectively the same as STAB in that other game
         boolean same_attack_type = source.getMonsterType() == move.getType();
         float attack_bonus = 1;
@@ -116,5 +117,12 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         } else {
             return 1f;
         }
+
+    public boolean doAccuracyHit(float factor) {
+        //Generates a random value
+        Random random = new Random();
+        //Ensures that the next move will always be below our factor and between(0-1)
+        return random.nextFloat() <= factor;
+
     }
 }

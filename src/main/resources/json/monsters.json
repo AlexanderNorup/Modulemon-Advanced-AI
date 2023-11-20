@@ -44,7 +44,7 @@
     "moves" : [
       "slam",
       "tornado",
-      "zap",
+      "kamikaze",
       "spit"
     ],
     "front": "/images/bird_front.png",

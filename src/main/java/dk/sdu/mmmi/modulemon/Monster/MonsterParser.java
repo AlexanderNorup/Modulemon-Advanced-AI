@@ -49,16 +49,20 @@ public class MonsterParser {
         for (int i = 0; i < jsonMoves.length(); i++) {
             JSONObject JSONMove = jsonMoves.getJSONObject(i);
             String soundPath;
+            float accuracy = 1f;
             if (JSONMove.has("sound")) {
                 soundPath = JSONMove.getString("sound");
             }
             else {
                 soundPath = "sounds/tackle.ogg";
             }
+            if (JSONMove.has("accuracy")) {
+                accuracy = JSONMove.getFloat("accuracy");
+            }
             IMonsterMove move = new MonsterMove(JSONMove.getString("name"),
                     JSONMove.getInt("damage"),
                     monsterTypeHashMap.get(JSONMove.getString("type").toLowerCase()),
-                    soundPath);
+                    soundPath, accuracy);
             moves.put(JSONMove.getString("id"), move);
         }
         return moves;
