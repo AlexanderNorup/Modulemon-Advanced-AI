@@ -99,6 +99,6 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         //Generates a random value
         Random random = new Random();
         //Ensures that the next move will always be below our factor and between(0-1)
-        return random.nextFloat() < factor;
+        return random.nextFloat() <= factor;
     }
 }
