@@ -14,8 +14,7 @@ import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 import java.util.ArrayList;
 
 public class EnemyBattleAttackAnimation extends BaseAnimation {
-
-    private BattleScene _battleScene;
+    protected BattleScene _battleScene;
     private Sound _attackSound;
     private boolean _attackSoundPlayed = false;
     private IGameSettings settings;

@@ -132,5 +132,12 @@
     "type": "AIR",
     "sound": "/sounds/screech.ogg",
     "accuracy": 0.4
+  },
+  {
+    "id": "christmasWish",
+    "name": "Christmas Wish",
+    "damage": 100,
+    "type": "NORMAL",
+    "sound": "/sounds/christmas_wish.ogg"
   }
 ]

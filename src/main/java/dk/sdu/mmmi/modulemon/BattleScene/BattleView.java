@@ -331,7 +331,7 @@ public class BattleView implements IGameViewService, IBattleView {
                 MoveBattleEvent event = (MoveBattleEvent) battleEvent;
                 if (event.getUsingParticipant().isPlayerControlled()) {
                     //Player attacked
-                    PlayerBattleAttackAnimation battleAnimation = new PlayerBattleAttackAnimation(_battleScene, getAttackSound(event.getMove()), settings);
+                    var battleAnimation = getBattleAnimation(event.getMove(), true);
                     if (forcedAIDelay.getSpeed() > 0) {
                         battleAnimation.setOnEventDone(() -> {
                             addEmptyAnimation(forcedAIDelay.getSpeed(), true);
@@ -342,7 +342,7 @@ public class BattleView implements IGameViewService, IBattleView {
                     _battleScene.setHealthIndicatorText(String.format("-%d HP", event.getDamage()));
                 } else {
                     //Enemy attacked
-                    EnemyBattleAttackAnimation battleAnimation = new EnemyBattleAttackAnimation(_battleScene, getAttackSound(event.getMove()), settings);
+                    var battleAnimation = getBattleAnimation(event.getMove(), false);
                     battleAnimation.start();
                     if (_battleSimulation.isPlayerControlledByAI() && forcedAIDelay.getSpeed() > 0) {
                         battleAnimation.setOnEventDone(() -> {
@@ -450,6 +450,7 @@ public class BattleView implements IGameViewService, IBattleView {
         }
     }
 
+    private IBattleState lastState = null;
     @Override
     public void draw(GameData gameData) {
         if (_battleSimulation == null || !_battleStarted) {
@@ -471,7 +472,7 @@ public class BattleView implements IGameViewService, IBattleView {
         _battleScene.setGameWidth(gameData.getDisplayWidth());
 
         //Update information
-        if (_currentBattleState != null) {
+        if (_currentBattleState != null && _currentBattleState != lastState) {
             IMonster playerActiveMonster = _currentBattleState.getPlayer().getActiveMonster();
             _battleScene.setPlayerSprite(playerActiveMonster.getBackSprite(), playerActiveMonster.getClass());
             _battleScene.setPlayerMonsterName(playerActiveMonster.getName());
@@ -483,6 +484,7 @@ public class BattleView implements IGameViewService, IBattleView {
             _battleScene.setEnemyMonsterName(enemyActiveMonster.getName());
             _battleScene.setEnemyHP(enemyActiveMonster.getHitPoints());
             _battleScene.setMaxEnemyHP(enemyActiveMonster.getMaxHitPoints());
+            lastState = _currentBattleState;
         }
 
         _battleScene.setSelectedActionIndex(selectedAction);
@@ -669,6 +671,20 @@ public class BattleView implements IGameViewService, IBattleView {
             _battleMusic = null; //Unload Battle Music
         }
         this._isInitialized = false;
+    }
+
+    private BaseAnimation getBattleAnimation(IMonsterMove move, boolean isPlayer){
+        if(isPlayer){
+            if(move.getName().equalsIgnoreCase("christmas wish")){
+                return new PlayerChristmasPresentAnimation(_battleScene, getAttackSound(move), settings);
+            }
+            return new PlayerBattleAttackAnimation(_battleScene, getAttackSound(move), settings);
+        }else{
+            if(move.getName().equalsIgnoreCase("christmas wish")){
+                return new EnemyChristmasPresentAnimation(_battleScene, getAttackSound(move), settings);
+            }
+            return new EnemyBattleAttackAnimation(_battleScene, getAttackSound(move), settings);
+        }
     }
 
     private EmptyAnimation addEmptyAnimation(int duration, boolean autoStart) {

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class PlayerBattleAttackAnimation extends BaseAnimation {
 
-    private BattleScene _battleScene;
+    protected BattleScene _battleScene;
     private Sound _attackSound;
     private boolean _attackSoundPlayed = false;
     private IGameSettings settings;
