@@ -119,7 +119,7 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         //Generate random number between 0-255
         float randomVal = random.nextInt(256);
         //true if the generated number is less than the threshold
-        boolean criticalHit = randomVal >= threshold;
+        boolean criticalHit = randomVal < threshold;
 
         if (criticalHit) {
             System.out.println("critical hit");
