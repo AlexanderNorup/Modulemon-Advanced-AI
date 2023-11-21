@@ -33,6 +33,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
 
 public class HeadlessBattleView implements IGameViewService {
@@ -68,6 +69,8 @@ public class HeadlessBattleView implements IGameViewService {
     private boolean editingMode = false;
     private int[] battleAmounts = {1, 10, 100, 250, 500, 750, 1000};
     private int battleAmountIndex = 1;
+    private MonsterSelector monsterSelector;
+    private final int TEAM_MONSTER_AMOUNT = 3;
 
     private CSVWriter csvWriter;
 
@@ -88,6 +91,7 @@ public class HeadlessBattleView implements IGameViewService {
 
         scene = new HeadlessBattleScene(settings);
         battlingScene = new HeadlessBattlingScene();
+        monsterSelector = new MonsterSelector(1337, monsterRegistry);
         concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount());
     }
 
@@ -333,6 +337,7 @@ public class HeadlessBattleView implements IGameViewService {
                 this.totalTurns = 0;
                 battleResults = new ArrayList<Future<IBattleResult>>();
                 battleResultsToRemove = new ArrayList<Future<IBattleResult>>();
+                monsterSelector.refreshSelector();
                 for (var i = 0; i < concurrentBattles; i++) {
                     battleResults.add(runBattle());
                 }
@@ -358,8 +363,8 @@ public class HeadlessBattleView implements IGameViewService {
         }
 
         // Currently just static list of monsters. Maybe create random teams, load from file or let user select teams
-        List<IMonster> teamA = Arrays.asList(monsterRegistry.getMonster(0), monsterRegistry.getMonster(1), monsterRegistry.getMonster(2));
-        List<IMonster> teamB = Arrays.asList(monsterRegistry.getMonster(0), monsterRegistry.getMonster(1), monsterRegistry.getMonster(2));
+        List<IMonster> teamA = monsterSelector.createMonsterTeam(TEAM_MONSTER_AMOUNT);
+        List<IMonster> teamB = monsterSelector.createMonsterTeam(TEAM_MONSTER_AMOUNT);
 
         var teamAPlayer = new BattleParticipant(teamA, true);
         var teamBPlayer = new BattleParticipant(teamB, false);

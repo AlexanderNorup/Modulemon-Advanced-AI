@@ -1,9 +1,9 @@
 [
   {
-    "id" : "spit",
-    "name" : "Spit",
-    "damage" : 40,
-    "type" : "WATER",
+    "id": "spit",
+    "name": "Spit",
+    "damage": 40,
+    "type": "WATER",
     "sound": "/sounds/spit.ogg"
   },
   {
@@ -14,17 +14,17 @@
     "sound": "/sounds/water_blast.ogg"
   },
   {
-    "id" : "mudBlast",
-    "name" : "Mud Blast",
-    "damage" : 55,
-    "type" : "WATER",
+    "id": "mudBlast",
+    "name": "Mud Blast",
+    "damage": 55,
+    "type": "WATER",
     "sound": "/sounds/mud_blast.ogg"
   },
   {
-    "id" : "trample",
-    "name" : "Trample",
-    "damage" : 60,
-    "type" : "GRASS",
+    "id": "trample",
+    "name": "Trample",
+    "damage": 60,
+    "type": "GRASS",
     "sound": "/sounds/trample.ogg"
   },
   {
@@ -35,17 +35,17 @@
     "sound": "/sounds/fur_ball.ogg"
   },
   {
-    "id" : "dig",
-    "name" : "Dig",
-    "damage" : 60,
-    "type" : "EARTH",
+    "id": "dig",
+    "name": "Dig",
+    "damage": 60,
+    "type": "EARTH",
     "sound": "/sounds/dig.ogg"
   },
   {
-    "id" : "earthquake",
-    "name" : "Earthquake",
-    "damage" : 80,
-    "type" : "EARTH",
+    "id": "earthquake",
+    "name": "Earthquake",
+    "damage": 80,
+    "type": "EARTH",
     "sound": "/sounds/earthquake.ogg"
   },
   {
@@ -84,17 +84,17 @@
     "sound": "/sounds/flame_fang.ogg"
   },
   {
-    "id" : "zap",
-    "name" : "Zap",
-    "damage" : 40,
-    "type" : "LIGHTNING",
+    "id": "zap",
+    "name": "Zap",
+    "damage": 40,
+    "type": "LIGHTNING",
     "sound": "/sounds/zap.ogg"
   },
   {
-    "id" : "arcBolt",
-    "name" : "Arc Bolt",
-    "damage" : 80,
-    "type" : "LIGHTNING",
+    "id": "arcBolt",
+    "name": "Arc Bolt",
+    "damage": 80,
+    "type": "LIGHTNING",
     "sound": "/sounds/arc_bolt.ogg"
   },
   {
@@ -132,6 +132,135 @@
     "type": "AIR",
     "sound": "/sounds/screech.ogg",
     "accuracy": 0.4
+  },
+  {"_comment":  "New data from here, which still needs to be balanced",
+    "name":  "N/A", "damage":  0, "type": "NONE", "id": "NONE"
+  },
+  {
+    "id": "vineWhip",
+    "name": "Vine Whip",
+    "damage": 50,
+    "type": "GRASS",
+    "sound": "/sounds/vineWhip.ogg"
+  },
+  {
+    "id": "shellDefense",
+    "name": "Shell Defense",
+    "damage": 30,
+    "type": "NORMAL",
+    "sound": "/sounds/shellDefense.ogg"
+  },
+  {
+    "id": "headButt",
+    "name": "Head Butt",
+    "damage": 70,
+    "type": "NORMAL",
+    "sound": "/sounds/headButt.ogg"
+  },
+  {
+    "id": "aquaticWave",
+    "name": "Aquatic Wave",
+    "damage": 60,
+    "type": "WATER",
+    "sound": "/sounds/aquaticWave.ogg"
+  },
+  {
+    "id": "fireBall",
+    "name": "Fire Ball",
+    "damage": 55,
+    "type": "FIRE",
+    "sound": "/sounds/fireBall.ogg"
+  },
+  {
+    "id": "wingSlash",
+    "name": "Wing Slash",
+    "damage": 65,
+    "type": "AIR",
+    "sound": "/sounds/wingSlash.ogg"
+  },
+  {
+    "id": "inferno",
+    "name": "Inferno",
+    "damage": 75,
+    "type": "FIRE",
+    "sound": "/sounds/inferno.ogg"
+  },
+  {
+    "id": "soar",
+    "name": "Soar",
+    "damage": 40,
+    "type": "AIR",
+    "sound": "/sounds/soar.ogg"
+  },
+  {
+    "id": "rockThrow",
+    "name": "Rock Throw",
+    "damage": 50,
+    "type": "EARTH",
+    "sound": "/sounds/rockThrow.ogg"
+  },
+  {
+    "id": "ironDefense",
+    "name": "Iron Defense",
+    "damage": 30,
+    "type": "NORMAL",
+    "sound": "/sounds/ironDefense.ogg"
+  },
+  {
+    "id": "tackle",
+    "name": "Tackle",
+    "damage": 55,
+    "type": "NORMAL",
+    "sound": "/sounds/tackle.ogg"
+  },
+  {
+    "id": "charge",
+    "name": "Charge",
+    "damage": 65,
+    "type": "LIGHTNING",
+    "sound": "/sounds/charge.ogg"
+  },
+  {
+    "id": "lightningStrike",
+    "name": "Lightning Strike",
+    "damage": 75,
+    "type": "LIGHTNING",
+    "sound": "/sounds/lightningStrike.ogg"
+  },
+  {
+    "id": "thunderStomp",
+    "name": "Thunder Stomp",
+    "damage": 60,
+    "type": "LIGHTNING",
+    "sound": "/sounds/thunderStomp.ogg"
+  },
+  {
+    "id": "hornSlam",
+    "name": "Horn Slam",
+    "damage": 55,
+    "type": "EARTH",
+    "sound": "/sounds/hornSlam.ogg"
+  },
+  {
+    "id": "leafShield",
+    "name": "Leaf Shield",
+    "damage": 35,
+    "type": "GRASS",
+    "sound": "/sounds/leafShield.ogg"
+  },
+  {
+    "id": "razorLeaf",
+    "name": "Razor Leaf",
+    "damage": 70,
+    "type": "GRASS",
+    "sound": "/sounds/razorLeaf.ogg"
+  },
+  {
+    "id": "natureBlast",
+    "name": "Nature Blast",
+    "damage": 65,
+    "type": "GRASS",
+    "sound": "/sounds/natureBlast.ogg"
   },
   {
     "id": "christmasWish",
