@@ -141,126 +141,126 @@
     "name": "Vine Whip",
     "damage": 50,
     "type": "GRASS",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/vineWhip.ogg"
   },
   {
     "id": "shellDefense",
     "name": "Shell Defense",
     "damage": 30,
     "type": "NORMAL",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/shellDefense.ogg"
   },
   {
     "id": "headButt",
     "name": "Head Butt",
     "damage": 70,
     "type": "NORMAL",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/headButt.ogg"
   },
   {
     "id": "aquaticWave",
     "name": "Aquatic Wave",
     "damage": 60,
     "type": "WATER",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/aquaticWave.ogg"
   },
   {
     "id": "fireBall",
     "name": "Fire Ball",
     "damage": 55,
     "type": "FIRE",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/fireBall.ogg"
   },
   {
     "id": "wingSlash",
     "name": "Wing Slash",
     "damage": 65,
     "type": "AIR",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/wingSlash.ogg"
   },
   {
     "id": "inferno",
     "name": "Inferno",
     "damage": 75,
     "type": "FIRE",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/inferno.ogg"
   },
   {
     "id": "soar",
     "name": "Soar",
     "damage": 40,
     "type": "AIR",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/soar.ogg"
   },
   {
     "id": "rockThrow",
     "name": "Rock Throw",
     "damage": 50,
     "type": "EARTH",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/rockThrow.ogg"
   },
   {
     "id": "ironDefense",
     "name": "Iron Defense",
     "damage": 30,
     "type": "NORMAL",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/ironDefense.ogg"
   },
   {
     "id": "tackle",
     "name": "Tackle",
     "damage": 55,
     "type": "NORMAL",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/tackle.ogg"
   },
   {
     "id": "charge",
     "name": "Charge",
     "damage": 65,
     "type": "LIGHTNING",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/charge.ogg"
   },
   {
     "id": "lightningStrike",
     "name": "Lightning Strike",
     "damage": 75,
     "type": "LIGHTNING",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/lightningStrike.ogg"
   },
   {
     "id": "thunderStomp",
     "name": "Thunder Stomp",
     "damage": 60,
     "type": "LIGHTNING",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/thunderStomp.ogg"
   },
   {
     "id": "hornSlam",
     "name": "Horn Slam",
     "damage": 55,
     "type": "EARTH",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/hornSlam.ogg"
   },
   {
     "id": "leafShield",
     "name": "Leaf Shield",
     "damage": 35,
     "type": "GRASS",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/leafShield.ogg"
   },
   {
     "id": "razorLeaf",
     "name": "Razor Leaf",
     "damage": 70,
     "type": "GRASS",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/razorLeaf.ogg"
   },
   {
     "id": "natureBlast",
     "name": "Nature Blast",
     "damage": 65,
     "type": "GRASS",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/natureBlast.ogg"
   },
   {
     "id": "christmasWish",
