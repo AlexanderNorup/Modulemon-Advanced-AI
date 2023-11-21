@@ -131,5 +131,65 @@
     ],
     "front": "/images/seagull_front.png",
     "back": "/images/seagull_back.png"
+  },
+  {
+    "id": 8,
+    "name": "Turtle",
+    "type": "WATER",
+    "hp": 110,
+    "defence": 120,
+    "attack": 95,
+    "speed": 60,
+    "moves": ["waterGun", "shellDefense", "headButt", "aquaticWave"],
+    "front": "/images/eel_1.png",
+    "back": "/images/eel_2.png"
+  },
+  {
+    "id": 9,
+    "name": "Phoenix",
+    "type": "FIRE",
+    "hp": 92,
+    "defence": 80,
+    "attack": 135,
+    "speed": 110,
+    "moves": ["fireBall", "wingSlash", "inferno", "soar"],
+    "front": "/images/dog_front.png",
+    "back": "/images/dog_back.png"
+  },
+  {
+    "id": 10,
+    "name": "Rock Golem",
+    "type": "EARTH",
+    "hp": 120,
+    "defence": 150,
+    "attack": 75,
+    "speed": 40,
+    "moves": ["rockThrow", "earthquake", "ironDefense", "tackle"],
+    "front": "/images/mole_front.png",
+    "back": "/images/mole_back.png"
+  },
+  {
+    "id": 11,
+    "name": "Thunder Bison",
+    "type": "LIGHTNING",
+    "hp": 100,
+    "defence": 95,
+    "attack": 120,
+    "speed": 80,
+    "moves": ["charge", "lightningStrike", "thunderStomp", "hornSlam"],
+    "front": "/images/cat_front.png",
+    "back": "/images/cat_back.png"
+  },
+  {
+    "id": 12,
+    "name": "Vine Serpent",
+    "type": "GRASS",
+    "hp": 88,
+    "defence": 75,
+    "attack": 110,
+    "speed": 100,
+    "moves": ["vineWhip", "leafShield", "razorLeaf", "natureBlast"],
+    "front": "/images/alpaca_1.png",
+    "back": "/images/alpaca_2.png"
   }
 ]
