@@ -87,7 +87,7 @@ public class HeadlessBattleView implements IGameViewService {
         csvWriter.setWriteExcelHeader(true); // Makes it so the file is easy to open in Excel.
 
         var coloumnTitles = new ArrayList<String>() {{
-            add("Turn");
+            add("Battle");
             add("WinnerTeam");
             add("TurnsToWin");
         }};
