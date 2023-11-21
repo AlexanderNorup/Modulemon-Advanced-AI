@@ -63,6 +63,7 @@ public class HeadlessBattleView implements IGameViewService {
     private int[] battleAmounts = {1, 10, 100, 250, 500, 750, 1000};
     private int battleAmountIndex = 1;
     private MonsterSelector monsterSelector;
+    private final int TEAM_MONSTER_AMOUNT = 3;
 
     @Override
     public void init(IGameViewManager gameViewManager) {
@@ -311,8 +312,8 @@ public class HeadlessBattleView implements IGameViewService {
         }
 
         // Currently just static list of monsters. Maybe create random teams, load from file or let user select teams
-        List<IMonster> teamA = monsterSelector.createMonsterTeam(3);
-        List<IMonster> teamB = monsterSelector.createMonsterTeam(3);
+        List<IMonster> teamA = monsterSelector.createMonsterTeam(TEAM_MONSTER_AMOUNT);
+        List<IMonster> teamB = monsterSelector.createMonsterTeam(TEAM_MONSTER_AMOUNT);
 
         var teamAPlayer = new BattleParticipant(teamA, true);
         var teamBPlayer = new BattleParticipant(teamB, false);
