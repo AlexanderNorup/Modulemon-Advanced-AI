@@ -261,5 +261,12 @@
     "damage": 65,
     "type": "GRASS",
     "sound": "/sounds/screech.ogg"
+  },
+  {
+    "id": "christmasWish",
+    "name": "Christmas Wish",
+    "damage": 100,
+    "type": "NORMAL",
+    "sound": "/sounds/christmas_wish.ogg"
   }
 ]

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import dk.sdu.mmmi.modulemon.Battle.BattleParticipant;
 import dk.sdu.mmmi.modulemon.BattleScene.BattleResult;
 import dk.sdu.mmmi.modulemon.BattleSimulation.BattleSimulation;
+import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
 import dk.sdu.mmmi.modulemon.CommonBattleClient.IBattleResult;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.AICrashedEvent;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.ChangeMonsterBattleEvent;
@@ -24,6 +25,11 @@ import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 import dk.sdu.mmmi.modulemon.common.services.IGameViewService;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.MoveBattleEvent;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.sql.Array;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +71,8 @@ public class HeadlessBattleView implements IGameViewService {
     private MonsterSelector monsterSelector;
     private final int TEAM_MONSTER_AMOUNT = 3;
 
+    private CSVWriter csvWriter;
+
     @Override
     public void init(IGameViewManager gameViewManager) {
         selectSound = AssetLoader.getInstance().getSoundAsset("/sounds/select.ogg", this.getClass());
@@ -72,11 +80,29 @@ public class HeadlessBattleView implements IGameViewService {
         yaySound = AssetLoader.getInstance().getSoundAsset("/sounds/YAY.ogg", this.getClass());
         battleWaitMusic = AssetLoader.getInstance().getMusicAsset("/music/headless.ogg", this.getClass());
         battleWaitMusic.setLooping(true);
-        battleWaitMusic.setVolume(getSoundVolume());
+        battleWaitMusic.setVolume(getMusicVolume());
         menuMusic = AssetLoader.getInstance().getMusicAsset("/music/headlessMenu.ogg", this.getClass());
         menuMusic.setLooping(true);
-        menuMusic.setVolume(getSoundVolume());
+        menuMusic.setVolume(getMusicVolume());
         menuMusic.play();
+
+        csvWriter = new CSVWriter();
+        csvWriter.setWriteExcelHeader(true); // Makes it so the file is easy to open in Excel.
+
+        var coloumnTitles = new ArrayList<String>() {{
+            add("Battle");
+            add("WinnerTeam");
+            add("TurnsToWin");
+        }};
+        int monstersPerTeam = 3;
+        for(String team : new String[]{"WinnerTeam", "LoserTeam"}) {
+            for (int i = 0; i < monstersPerTeam; i++) {
+                coloumnTitles.add(String.format("%s_Monster%d_Name", team, i+1));
+                coloumnTitles.add(String.format("%s_Monster%d_HP", team, i+1));
+            }
+        }
+
+        csvWriter.setColumnTitles(coloumnTitles.toArray(new String[0]));
 
         scene = new HeadlessBattleScene(settings);
         battlingScene = new HeadlessBattlingScene();
@@ -100,6 +126,7 @@ public class HeadlessBattleView implements IGameViewService {
                 if (battleResultFuture.isDone()) {
                     try {
                         var battleResult = battleResultFuture.get();
+                        boolean teamAWon = true;
                         if (battleResult.getWinner() == battleResult.getPlayer()) {
                             teamAWins++;
                             if(battleResult.getStarter() == battleResult.getWinner()){
@@ -107,6 +134,7 @@ public class HeadlessBattleView implements IGameViewService {
                             }
                             winTurnsA += battleResult.getTurns();
                         } else {
+                            teamAWon = false;
                             teamBWins++;
                             if(battleResult.getStarter() == battleResult.getWinner()){
                                 teamBStartWins++;
@@ -116,9 +144,24 @@ public class HeadlessBattleView implements IGameViewService {
                         completedBattles++;
                         currentBattles--;
                         battleResultsToRemove.add(battleResultFuture);
+
+                        var row = new ArrayList<Object>();
+                        row.add(completedBattles);
+                        row.add(teamAWon ? "A" : "B");
+                        row.add(battleResult.getTurns());
+
+                        var participantWinner = battleResult.getWinner();
+                        var participantLoser = battleResult.getWinner().equals(battleResult.getPlayer()) ? battleResult.getEnemy() : battleResult.getPlayer();
+                        for(var team : new IBattleParticipant[]{participantWinner, participantLoser}) {
+                            for (var monster : team.getMonsterTeam()) {
+                                row.add(monster.getName());
+                                row.add(monster.getHitPoints());
+                            }
+                        }
+
+                        csvWriter.addRow(row.toArray());
                     } catch (InterruptedException | ExecutionException e) {
                         System.out.println("Battle was cancelled!");
-                        ;
                     }
                 }
             }
@@ -133,10 +176,26 @@ public class HeadlessBattleView implements IGameViewService {
             if (completedBattles >= battleAmount) {
                 yaySound.play(getSoundVolume());
                 battling = false;
+                EmptyOutHandler.setDefaultHandler();
                 doneBattling = true;
                 currentBattles = 0;
                 // Stop any remaining battles
                 stopAllBattles();
+
+                // Save CSV file
+                try {
+                    final String outputDir = "BattleResults";
+                    var dir = new File(outputDir);
+                    if(!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    var filename = Path.of(outputDir, String.format("battle_simulation_results_%d.csv", System.currentTimeMillis() / 1000L));
+                    csvWriter.save(filename.toAbsolutePath().toString());
+                } catch (IOException e) {
+                    System.out.println("Tried to save CSV file, but failed! Oh no! Anyway..");
+                    e.printStackTrace();
+                }
+
             } else if (currentBattles < concurrentBattles && currentBattles + completedBattles < battleAmount) {
                 var amountBattlesToStart = concurrentBattles - currentBattles;
                 for (int i = 0; i < amountBattlesToStart; i++) {
@@ -295,6 +354,7 @@ public class HeadlessBattleView implements IGameViewService {
                 battleWaitMusic.setVolume(getSoundVolume());
                 battleWaitMusic.play();
                 battling = true;
+                EmptyOutHandler.setEmptyHandler();
             } else if (gameData.getKeys().isPressed(GameKeys.ACTION)) {
                 chooseSound.play(getSoundVolume());
                 editingMode = true;
@@ -376,6 +436,10 @@ public class HeadlessBattleView implements IGameViewService {
 
     private float getSoundVolume() {
         return ((int) settings.getSetting(settingsRegistry.getSoundVolumeSetting()) / 100f);
+    }
+
+    private float getMusicVolume() {
+        return ((int) settings.getSetting(settingsRegistry.getMusicVolumeSetting()) / 100f);
     }
 
     public void setSettings(IGameSettings settings) {

@@ -191,5 +191,22 @@
     "moves": ["vineWhip", "leafShield", "razorLeaf", "natureBlast"],
     "front": "/images/vineSerpent_front.png",
     "back": "/images/vineSerpent_back.png"
+  },
+  {
+    "id" : 13,
+    "name" : "Jonas",
+    "type" : "NORMAL",
+    "hp" : 69,
+    "defence" : 120,
+    "attack" : 54,
+    "speed" : 80,
+    "moves" : [
+      "tornado",
+      "slam",
+      "trample",
+      "christmasWish"
+    ],
+    "front": "/images/jonas_front.png",
+    "back": "/images/jonas_back.png"
   }
 ]
