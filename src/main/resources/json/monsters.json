@@ -140,9 +140,9 @@
     "defence": 120,
     "attack": 95,
     "speed": 60,
-    "moves": ["waterGun", "shellDefense", "headButt", "aquaticWave"],
-    "front": "/images/eel_1.png",
-    "back": "/images/eel_2.png"
+    "moves": ["tackle", "shellDefense", "headButt", "aquaticWave"],
+    "front": "/images/turtle_front.png",
+    "back": "/images/turtle_back.png"
   },
   {
     "id": 9,
@@ -153,8 +153,8 @@
     "attack": 135,
     "speed": 110,
     "moves": ["fireBall", "wingSlash", "inferno", "soar"],
-    "front": "/images/dog_front.png",
-    "back": "/images/dog_back.png"
+    "front": "/images/phoenix_front.png",
+    "back": "/images/phoenix_back.png"
   },
   {
     "id": 10,
@@ -165,8 +165,8 @@
     "attack": 75,
     "speed": 40,
     "moves": ["rockThrow", "earthquake", "ironDefense", "tackle"],
-    "front": "/images/mole_front.png",
-    "back": "/images/mole_back.png"
+    "front": "/images/rockGolem_front.png",
+    "back": "/images/rockGolem_back.png"
   },
   {
     "id": 11,
@@ -177,8 +177,8 @@
     "attack": 120,
     "speed": 80,
     "moves": ["charge", "lightningStrike", "thunderStomp", "hornSlam"],
-    "front": "/images/cat_front.png",
-    "back": "/images/cat_back.png"
+    "front": "/images/thunderBison_front.png",
+    "back": "/images/thunderBison_back.png"
   },
   {
     "id": 12,
@@ -189,7 +189,7 @@
     "attack": 110,
     "speed": 100,
     "moves": ["vineWhip", "leafShield", "razorLeaf", "natureBlast"],
-    "front": "/images/alpaca_1.png",
-    "back": "/images/alpaca_2.png"
+    "front": "/images/vineSerpent_front.png",
+    "back": "/images/vineSerpent_back.png"
   }
 ]
