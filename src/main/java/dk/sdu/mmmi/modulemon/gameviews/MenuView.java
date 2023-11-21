@@ -74,6 +74,8 @@ public class MenuView implements IGameViewService {
             "Battle Music Theme",
             "AI",
             "Use AI knowledge states",
+            "Nondeterminism",
+            "Concurrent battle amount"
     };
 
     private int AIIndex = 0;
@@ -213,7 +215,7 @@ public class MenuView implements IGameViewService {
                 (Game.HEIGHT - glyphLayout.height) / 1.25f
         );
 
-        if(!subtitle.isBlank()) {
+        if (!subtitle.isBlank()) {
             subtitleFont.setColor(Color.valueOf("ffcb05"));
             glyphLayout.setText(subtitleFont, subtitle);
             subtitleFont.draw(
@@ -278,6 +280,9 @@ public class MenuView implements IGameViewService {
 
     @Override
     public void handleInput(GameData gameData, IGameViewManager gameViewManager) {
+        if (gameData.getKeys().isPressed(GameKeys.BACK)) {
+            goBackToMainMenu();
+        }
         // Moves up in the menu
         if (gameData.getKeys().isPressed(GameKeys.UP)) {
             if (currentOption > 0) {
@@ -316,10 +321,7 @@ public class MenuView implements IGameViewService {
      */
     private void selectOption(IGameViewManager gvm) {
         if (menuOptions[currentOption].equalsIgnoreCase("GO BACK")) {
-            currentMenuState = MenuStates.DEFAULT;
-            currentOption = 0;
-            showSettings = false;
-            chooseSound.play(getSoundVolumeAsFloat());
+            goBackToMainMenu();
             return;
         }
 
@@ -353,6 +355,14 @@ public class MenuView implements IGameViewService {
                 Gdx.app.exit();
             }
         }
+    }
+
+    private void goBackToMainMenu() {
+        currentMenuState = MenuStates.DEFAULT;
+        currentOption = 0;
+        showSettings = false;
+        chooseSound.play(getSoundVolumeAsFloat());
+        return;
     }
 
     /**
@@ -408,7 +418,7 @@ public class MenuView implements IGameViewService {
                         break;
                     }
 
-                    if(menuOptions[currentOption].equalsIgnoreCase("AI")){
+                    if (menuOptions[currentOption].equalsIgnoreCase("AI")) {
                         AIIndex++;
 
                         AIIndex = AIIndex % AIOptions.length;
@@ -436,6 +446,20 @@ public class MenuView implements IGameViewService {
                         chooseSound.play(getSoundVolumeAsFloat());
                         break;
                     }
+
+                    if (menuOptions[currentOption].equalsIgnoreCase("Concurrent battle amount")) {
+                        // Sets the maximum concurrent battles to 10
+                        if (((int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) < 16)) {
+                            // increases the concurrent battles by 1
+                            int concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) + 1;
+                            settings.setSetting(settingsRegistry.getConcurrentBattleAmount(), concurrentBattles);
+
+                            settingsValueList.set(9, String.valueOf(concurrentBattles));
+                            chooseSound.play(getSoundVolumeAsFloat());
+                        }
+                        break;
+                    }
+
                     boolean_settings_switch_on_off();
                     break;
                 }
@@ -483,7 +507,7 @@ public class MenuView implements IGameViewService {
                     }
 
 
-                    if(menuOptions[currentOption].equalsIgnoreCase("AI")){
+                    if (menuOptions[currentOption].equalsIgnoreCase("AI")) {
                         if (AIIndex == 0) {
                             AIIndex = AIOptions.length - 1;
                         } else {
@@ -514,6 +538,19 @@ public class MenuView implements IGameViewService {
                         settingsValueList.set(5, battleTheme);
 
                         chooseSound.play(getSoundVolumeAsFloat());
+                        break;
+                    }
+
+                    if (menuOptions[currentOption].equalsIgnoreCase("Concurrent battle amount")) {
+                        // Sets the minimum concurrent battles to 1
+                        if (((int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) > 1)) {
+                            // Decreases the concurrent battles by 1
+                            int concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) - 1;
+                            settings.setSetting(settingsRegistry.getConcurrentBattleAmount(), concurrentBattles);
+
+                            settingsValueList.set(9, String.valueOf(concurrentBattles));
+                            chooseSound.play(getSoundVolumeAsFloat());
+                        }
                         break;
                     }
 
@@ -574,6 +611,18 @@ public class MenuView implements IGameViewService {
                     settings.setSetting(settingsRegistry.getAIKnowlegdeStateEnabled(), true);
                 }
                 chooseSound.play(getSoundVolumeAsFloat());
+            } else if (menuOptions[currentOption].equalsIgnoreCase("Nondeterminism")) {
+                /*
+                If setting for using nondeterminism for battles,
+                 */
+                if (((Boolean) settings.getSetting(settingsRegistry.getNonDeterminism()))) {
+                    settingsValueList.set(8, "Off");
+                    settings.setSetting(settingsRegistry.getNonDeterminism(), false);
+                } else {
+                    settingsValueList.set(8, "On");
+                    settings.setSetting(settingsRegistry.getNonDeterminism(), true);
+                }
+                chooseSound.play(getSoundVolumeAsFloat());
             }
         }
     }
@@ -604,6 +653,9 @@ public class MenuView implements IGameViewService {
 
             settingsValueList.add((Boolean) settings.getSetting(settingsRegistry.getAIKnowlegdeStateEnabled()) ? "On" : "Off");
             AIIndex = Arrays.asList(AIOptions).indexOf(AI);
+            settingsValueList.add((Boolean) settings.getSetting(settingsRegistry.getNonDeterminism()) ? "On" : "Off");
+            var battleAmount = String.valueOf(settings.getSetting(settingsRegistry.getConcurrentBattleAmount()));
+            settingsValueList.add(battleAmount);
         }
     }
 

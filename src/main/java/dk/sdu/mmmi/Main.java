@@ -31,6 +31,7 @@ public class Main {
         var settings  = new Settings();
         var monsterRegistry = new MonsterRegistry();
         var battleMonsterProcessor = new BattleMonsterProcessor();
+        battleMonsterProcessor.setSettings(settings);
 
         var battleAI = new dk.sdu.mmmi.modulemon.BattleAI.BattleAIFactory();
         battleAI.setSettingsService(settings);
