@@ -112,7 +112,6 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         boolean criticalHit = randomVal >= threshold;
 
         if (criticalHit) {
-            System.out.println("critical hit");
             return 1.5f;
         } else {
             return 1f;

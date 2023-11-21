@@ -27,6 +27,7 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.MoveBattleEvent
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
 
 public class HeadlessBattleView implements IGameViewService {
@@ -61,6 +62,7 @@ public class HeadlessBattleView implements IGameViewService {
     private boolean editingMode = false;
     private int[] battleAmounts = {1, 10, 100, 250, 500, 750, 1000};
     private int battleAmountIndex = 1;
+    private MonsterSelector monsterSelector;
 
     @Override
     public void init(IGameViewManager gameViewManager) {
@@ -77,6 +79,7 @@ public class HeadlessBattleView implements IGameViewService {
 
         scene = new HeadlessBattleScene(settings);
         battlingScene = new HeadlessBattlingScene();
+        monsterSelector = new MonsterSelector(1337, monsterRegistry);
     }
 
     @Override
@@ -283,6 +286,7 @@ public class HeadlessBattleView implements IGameViewService {
                 chooseSound.play(getSoundVolume());
                 battleResults = new ArrayList<Future<IBattleResult>>();
                 battleResultsToRemove = new ArrayList<Future<IBattleResult>>();
+                monsterSelector.refreshSelector();
                 for (var i = 0; i < concurrentBattles; i++) {
                     battleResults.add(runBattle());
                 }
@@ -307,8 +311,8 @@ public class HeadlessBattleView implements IGameViewService {
         }
 
         // Currently just static list of monsters. Maybe create random teams, load from file or let user select teams
-        List<IMonster> teamA = Arrays.asList(monsterRegistry.getMonster(0), monsterRegistry.getMonster(1), monsterRegistry.getMonster(2));
-        List<IMonster> teamB = Arrays.asList(monsterRegistry.getMonster(0), monsterRegistry.getMonster(1), monsterRegistry.getMonster(2));
+        List<IMonster> teamA = monsterSelector.createMonsterTeam(3);
+        List<IMonster> teamB = monsterSelector.createMonsterTeam(3);
 
         var teamAPlayer = new BattleParticipant(teamA, true);
         var teamBPlayer = new BattleParticipant(teamB, false);
