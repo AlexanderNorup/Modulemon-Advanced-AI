@@ -315,6 +315,7 @@ public class HeadlessBattleView implements IGameViewService {
 
         var battleSim = new BattleSimulation();
         var processor = new BattleMonsterProcessor();
+        processor.setSettings(settings);
         battleSim.setMonsterProcessor(processor);
         battleSim.setPlayerAIFactory(teamAAI);
         battleSim.setOpponentAIFactory(teamBAI);
