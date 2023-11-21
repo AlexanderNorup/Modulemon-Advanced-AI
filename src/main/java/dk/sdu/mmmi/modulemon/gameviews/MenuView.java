@@ -74,7 +74,8 @@ public class MenuView implements IGameViewService {
             "Battle Music Theme",
             "AI",
             "Use AI knowledge states",
-            "Nondeterminism"
+            "Nondeterminism",
+            "Concurrent battle amount"
     };
 
     private int AIIndex = 0;
@@ -445,6 +446,20 @@ public class MenuView implements IGameViewService {
                         chooseSound.play(getSoundVolumeAsFloat());
                         break;
                     }
+
+                    if (menuOptions[currentOption].equalsIgnoreCase("Concurrent battle amount")) {
+                        // Sets the maximum concurrent battles to 10
+                        if (((int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) < 16)) {
+                            // increases the concurrent battles by 1
+                            int concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) + 1;
+                            settings.setSetting(settingsRegistry.getConcurrentBattleAmount(), concurrentBattles);
+
+                            settingsValueList.set(9, String.valueOf(concurrentBattles));
+                            chooseSound.play(getSoundVolumeAsFloat());
+                        }
+                        break;
+                    }
+
                     boolean_settings_switch_on_off();
                     break;
                 }
@@ -523,6 +538,19 @@ public class MenuView implements IGameViewService {
                         settingsValueList.set(5, battleTheme);
 
                         chooseSound.play(getSoundVolumeAsFloat());
+                        break;
+                    }
+
+                    if (menuOptions[currentOption].equalsIgnoreCase("Concurrent battle amount")) {
+                        // Sets the minimum concurrent battles to 1
+                        if (((int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) > 1)) {
+                            // Decreases the concurrent battles by 1
+                            int concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount()) - 1;
+                            settings.setSetting(settingsRegistry.getConcurrentBattleAmount(), concurrentBattles);
+
+                            settingsValueList.set(9, String.valueOf(concurrentBattles));
+                            chooseSound.play(getSoundVolumeAsFloat());
+                        }
                         break;
                     }
 
@@ -626,6 +654,8 @@ public class MenuView implements IGameViewService {
             settingsValueList.add((Boolean) settings.getSetting(settingsRegistry.getAIKnowlegdeStateEnabled()) ? "On" : "Off");
             AIIndex = Arrays.asList(AIOptions).indexOf(AI);
             settingsValueList.add((Boolean) settings.getSetting(settingsRegistry.getNonDeterminism()) ? "On" : "Off");
+            var battleAmount = String.valueOf(settings.getSetting(settingsRegistry.getConcurrentBattleAmount()));
+            settingsValueList.add(battleAmount);
         }
     }
 

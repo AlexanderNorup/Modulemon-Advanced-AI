@@ -188,6 +188,9 @@ public class Game implements ApplicationListener {
             if(settings.getSetting(SettingsRegistry.getInstance().getNonDeterminism()) == null){
                 settings.setSetting(SettingsRegistry.getInstance().getNonDeterminism(), true);
             }
+            if(settings.getSetting(SettingsRegistry.getInstance().getConcurrentBattleAmount()) == null){
+                settings.setSetting(SettingsRegistry.getInstance().getConcurrentBattleAmount(), 5);
+            }
             gvm.setSettings(settings);
         });
     }

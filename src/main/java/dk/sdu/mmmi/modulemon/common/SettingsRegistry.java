@@ -19,6 +19,7 @@ public class SettingsRegistry {
     private UUID battle_theme = UUID.randomUUID();
     private UUID battle_AI = UUID.randomUUID();
     private UUID non_determinism = UUID.randomUUID();
+    private UUID concurrent_battles = UUID.randomUUID();
 
     private SettingsRegistry(){
         settingsMap = new HashMap<>();
@@ -41,6 +42,7 @@ public class SettingsRegistry {
         settingsMap.put(battle_theme, "battleMusicTheme");
         settingsMap.put(battle_AI, "AI");
         settingsMap.put(non_determinism, "Nondeterminism");
+        settingsMap.put(concurrent_battles, "Concurrent Battles");
     }
 
     /*
@@ -78,6 +80,9 @@ public class SettingsRegistry {
 
     public String getNonDeterminism() {
         return settingsMap.get(non_determinism);
+    }
+    public String getConcurrentBattleAmount() {
+        return settingsMap.get(concurrent_battles);
     }
 
     public static SettingsRegistry getInstance(){

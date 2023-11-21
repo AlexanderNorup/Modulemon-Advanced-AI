@@ -77,6 +77,7 @@ public class HeadlessBattleView implements IGameViewService {
 
         scene = new HeadlessBattleScene(settings);
         battlingScene = new HeadlessBattlingScene();
+        concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount());
     }
 
     @Override
