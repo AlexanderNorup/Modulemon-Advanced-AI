@@ -3,10 +3,15 @@ package dk.sdu.mmmi.modulemon.Monster;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleMonsterProcessor;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
+import dk.sdu.mmmi.modulemon.Settings.Settings;
+import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
+import dk.sdu.mmmi.modulemon.common.services.IGameSettings;
 
 import java.util.Random;
 
 public class BattleMonsterProcessor implements IBattleMonsterProcessor {
+
+    private IGameSettings settings;
 
     @Override
     public IMonster whichMonsterStarts(IMonster iMonster1, IMonster iMonster2) {
@@ -24,7 +29,9 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         float sourceAttack = (float) source.getAttack();
         float targetDefence = (float) target.getDefence();
 
-        if (!doAccuracyHit(move.getAccuracy())) { return 0; }
+        boolean shouldUseNonDeterminism = (Boolean) settings.getSetting(SettingsRegistry.getInstance().getNonDeterminism());
+
+        if (!doAccuracyHit(move.getAccuracy()) && shouldUseNonDeterminism) { return 0; }
         // Same type attack bonus. Effectively the same as STAB in that other game
         boolean same_attack_type = source.getMonsterType() == move.getType();
         float attack_bonus = 1;
@@ -35,7 +42,10 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
 
         float monsterAttackDefence = (0.2f * sourceAttack + 3 + 20 ) / (targetDefence + 50);
 
-        int damage =  Math.round( monsterAttackDefence * moveDamage * attack_bonus * calculateTypeAdvantage(move.getType(), target.getMonsterType()) * calculateCriticalHit(source) );
+        int damage =  Math.round( monsterAttackDefence * moveDamage * attack_bonus * calculateTypeAdvantage(move.getType(), target.getMonsterType()));
+        if(shouldUseNonDeterminism){
+            damage *= calculateCriticalHit(source);
+        }
         return damage;
     }
 
@@ -109,7 +119,7 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         //Generate random number between 0-255
         float randomVal = random.nextInt(256);
         //true if the generated number is less than the threshold
-        boolean criticalHit = randomVal >= threshold;
+        boolean criticalHit = randomVal < threshold;
 
         if (criticalHit) {
             System.out.println("critical hit");
@@ -125,5 +135,9 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         //Ensures that the next move will always be below our factor and between(0-1)
         return random.nextFloat() <= factor;
 
+    }
+
+    public void setSettings(IGameSettings settings) {
+        this.settings = settings;
     }
 }

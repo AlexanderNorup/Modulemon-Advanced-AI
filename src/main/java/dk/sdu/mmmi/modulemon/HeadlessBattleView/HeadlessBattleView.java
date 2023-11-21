@@ -103,6 +103,7 @@ public class HeadlessBattleView implements IGameViewService {
 
         scene = new HeadlessBattleScene(settings);
         battlingScene = new HeadlessBattlingScene();
+        concurrentBattles = (int) settings.getSetting(settingsRegistry.getConcurrentBattleAmount());
     }
 
     @Override
@@ -375,6 +376,7 @@ public class HeadlessBattleView implements IGameViewService {
 
         var battleSim = new BattleSimulation();
         var processor = new BattleMonsterProcessor();
+        processor.setSettings(settings);
         battleSim.setMonsterProcessor(processor);
         battleSim.setPlayerAIFactory(teamAAI);
         battleSim.setOpponentAIFactory(teamBAI);
