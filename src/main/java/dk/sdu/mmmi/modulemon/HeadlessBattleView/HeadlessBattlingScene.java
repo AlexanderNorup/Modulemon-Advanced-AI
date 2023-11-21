@@ -27,6 +27,7 @@ public class HeadlessBattlingScene {
     private String teamBAIName;
 
     private int currentBattles = 0;
+    private int totalTurns = 0;
     private float battleProgress = 0;
     private boolean doneBattling = false;
 
@@ -78,8 +79,8 @@ public class HeadlessBattlingScene {
         var winNumHeight = winTextHeight - winYGap;
         text.drawBigBoldRoboto(spriteBatch, "Team A Wins", Color.BLACK, aXPos, winTextHeight);
         text.drawBigBoldRoboto(spriteBatch, "Team B Wins", Color.BLACK, bXPos, winTextHeight);
-        text.drawSmallRoboto(spriteBatch, teamAAIName, Color.BLACK, aXPos, winTextHeight - 20);
-        text.drawSmallRoboto(spriteBatch, teamBAIName, Color.BLACK, bXPos, winTextHeight - 20);
+        text.drawSmallRoboto(spriteBatch, teamAAIName, Color.BLACK, aXPos, winTextHeight - 22);
+        text.drawSmallRoboto(spriteBatch, teamBAIName, Color.BLACK, bXPos, winTextHeight - 22);
         text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamAWins), Color.BLACK, aXPos, winNumHeight);
         text.drawNormalBoldRoboto(spriteBatch, String.valueOf(teamBWins), Color.BLACK, bXPos, winNumHeight);
         var startingWinTextHeight = winTextHeight - (winYGap * 2);
@@ -96,6 +97,7 @@ public class HeadlessBattlingScene {
         text.drawSmallRoboto(spriteBatch, String.valueOf(avgTurnsToWinB), Color.BLACK, bXPos, turnsToWinNumHeight);
 
         text.drawNormalBoldRoboto(spriteBatch, String.format("Ongoing battles: %d", currentBattles), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 3f);
+        text.drawSmallRoboto(spriteBatch, String.format("Total turns actually taken: %d", totalTurns), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 3.45f);
         text.drawBigBoldRoboto(spriteBatch, String.format("Battle progress %.1f %%", battleProgress * 100), Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 4f);
         if (doneBattling) {
             text.drawNormalRoboto(spriteBatch, "Press [action] to return", Color.WHITE, screenWidth / 2f, (screenHeight / 2f) - winYGap * 5);
@@ -170,6 +172,10 @@ public class HeadlessBattlingScene {
 
     public void setCurrentBattles(int currentBattles) {
         this.currentBattles = currentBattles;
+    }
+
+    public void setTotalTurns(int totalTurns) {
+        this.totalTurns = totalTurns;
     }
 
     public void setBattleProgress(float battleProgress) {

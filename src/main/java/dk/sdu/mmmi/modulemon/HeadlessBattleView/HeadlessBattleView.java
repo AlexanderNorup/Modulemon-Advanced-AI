@@ -49,6 +49,7 @@ public class HeadlessBattleView implements IGameViewService {
     private List<Future<IBattleResult>> battleResultsToRemove;
     private int concurrentBattles = 5;
     private int currentBattles = 0;
+    private int totalTurns = 0;
     private ExecutorService battleExecutor = Executors.newFixedThreadPool(concurrentBattles);
     private HeadlessBattleScene scene;
     private HeadlessBattlingScene battlingScene;
@@ -83,23 +84,7 @@ public class HeadlessBattleView implements IGameViewService {
         menuMusic.setVolume(getMusicVolume());
         menuMusic.play();
 
-        csvWriter = new CSVWriter();
-        csvWriter.setWriteExcelHeader(true); // Makes it so the file is easy to open in Excel.
-
-        var coloumnTitles = new ArrayList<String>() {{
-            add("Battle");
-            add("WinnerTeam");
-            add("TurnsToWin");
-        }};
-        int monstersPerTeam = 3;
-        for(String team : new String[]{"WinnerTeam", "LoserTeam"}) {
-            for (int i = 0; i < monstersPerTeam; i++) {
-                coloumnTitles.add(String.format("%s_Monster%d_Name", team, i+1));
-                coloumnTitles.add(String.format("%s_Monster%d_HP", team, i+1));
-            }
-        }
-
-        csvWriter.setColumnTitles(coloumnTitles.toArray(new String[0]));
+        resetCsv();
 
         scene = new HeadlessBattleScene(settings);
         battlingScene = new HeadlessBattlingScene();
@@ -114,9 +99,10 @@ public class HeadlessBattleView implements IGameViewService {
             battlingScene.setTeamBWins(teamBWins);
             battlingScene.setTeamAStartWins(teamAStartWins);
             battlingScene.setTeamBStartWins(teamBStartWins);
-            battlingScene.setAvgTurnsToWinA((float)winTurnsA / teamAWins);
-            battlingScene.setAvgTurnsToWinB((float)winTurnsB / teamBWins);
+            battlingScene.setAvgTurnsToWinA((float) winTurnsA / teamAWins);
+            battlingScene.setAvgTurnsToWinB((float) winTurnsB / teamBWins);
             battlingScene.setBattleProgress(((float) completedBattles / battleAmount));
+            battlingScene.setTotalTurns(totalTurns);
             battlingScene.setCurrentBattles(currentBattles);
             battlingScene.setDoneBattling(doneBattling);
             for (var battleResultFuture : battleResults) {
@@ -126,14 +112,14 @@ public class HeadlessBattleView implements IGameViewService {
                         boolean teamAWon = true;
                         if (battleResult.getWinner() == battleResult.getPlayer()) {
                             teamAWins++;
-                            if(battleResult.getStarter() == battleResult.getWinner()){
+                            if (battleResult.getStarter() == battleResult.getWinner()) {
                                 teamAStartWins++;
                             }
                             winTurnsA += battleResult.getTurns();
                         } else {
                             teamAWon = false;
                             teamBWins++;
-                            if(battleResult.getStarter() == battleResult.getWinner()){
+                            if (battleResult.getStarter() == battleResult.getWinner()) {
                                 teamBStartWins++;
                             }
                             winTurnsB += battleResult.getTurns();
@@ -144,12 +130,12 @@ public class HeadlessBattleView implements IGameViewService {
 
                         var row = new ArrayList<Object>();
                         row.add(completedBattles);
-                        row.add(teamAWon ? "A" : "B");
+                        row.add(teamAWon ? String.format("Team A: %s", this.getSelectedAI(selectedTeamAAI)) : String.format("Team B: %s", this.getSelectedAI(selectedTeamBAI)));
                         row.add(battleResult.getTurns());
 
                         var participantWinner = battleResult.getWinner();
                         var participantLoser = battleResult.getWinner().equals(battleResult.getPlayer()) ? battleResult.getEnemy() : battleResult.getPlayer();
-                        for(var team : new IBattleParticipant[]{participantWinner, participantLoser}) {
+                        for (var team : new IBattleParticipant[]{participantWinner, participantLoser}) {
                             for (var monster : team.getMonsterTeam()) {
                                 row.add(monster.getName());
                                 row.add(monster.getHitPoints());
@@ -183,7 +169,7 @@ public class HeadlessBattleView implements IGameViewService {
                 try {
                     final String outputDir = "BattleResults";
                     var dir = new File(outputDir);
-                    if(!dir.exists()) {
+                    if (!dir.exists()) {
                         dir.mkdirs();
                     }
                     var filename = Path.of(outputDir, String.format("battle_simulation_results_%d.csv", System.currentTimeMillis() / 1000L));
@@ -205,9 +191,10 @@ public class HeadlessBattleView implements IGameViewService {
             battlingScene.setTeamBWins(teamBWins);
             battlingScene.setTeamAStartWins(teamAStartWins);
             battlingScene.setTeamBStartWins(teamBStartWins);
-            battlingScene.setAvgTurnsToWinA((float)winTurnsA / teamAWins);
-            battlingScene.setAvgTurnsToWinB((float)winTurnsB / teamBWins);
+            battlingScene.setAvgTurnsToWinA((float) winTurnsA / teamAWins);
+            battlingScene.setAvgTurnsToWinB((float) winTurnsB / teamBWins);
             battlingScene.setBattleProgress((float) completedBattles / battleAmounts[battleAmountIndex]);
+            battlingScene.setTotalTurns(totalTurns);
             battlingScene.setCurrentBattles(currentBattles);
             if (battleWaitMusic.getVolume() <= 0) {
                 battleWaitMusic.stop();
@@ -333,14 +320,17 @@ public class HeadlessBattleView implements IGameViewService {
         } else {
             if (gameData.getKeys().isPressed(GameKeys.DOWN)) {
                 selectSound.play(getSoundVolume());
-                cursorPosition = cursorPosition >= 3 ? 0 : cursorPosition+1;
+                cursorPosition = cursorPosition >= 3 ? 0 : cursorPosition + 1;
             }
             if (gameData.getKeys().isPressed(GameKeys.UP)) {
                 selectSound.play(getSoundVolume());
-                cursorPosition = cursorPosition <= 0 ? 3 : cursorPosition-1;;
+                cursorPosition = cursorPosition <= 0 ? 3 : cursorPosition - 1;
+                ;
             }
             if (gameData.getKeys().isPressed(GameKeys.ACTION) && cursorPosition == 3) {
+                resetCsv();
                 chooseSound.play(getSoundVolume());
+                this.totalTurns = 0;
                 battleResults = new ArrayList<Future<IBattleResult>>();
                 battleResultsToRemove = new ArrayList<Future<IBattleResult>>();
                 for (var i = 0; i < concurrentBattles; i++) {
@@ -392,6 +382,9 @@ public class HeadlessBattleView implements IGameViewService {
                     throw new InterruptedException();
                 }
                 var event = battleSim.getNextBattleEvent();
+                if (event != null) {
+                    incrementTotalTurns();
+                }
                 if (event instanceof VictoryBattleEvent victoryBattleEvent) {
                     var winner = victoryBattleEvent.getWinner() == battleSim.getState().getPlayer()
                             ? battleSim.getState().getPlayer()
@@ -406,6 +399,30 @@ public class HeadlessBattleView implements IGameViewService {
             }
         });
 
+    }
+
+    private synchronized void incrementTotalTurns() {
+        this.totalTurns++;
+    }
+
+    private void resetCsv() {
+        csvWriter = new CSVWriter();
+        csvWriter.setWriteExcelHeader(true); // Makes it so the file is easy to open in Excel.
+
+        var coloumnTitles = new ArrayList<String>() {{
+            add("Battle");
+            add("WinnerTeam");
+            add("TurnsToWin");
+        }};
+        int monstersPerTeam = 3;
+        for (String team : new String[]{"WinnerTeam", "LoserTeam"}) {
+            for (int i = 0; i < monstersPerTeam; i++) {
+                coloumnTitles.add(String.format("%s_Monster%d_Name", team, i + 1));
+                coloumnTitles.add(String.format("%s_Monster%d_HP", team, i + 1));
+            }
+        }
+
+        csvWriter.setColumnTitles(coloumnTitles.toArray(new String[0]));
     }
 
     private Integer scrollIndex(int index, int scrollAmount, int max) {
