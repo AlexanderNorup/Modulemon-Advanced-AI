@@ -117,6 +117,7 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         } else {
             return 1f;
         }
+    }
 
     public boolean doAccuracyHit(float factor) {
         //Generates a random value
