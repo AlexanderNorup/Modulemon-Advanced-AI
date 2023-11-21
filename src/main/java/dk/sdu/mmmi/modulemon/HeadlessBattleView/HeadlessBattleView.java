@@ -77,10 +77,10 @@ public class HeadlessBattleView implements IGameViewService {
         yaySound = AssetLoader.getInstance().getSoundAsset("/sounds/YAY.ogg", this.getClass());
         battleWaitMusic = AssetLoader.getInstance().getMusicAsset("/music/headless.ogg", this.getClass());
         battleWaitMusic.setLooping(true);
-        battleWaitMusic.setVolume(getSoundVolume());
+        battleWaitMusic.setVolume(getMusicVolume());
         menuMusic = AssetLoader.getInstance().getMusicAsset("/music/headlessMenu.ogg", this.getClass());
         menuMusic.setLooping(true);
-        menuMusic.setVolume(getSoundVolume());
+        menuMusic.setVolume(getMusicVolume());
         menuMusic.play();
 
         csvWriter = new CSVWriter();
@@ -431,6 +431,10 @@ public class HeadlessBattleView implements IGameViewService {
 
     private float getSoundVolume() {
         return ((int) settings.getSetting(settingsRegistry.getSoundVolumeSetting()) / 100f);
+    }
+
+    private float getMusicVolume() {
+        return ((int) settings.getSetting(settingsRegistry.getMusicVolumeSetting()) / 100f);
     }
 
     public void setSettings(IGameSettings settings) {
