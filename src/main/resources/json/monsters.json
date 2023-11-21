@@ -131,5 +131,22 @@
     ],
     "front": "/images/seagull_front.png",
     "back": "/images/seagull_back.png"
+  },
+  {
+    "id" : 8,
+    "name" : "Jonas",
+    "type" : "NORMAL",
+    "hp" : 69,
+    "defence" : 120,
+    "attack" : 54,
+    "speed" : 80,
+    "moves" : [
+      "tornado",
+      "slam",
+      "trample",
+      "christmasWish"
+    ],
+    "front": "/images/jonas_front.png",
+    "back": "/images/jonas_back.png"
   }
 ]
