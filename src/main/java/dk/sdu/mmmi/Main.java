@@ -43,6 +43,8 @@ public class Main {
         var randomSwitchingBattleAI = new dk.sdu.mmmi.modulemon.RandomAI.RandomAIFactory(true);
         var randomNonSwitchingBattleAI = new dk.sdu.mmmi.modulemon.RandomAI.RandomAIFactory(false);
 
+        var emptyAI = new dk.sdu.mmmi.modulemon.EmptyAI.EmptyAIFactory();
+
         var battleSimulation = new BattleSimulation();
         battleSimulation.setOpponentAIFactory(battleAI);
         battleSimulation.setMonsterProcessor(battleMonsterProcessor);
@@ -63,6 +65,7 @@ public class Main {
         customBattle.addBattleAI(nonAlphaBetaBattleAI);
         customBattle.addBattleAI(randomSwitchingBattleAI);
         customBattle.addBattleAI(randomNonSwitchingBattleAI);
+        customBattle.addBattleAI(emptyAI);
 
         var headlessBattle = new HeadlessBattleView();
         headlessBattle.setSettings(settings);
@@ -72,6 +75,7 @@ public class Main {
         headlessBattle.addBattleAI(nonAlphaBetaBattleAI);
         headlessBattle.addBattleAI(randomSwitchingBattleAI);
         headlessBattle.addBattleAI(randomNonSwitchingBattleAI);
+        headlessBattle.addBattleAI(emptyAI);
         headlessBattle.setMonsterRegistry(monsterRegistry);
 
 

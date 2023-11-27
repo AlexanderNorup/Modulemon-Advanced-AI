@@ -5,6 +5,7 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAI;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleState;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.KnowledgeState;
+import dk.sdu.mmmi.modulemon.CommonMonster.EmptyMove;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
 import dk.sdu.mmmi.modulemon.common.SettingsRegistry;
@@ -354,7 +355,7 @@ public class MCTSBattleAI implements IBattleAI {
         if(actions.isEmpty()){
             if(useKnowledgeState){
                 actions = new ArrayList<>(1);
-                actions.add(new EmptyMove());
+                actions.add(EmptyMove.getInstance());
             }else{
                 throw new IllegalStateException(String.format("There were no actions for the node: %s", node));
             }

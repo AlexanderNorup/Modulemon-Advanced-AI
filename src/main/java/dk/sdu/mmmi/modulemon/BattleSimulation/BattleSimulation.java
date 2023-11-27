@@ -5,6 +5,7 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.*;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.*;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
+import dk.sdu.mmmi.modulemon.CommonMonster.EmptyMove;
 
 import java.util.Optional;
 import java.util.Random;
@@ -118,7 +119,8 @@ public class BattleSimulation implements IBattleSimulation {
         if (battleParticipant != battleState.getActiveParticipant()) {
             throw new IllegalArgumentException("It is not that battle participants turn!");
         }
-        if (!battleParticipant.getActiveMonster().getMoves().contains(move)) {
+
+        if (!battleParticipant.getActiveMonster().getMoves().contains(move) && !(move instanceof EmptyMove)) {
             throw new IllegalArgumentException("The battle participants active monster can't use the specified move");
         }
 
@@ -129,7 +131,7 @@ public class BattleSimulation implements IBattleSimulation {
         IBattleParticipant opposingParticipant;
 
         if (battleParticipant.equals(battleState.getPlayer())) {
-            if (getOpponentAI() != null) {
+            if (getOpponentAI() != null && !(move instanceof EmptyMove) ) {
                 getOpponentAI().opposingMonsterUsedMove(source, move);
             }
         }
