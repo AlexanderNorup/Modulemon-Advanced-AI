@@ -74,7 +74,7 @@ public class MenuView implements IGameViewService {
             "Battle Music Theme",
             "AI",
             "Use AI knowledge states",
-            "Nondeterminism",
+            "Nondeterminism (random battles)",
             "Concurrent battle amount"
     };
 

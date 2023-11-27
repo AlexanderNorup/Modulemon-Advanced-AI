@@ -265,7 +265,7 @@ public class MCTSBattleAI implements IBattleAI {
 
     private Node bestChild(Node node, float exploration_coefficient) {
         Node bestChild = null;
-        var bestUCT = Float.NEGATIVE_INFINITY;
+        var bestUCT = Float.MIN_NORMAL;
 
         for (Node child : node.getChildren()) {
             var uct = calculateUCT(child, exploration_coefficient);
