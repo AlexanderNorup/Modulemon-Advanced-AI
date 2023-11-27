@@ -268,5 +268,12 @@
     "damage": 100,
     "type": "NORMAL",
     "sound": "/sounds/christmas_wish.ogg"
+  },
+  {
+    "id": "smack",
+    "name": "Smack",
+    "damage": 95,
+    "type": "NORMAL",
+    "sound": "/sounds/smack.ogg"
   }
 ]
