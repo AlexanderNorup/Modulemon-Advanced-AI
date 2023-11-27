@@ -72,11 +72,11 @@ public class MCTSBattleAI implements IBattleAI {
 
         startTime = System.nanoTime();
         var rootNode = new Node(battleSimulation.getState().clone(), this.participantToControl);
-        while (!outOfTime()) {
+        do {
             var newNode = treePolicy(rootNode);
             var reward = defaultPolicy(newNode);
             backpropagation(newNode, reward);
-        }
+        }while (!outOfTime());
 
         var bestChild = bestChild(rootNode, 0);
 
