@@ -71,6 +71,9 @@ public class TextUtils {
     }
 
     public void drawTitleFont(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(titleFont, text);
         titleFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -83,6 +86,9 @@ public class TextUtils {
     }
 
     public void drawBigRoboto(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(bigRobotoFont, text);
         bigRobotoFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -95,6 +101,9 @@ public class TextUtils {
     }
 
     public void drawBigBoldRoboto(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(bigBoldRobotoFont, text);
         bigBoldRobotoFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -107,6 +116,9 @@ public class TextUtils {
     }
 
     public void drawNormalRoboto(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(normalRobotoFont, text);
         normalRobotoFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -119,6 +131,9 @@ public class TextUtils {
     }
 
     public void drawNormalBoldRoboto(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(normalBoldRobotoFont, text);
         normalBoldRobotoFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -131,6 +146,9 @@ public class TextUtils {
     }
 
     public void drawSmallRoboto(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(smallRobotoFont, text);
         smallRobotoFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -143,6 +161,9 @@ public class TextUtils {
     }
 
     public void drawSmallBoldRoboto(SpriteBatch batch, String text, Color color, float x, float y) {
+        if (text == null) {
+            return;
+        }
         glyphLayout.setText(smallBoldRobotoFont, text);
         smallBoldRobotoFont.setColor(color);
         var adjusted = getAdjustedCoordinates(glyphLayout, x, y);
@@ -158,7 +179,7 @@ public class TextUtils {
         return switch (currentCoordinateMode) {
             case TOP_LEFT -> new Position(x, y);
             case BOTTOM_RIGHT -> new Position(x - layout.width, y + layout.height);
-            case CENTER -> new Position(x - (layout.width / 2f), y + (layout.height/2f));
+            case CENTER -> new Position(x - (layout.width / 2f), y + (layout.height / 2f));
         };
     }
 
