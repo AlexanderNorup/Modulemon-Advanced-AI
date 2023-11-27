@@ -49,7 +49,7 @@ public abstract class BaseAnimation {
         }
 
         if (States.size() != Timeline.length) {
-            throw new IllegalStateException("Timeline length does not match up with number of animation states");
+            throw new IllegalStateException("Timeline length ("+Timeline.length+") does not match up with number of animation states ("+States.size()+")");
         }
         int sampleLength = States.get(0).length;
         if (!States.stream().allMatch(x -> x.length == sampleLength)) {
