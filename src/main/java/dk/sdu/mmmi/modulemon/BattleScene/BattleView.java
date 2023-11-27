@@ -17,6 +17,7 @@ import dk.sdu.mmmi.modulemon.CommonBattleSimulation.BattleEvents.*;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleAIFactory;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleSimulation;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleState;
+import dk.sdu.mmmi.modulemon.CommonMonster.EmptyMove;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterRegistry;
@@ -674,6 +675,11 @@ public class BattleView implements IGameViewService, IBattleView {
     }
 
     private BaseAnimation getBattleAnimation(IMonsterMove move, boolean isPlayer){
+        if(move instanceof EmptyMove){
+            var monsterController = isPlayer ? MonsterSpecifierDelegates.player : MonsterSpecifierDelegates.enemy;
+            return new MonsterLoafAroundAnimation(_battleScene, monsterController, getAttackSound(move), settings);
+        }
+
         if(isPlayer){
             if(move.getName().equalsIgnoreCase("christmas wish")){
                 return new PlayerChristmasPresentAnimation(_battleScene, getAttackSound(move), settings);
