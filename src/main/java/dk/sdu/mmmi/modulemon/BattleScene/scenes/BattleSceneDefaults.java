@@ -19,7 +19,7 @@ public class BattleSceneDefaults {
     public static float playerHealthBoxHeight(){return 100f;}
     public static Position actionBoxPosition(float gameWidth){return new Position(gameWidth - 300, 155); }
     public static float actionBoxWidth(){return 250f;}
-    public static float actionBoxHeight(){return 200f;}
+    public static float actionBoxHeight(){return 260f;}
     public static Position healthIndicatorPosition() { return new Position(-100, -100); };
     public static Position textBoxPosition(){ return new Position(20,20); };
     public static float textBoxHeight(){return 100f;}

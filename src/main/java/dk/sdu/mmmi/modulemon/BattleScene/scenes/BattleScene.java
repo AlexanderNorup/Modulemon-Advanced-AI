@@ -219,10 +219,11 @@ public class BattleScene {
             textUtils.drawNormalRoboto(spriteBatch, _healthIndicatorText, _healthIndicatorColor, _healthIndicatorPosition.getX(), _healthIndicatorPosition.getY());
 
         //Action box
-        int topActionTextOffset = 150;
+        int topActionTextOffset = 210;
+        int actionTopTextHeight = topActionTextOffset + 36;
         if (actions.length > 0) {
             Color actionTextColor = new Color(0, 0, 0, _actionBoxAlpha);
-            textUtils.drawNormalRoboto(spriteBatch, actionTitle, actionTextColor, _actionBoxPosition.getX() + 10, _actionBoxPosition.getY() + 186);
+            textUtils.drawNormalRoboto(spriteBatch, actionTitle, actionTextColor, _actionBoxPosition.getX() + 10, _actionBoxPosition.getY() + actionTopTextHeight);
 
             for (int i = 0; i < actions.length; i++) {
                 textUtils.drawSmallRoboto(spriteBatch, actions[i].toString(), actionTextColor, _actionBoxPosition.getX() + 60, _actionBoxPosition.getY() + topActionTextOffset - (i * 30));
@@ -246,7 +247,6 @@ public class BattleScene {
             int triangleHeight = 20;
             int smallTextHeight = 15;
             int normalTextHeight = 24;
-            int actionTopTextHeight = 186;
             int offsetFromActionHeadToFirstAction = 8;
 
             int renderHeight = actionTopTextHeight - triangleHeight - normalTextHeight - offsetFromActionHeadToFirstAction;
