@@ -39,7 +39,9 @@ public class Main {
         nonAlphaBetaBattleAI.setSettingsService(settings);
         var mctsBattleAI = new MCTSBattleAIFactory();
         mctsBattleAI.setSettingsService(settings);
-        var simpleBattleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory(); // Uncomment for Simple AI
+        var simpleBattleAI = new dk.sdu.mmmi.modulemon.SimpleAI.BattleAIFactory();
+        var randomSwitchingBattleAI = new dk.sdu.mmmi.modulemon.RandomAI.RandomAIFactory(true);
+        var randomNonSwitchingBattleAI = new dk.sdu.mmmi.modulemon.RandomAI.RandomAIFactory(false);
 
         var battleSimulation = new BattleSimulation();
         battleSimulation.setOpponentAIFactory(battleAI);
@@ -59,6 +61,8 @@ public class Main {
         customBattle.addBattleAI(mctsBattleAI);
         customBattle.addBattleAI(simpleBattleAI);
         customBattle.addBattleAI(nonAlphaBetaBattleAI);
+        customBattle.addBattleAI(randomSwitchingBattleAI);
+        customBattle.addBattleAI(randomNonSwitchingBattleAI);
 
         var headlessBattle = new HeadlessBattleView();
         headlessBattle.setSettings(settings);
@@ -66,6 +70,8 @@ public class Main {
         headlessBattle.addBattleAI(mctsBattleAI);
         headlessBattle.addBattleAI(simpleBattleAI);
         headlessBattle.addBattleAI(nonAlphaBetaBattleAI);
+        headlessBattle.addBattleAI(randomSwitchingBattleAI);
+        headlessBattle.addBattleAI(randomNonSwitchingBattleAI);
         headlessBattle.setMonsterRegistry(monsterRegistry);
 
 
