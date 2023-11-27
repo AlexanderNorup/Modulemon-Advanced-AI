@@ -1,8 +1,16 @@
-package dk.sdu.mmmi.modulemon.MCTSBattleAI;
-
-import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
+package dk.sdu.mmmi.modulemon.CommonMonster;
 
 public class EmptyMove implements IMonsterMove {
+
+    private static EmptyMove instance = new EmptyMove();
+    public static EmptyMove getInstance(){
+        return instance;
+    }
+
+    private EmptyMove(){
+
+    }
+
     @Override
     public String getName() {
         return "Loaf around";
@@ -10,7 +18,7 @@ public class EmptyMove implements IMonsterMove {
 
     @Override
     public String getSoundPath() {
-        return null;
+        return "/sounds/loafAround.ogg";
     }
 
     @Override
