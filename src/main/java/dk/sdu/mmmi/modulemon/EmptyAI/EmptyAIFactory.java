@@ -16,6 +16,6 @@ public class EmptyAIFactory implements IBattleAIFactory {
 
     @Override
     public String toString() {
-        return "Empty AI";
+        return "Loafing AI";
     }
 }
