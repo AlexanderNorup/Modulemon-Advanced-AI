@@ -188,7 +188,7 @@
     "defence": 75,
     "attack": 110,
     "speed": 100,
-    "moves": ["vineWhip", "leafShield", "razorLeaf", "natureBlast"],
+    "moves": ["smack", "leafShield", "razorLeaf", "natureBlast"],
     "front": "/images/vineSerpent_front.png",
     "back": "/images/vineSerpent_back.png"
   },
