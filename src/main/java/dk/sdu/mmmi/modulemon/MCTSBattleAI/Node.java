@@ -4,6 +4,7 @@ import dk.sdu.mmmi.modulemon.CommonBattle.IBattleParticipant;
 import dk.sdu.mmmi.modulemon.CommonBattleSimulation.IBattleState;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonster;
 import dk.sdu.mmmi.modulemon.CommonMonster.IMonsterMove;
+import dk.sdu.mmmi.modulemon.Monster.BattleMonsterProcessor;
 
 import java.util.ArrayList;
 
@@ -109,7 +110,9 @@ public class Node {
         if(this.parent != null){
             String action = "doing nothing";
             if(this.parentMove != null){
-                action = String.format("%s using %s", this.parent.getParticipant().getActiveMonster().getName(), this.parentMove);
+                // Debugging and breaking the contract
+                var damageMoveWouldDeal = new BattleMonsterProcessor().calculateDamage(this.parent.getParticipant().getActiveMonster(), this.parentMove, getOpposingParticipant(this.parent.getParticipant(), this.parent.state).getActiveMonster());
+                action = String.format("%s using %s (would deal %d)", this.parent.getParticipant().getActiveMonster().getName(), this.parentMove, damageMoveWouldDeal);
             }else if(this.parentSwitch != null){
                 action = "Switching to " + this.parentSwitch;
             }

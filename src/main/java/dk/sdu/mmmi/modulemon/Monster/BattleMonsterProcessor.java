@@ -34,7 +34,8 @@ public class BattleMonsterProcessor implements IBattleMonsterProcessor {
         float sourceAttack = (float) source.getAttack();
         float targetDefence = (float) target.getDefence();
 
-        boolean shouldUseNonDeterminism = (Boolean) settings.getSetting(SettingsRegistry.getInstance().getNonDeterminism());
+        // Defaults to non-random if settings is null
+        boolean shouldUseNonDeterminism = settings != null && (Boolean) settings.getSetting(SettingsRegistry.getInstance().getNonDeterminism());
 
         if (!doAccuracyHit(move.getAccuracy()) && shouldUseNonDeterminism) { return 0; }
         // Same type attack bonus. Effectively the same as STAB in that other game
