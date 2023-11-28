@@ -242,9 +242,6 @@ public class MCTSBattleAI implements IBattleAI {
     private IBattleState simulateAction(IBattleParticipant actor, Object action, IBattleState currentState) {
         this.numSimulatedActions++;
         if (action instanceof IMonsterMove move) {
-            if(move instanceof EmptyMove){
-                return battleSimulation.simulateDoMove(actor, null, currentState);
-            }
             return battleSimulation.simulateDoMove(actor, move, currentState);
         } else if (action instanceof IMonster monster) {
             return battleSimulation.simulateSwitchMonster(actor, monster, currentState);
