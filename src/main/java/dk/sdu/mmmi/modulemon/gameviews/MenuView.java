@@ -611,7 +611,7 @@ public class MenuView implements IGameViewService {
                     settings.setSetting(settingsRegistry.getAIKnowlegdeStateEnabled(), true);
                 }
                 chooseSound.play(getSoundVolumeAsFloat());
-            } else if (menuOptions[currentOption].equalsIgnoreCase("Nondeterminism")) {
+            } else if (menuOptions[currentOption].equalsIgnoreCase("Nondeterminism (random battles)")) {
                 /*
                 If setting for using nondeterminism for battles,
                  */
