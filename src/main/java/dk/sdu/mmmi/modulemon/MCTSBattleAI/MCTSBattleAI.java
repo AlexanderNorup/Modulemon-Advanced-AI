@@ -190,7 +190,7 @@ public class MCTSBattleAI implements IBattleAI {
         var reward = getReward(state);
 
         if (reward > 0) {
-            reward *= (2f / (depth+1)); // Making sure that the deeper, the worse reward
+            reward *= (1f / (depth+1)); // Making sure that the deeper, the worse reward
         }
 
         return reward;
