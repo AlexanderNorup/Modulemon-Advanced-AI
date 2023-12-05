@@ -170,18 +170,7 @@ public class HeadlessBattleView implements IGameViewService {
                 stopAllBattles();
 
                 // Save CSV file
-                try {
-                    final String outputDir = "BattleResults";
-                    var dir = new File(outputDir);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                    var filename = Path.of(outputDir, String.format("battle_simulation_results_%d.csv", System.currentTimeMillis() / 1000L));
-                    csvWriter.save(filename.toAbsolutePath().toString());
-                } catch (IOException e) {
-                    System.out.println("Tried to save CSV file, but failed! Oh no! Anyway..");
-                    e.printStackTrace();
-                }
+                saveCSVFile();
 
             } else if (currentBattles < concurrentBattles && currentBattles + completedBattles < battleAmount) {
                 var amountBattlesToStart = concurrentBattles - currentBattles;
@@ -243,6 +232,21 @@ public class HeadlessBattleView implements IGameViewService {
         }
     }
 
+    private void saveCSVFile() {
+        try {
+            final String outputDir = "BattleResults";
+            var dir = new File(outputDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            var filename = Path.of(outputDir, String.format("battle_simulation_results_%d.csv", System.currentTimeMillis() / 1000L));
+            csvWriter.save(filename.toAbsolutePath().toString());
+        } catch (IOException e) {
+            System.out.println("Tried to save CSV file, but failed! Oh no! Anyway..");
+            e.printStackTrace();
+        }
+    }
+
     private void stopAllBattles() {
         doneBattling = true;
         currentBattles = 0;
@@ -286,6 +290,7 @@ public class HeadlessBattleView implements IGameViewService {
                 editingMode = false;
             } else if (battling || doneBattling) {
                 battling = false;
+                saveCSVFile();
                 stopAllBattles();
             } else {
                 gameViewManager.setDefaultView();

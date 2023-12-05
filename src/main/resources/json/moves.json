@@ -11,7 +11,8 @@
     "name": "Water Blast",
     "damage": 70,
     "type": "WATER",
-    "sound": "/sounds/water_blast.ogg"
+    "sound": "/sounds/water_blast.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "mudBlast",
@@ -46,7 +47,8 @@
     "name": "Earthquake",
     "damage": 80,
     "type": "EARTH",
-    "sound": "/sounds/earthquake.ogg"
+    "sound": "/sounds/earthquake.ogg",
+    "accuracy": 0.85
   },
   {
     "id": "hornBlast",
@@ -67,7 +69,8 @@
     "name": "Egg Bomb",
     "damage": 65,
     "type": "NORMAL",
-    "sound": "/sounds/egg_bomb.ogg"
+    "sound": "/sounds/egg_bomb.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "fireBreath",
@@ -81,7 +84,8 @@
     "name": "Flame Fang",
     "damage": 70,
     "type": "FIRE",
-    "sound": "/sounds/flame_fang.ogg"
+    "sound": "/sounds/flame_fang.ogg",
+    "accuracy": 0.7
   },
   {
     "id": "zap",
@@ -95,14 +99,16 @@
     "name": "Arc Bolt",
     "damage": 80,
     "type": "LIGHTNING",
-    "sound": "/sounds/arc_bolt.ogg"
+    "sound": "/sounds/arc_bolt.ogg",
+    "accuracy": 0.75
   },
   {
     "id": "tornado",
     "name": "Tornado",
     "damage": 75,
     "type": "AIR",
-    "sound": "/sounds/tornado.ogg"
+    "sound": "/sounds/tornado.ogg",
+    "accuracy": 0.66
   },
   {
     "id": "windGust",
@@ -155,7 +161,8 @@
     "name": "Head Butt",
     "damage": 70,
     "type": "NORMAL",
-    "sound": "/sounds/headButt.ogg"
+    "sound": "/sounds/headButt.ogg",
+    "accuracy": 0.75
   },
   {
     "id": "aquaticWave",
@@ -183,7 +190,8 @@
     "name": "Inferno",
     "damage": 75,
     "type": "FIRE",
-    "sound": "/sounds/inferno.ogg"
+    "sound": "/sounds/inferno.ogg",
+    "accuracy": 0.7
   },
   {
     "id": "soar",
@@ -225,7 +233,8 @@
     "name": "Lightning Strike",
     "damage": 75,
     "type": "LIGHTNING",
-    "sound": "/sounds/lightningStrike.ogg"
+    "sound": "/sounds/lightningStrike.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "thunderStomp",
@@ -274,6 +283,7 @@
     "name": "Smack",
     "damage": 95,
     "type": "NORMAL",
-    "sound": "/sounds/smack.ogg"
+    "sound": "/sounds/smack.ogg",
+    "accuracy": 0.55
   }
 ]
