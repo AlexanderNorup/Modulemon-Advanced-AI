@@ -12,7 +12,7 @@
     "damage": 70,
     "type": "WATER",
     "sound": "/sounds/water_blast.ogg",
-    "accuracy": 0.8
+    "accuracy": 0.7
   },
   {
     "id": "mudBlast",
@@ -26,7 +26,8 @@
     "name": "Trample",
     "damage": 60,
     "type": "GRASS",
-    "sound": "/sounds/trample.ogg"
+    "sound": "/sounds/trample.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "furBall",
@@ -40,7 +41,8 @@
     "name": "Dig",
     "damage": 60,
     "type": "EARTH",
-    "sound": "/sounds/dig.ogg"
+    "sound": "/sounds/dig.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "earthquake",
@@ -48,7 +50,7 @@
     "damage": 80,
     "type": "EARTH",
     "sound": "/sounds/earthquake.ogg",
-    "accuracy": 0.85
+    "accuracy": 0.7
   },
   {
     "id": "hornBlast",
@@ -100,7 +102,7 @@
     "damage": 80,
     "type": "LIGHTNING",
     "sound": "/sounds/arc_bolt.ogg",
-    "accuracy": 0.75
+    "accuracy": 0.6
   },
   {
     "id": "tornado",
@@ -129,7 +131,8 @@
     "name": "Screech",
     "damage": 60,
     "type": "AIR",
-    "sound": "/sounds/screech.ogg"
+    "sound": "/sounds/screech.ogg",
+    "accuracy": 0.75
   },
   {
     "id": "kamikaze",
@@ -162,7 +165,7 @@
     "damage": 70,
     "type": "NORMAL",
     "sound": "/sounds/headButt.ogg",
-    "accuracy": 0.75
+    "accuracy": 0.7
   },
   {
     "id": "aquaticWave",
@@ -226,7 +229,8 @@
     "name": "Charge",
     "damage": 65,
     "type": "LIGHTNING",
-    "sound": "/sounds/charge.ogg"
+    "sound": "/sounds/charge.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "lightningStrike",
@@ -234,7 +238,7 @@
     "damage": 75,
     "type": "LIGHTNING",
     "sound": "/sounds/lightningStrike.ogg",
-    "accuracy": 0.8
+    "accuracy": 0.7
   },
   {
     "id": "thunderStomp",
@@ -262,14 +266,16 @@
     "name": "Razor Leaf",
     "damage": 70,
     "type": "GRASS",
-    "sound": "/sounds/razorLeaf.ogg"
+    "sound": "/sounds/razorLeaf.ogg",
+    "accuracy": 0.7
   },
   {
     "id": "natureBlast",
     "name": "Nature Blast",
     "damage": 65,
     "type": "GRASS",
-    "sound": "/sounds/natureBlast.ogg"
+    "sound": "/sounds/natureBlast.ogg",
+    "accuracy": 0.8
   },
   {
     "id": "christmasWish",
