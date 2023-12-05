@@ -130,7 +130,7 @@
     "name": "Kamikaze",
     "damage": 120,
     "type": "AIR",
-    "sound": "/sounds/screech.ogg",
+    "sound": "/sounds/kamikaze.ogg",
     "accuracy": 0.4
   },
   {"_comment":  "New data from here, which still needs to be balanced",
