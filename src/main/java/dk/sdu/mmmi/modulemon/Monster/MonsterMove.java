@@ -11,7 +11,7 @@ public class MonsterMove implements IMonsterMove {
     private MonsterType type;
     private String soundPath;
 
-    private float accuracy = 1f;
+    private float accuracy = 0.90f;
     public MonsterMove(String name, int damage, MonsterType type, String soundPath, float accuracy) {
         this.name = name;
         this.damage = damage;
